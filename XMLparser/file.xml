@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<servers>
+    <server>
+        <hash>1223232</hash>
+        <ip>192.168.1.2</ip>
+    </server>
+    <server>
+        <hash>1223</hash>
+        <ip>192.168.1.1</ip>
+    </server>
+</servers>
