@@ -9,7 +9,7 @@ public class Hash {
 
     public int generateHash(String hostname){
         int hashCode = hostname.hashCode();
-        int hashValue  = hashCode;
+        int hashValue  = abs(hashCode);
         return (int)hashValue;
     }
 }

@@ -8,15 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 @Service
 public class NamingServer {
 
-    private TreeMap<Integer, Inet4Address> database = new TreeMap<>();
+    private TreeMap<Integer, Inet4Address> database;
     private final Hash hashGen = new Hash();
 
     public NamingServer() {
