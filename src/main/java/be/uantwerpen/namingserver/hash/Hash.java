@@ -9,7 +9,7 @@ public class Hash {
 
     public int generateHash(String hostname){
         int hashCode = hostname.hashCode();
-        int hashValue  = (hashCode+max)*(32768/(max+abs(min)));
+        int hashValue  = hashCode;
         return (int)hashValue;
     }
 }

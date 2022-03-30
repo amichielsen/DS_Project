@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 
 
@@ -11,13 +12,15 @@ import java.util.HashMap;
 @RequestMapping("/db")
 public class Database {
 
-    @Autowired
-    NamingServer namingServer;
+    private NamingServer namingServer= new NamingServer();
 
 
     private int hostId;
     private Inet4Address hostIp;
     private static HashMap<Integer,Inet4Address> hostsDB = null;
+
+    public Database() throws UnknownHostException {
+    }
 
     /*{ Hosts:[
         {"filename": "doc1.txt",
