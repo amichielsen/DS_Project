@@ -27,7 +27,7 @@ public class XMLWrite {
     public XMLWrite() {
         try {
             serverList.put(1223, (Inet4Address) Inet4Address.getByName("192.168.1.1"));
-            serverList.put(1223232, (Inet4Address) Inet4Address.getByName("192.168.1.3"));
+            serverList.put(23232, (Inet4Address) Inet4Address.getByName("192.168.1.3"));
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
