@@ -6,22 +6,26 @@ import org.springframework.web.bind.annotation.*;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-
+import java.util.TreeMap;
 
 
 @RestController
 @RequestMapping("/db")
 public class Database {
+    private static final NamingServer namingServer = new NamingServer();
+    private static TreeMap<Integer,Inet4Address> hostsDB = namingServer.getDatabase();
 
-    private static HashMap<Integer,Inet4Address> hostsDB = null;
 
-    @GetMapping("/hosts")
-    public static HashMap<Integer,Inet4Address> getInstance() {
-        if(hostsDB == null)
-            hostsDB = new HashMap< >();
+    @GetMapping(path ="/hosts")
+    public static TreeMap<Integer,Inet4Address> getInstance() {
+        System.out.println("hi");
         return hostsDB;
     }
 
+    @PostMapping(path ="/host")
+    public static void addHost(@RequestParam(value = "host") String ip) {
+        namingServer.addIpAddress(ip);
+    }
 
     //Add an entry into the hosts database using parameters
     @PostMapping(
