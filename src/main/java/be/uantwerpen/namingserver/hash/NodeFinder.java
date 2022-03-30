@@ -1,13 +1,14 @@
 package be.uantwerpen.namingserver.hash;
 
+import java.net.Inet4Address;
 import java.util.*;
 
 public class NodeFinder {
 
     private Hash hashGenerator;
-    private Map<Integer, String> nodeMap;
+    private Map<Integer, Inet4Address> nodeMap;
 
-    public NodeFinder(Hash hashGenerator, Map<Integer, String> nodeMap) {
+    public NodeFinder(Hash hashGenerator, Map<Integer, Inet4Address> nodeMap) {
         this.hashGenerator = hashGenerator;
         this.nodeMap = nodeMap;
     }

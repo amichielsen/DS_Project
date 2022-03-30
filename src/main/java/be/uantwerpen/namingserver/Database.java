@@ -1,5 +1,6 @@
 package be.uantwerpen.namingserver;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
@@ -9,6 +10,9 @@ import java.util.HashMap;
 @RestController
 @RequestMapping("/db")
 public class Database {
+
+    @Autowired
+    NamingServer namingServer;
 
 
     private int hostId;
@@ -38,8 +42,8 @@ public class Database {
     }
 
     @GetMapping(path = "/filename")
-    public String getId(@RequestParam(value = "fileName" ,defaultValue = "") String fileName){
-        return  String.format("Id is ",hostId);
+    public Inet4Address getId(@RequestParam(value = "fileName" ,defaultValue = "") String fileName){
+        return  namingServer.getIpAddress(fileName);
     }
 
     @GetMapping(path ="/hosts/{Node}")
