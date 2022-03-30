@@ -3,6 +3,7 @@ package be.uantwerpen.namingserver;
 import be.uantwerpen.namingserver.hash.Hash;
 import be.uantwerpen.namingserver.hash.Main;
 import be.uantwerpen.namingserver.hash.NodeFinder;
+import be.uantwerpen.namingserver.xmlParser.XMLWrite;
 import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
@@ -19,14 +20,16 @@ public class NamingServer {
     private final Hash hashGen = new Hash();
 
     public NamingServer() throws UnknownHostException {
-        database.put(120000, (Inet4Address) Inet4Address.getByName("192.168.2.5"));
-        database.put(1800000, (Inet4Address) Inet4Address.getByName("192.168.1.5"));
-        database.put(3, (Inet4Address) Inet4Address.getByName("192.168.3.5"));
+        database = XMLWrite.readServerList();
     }
 
     Inet4Address getIpAddress(String filename){
         NodeFinder nodeFinder = new NodeFinder(hashGen, database);
         int value = nodeFinder.findNodeFromFile(filename);
         return database.get(value);
+    }
+
+    public Map<Integer, Inet4Address> getDatabase() {
+        return database;
     }
 }
