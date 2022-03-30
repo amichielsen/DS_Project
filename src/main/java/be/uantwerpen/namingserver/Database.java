@@ -6,7 +6,6 @@ import java.net.Inet4Address;
 import java.util.HashMap;
 
 
-
 @RestController
 @RequestMapping("/db")
 public class Database {
