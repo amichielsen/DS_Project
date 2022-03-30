@@ -1,3 +1,5 @@
+package be.uantwerpen.namingserver.hash;
+
 import java.util.*;
 
 public class NodeFinder {
