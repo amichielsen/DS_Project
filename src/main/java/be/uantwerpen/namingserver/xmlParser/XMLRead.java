@@ -12,6 +12,10 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.util.TreeMap;
 
+/**
+ * This function will read a XML file and formats this as a Map.
+ * -- Louis de Looze
+ */
 public class XMLRead {
     public static TreeMap<Integer, Inet4Address> serverList() {
         TreeMap<Integer, Inet4Address> list = new TreeMap<>();

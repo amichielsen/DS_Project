@@ -15,6 +15,10 @@ import java.net.Inet4Address;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * This function will write a XML file based on a Map.
+ * -- Louis de Looze
+ */
 public class XMLWrite {
     public static void serverList(TreeMap<Integer, Inet4Address> list) {
         try {
