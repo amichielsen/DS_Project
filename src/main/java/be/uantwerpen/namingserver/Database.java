@@ -39,7 +39,7 @@ public class Database {
             consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
             path = "/addEntryBody")
-    public String addEntryBody(@RequestBody HostDetails2 hostDetails) throws UnknownHostException {
+    public String addEntryBody(@RequestBody HostDetails hostDetails) throws UnknownHostException {
         Inet4Address tempIP = (Inet4Address) Inet4Address.getByName(hostDetails.getHostIP());
         Database.getInstance().put(   Integer.parseInt(hostDetails.getHostID()), tempIP                 );
         return "added successfully";
@@ -48,11 +48,11 @@ public class Database {
 
     //sample GET request. Just for reference
     @GetMapping(path = "/getHostDetails")
-    public HostDetails2 getHost(@RequestParam String hostId) throws UnknownHostException {
+    public HostDetails getHost(@RequestParam String hostId) throws UnknownHostException {
 
         //test hostDetails entry
         Inet4Address googleAdres = (Inet4Address) Inet4Address.getByName("www.google.com");
-        HostDetails2 host1 = new HostDetails2(hostId,googleAdres.getHostAddress());
+        HostDetails host1 = new HostDetails(hostId,googleAdres.getHostAddress());
         return  host1;
     }
 
