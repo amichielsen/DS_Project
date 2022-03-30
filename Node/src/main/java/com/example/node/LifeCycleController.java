@@ -1,6 +1,6 @@
 package com.example.node;
 
-public class NodeLifeCycle implements LifeCycle {
+public class LifeCycleController implements LifeCycle {
 
     @Override
     public void Discovery() {
