@@ -70,8 +70,9 @@ public class XMLWrite {
         }
     }
 
-    private HashMap<Integer, Inet4Address> readServerList() {
+    public static HashMap<Integer, Inet4Address> readServerList() {
         HashMap<Integer, Inet4Address> list = new HashMap<>();
+        System.out.print("Loading XML ... ");
         try {
             // parse XML file to build DOM
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -103,7 +104,7 @@ public class XMLWrite {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
+        System.out.println("[DONE]");
         return list;
     }
 }

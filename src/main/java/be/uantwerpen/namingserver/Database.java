@@ -5,19 +5,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
 import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
 @RequestMapping("/db")
 public class Database {
 
-    @Autowired
-    NamingServer namingServer;
+    //@Autowired
+    //NamingServer namingServer = new NamingServer();
 
 
     private int hostId;
     private Inet4Address hostIp;
-    private static HashMap<Integer,Inet4Address> hostsDB = null;
+    private static final NamingServer namingServer = new NamingServer();
+    private static Map<Integer,Inet4Address> hostsDB = namingServer.getDatabase();
 
     /*{ Hosts:[
         {"filename": "doc1.txt",
@@ -33,10 +35,8 @@ public class Database {
 
 
 
-    @GetMapping("/hosts")
-    public static HashMap<Integer,Inet4Address> getInstance() {
-        if(hostsDB == null)
-            hostsDB = new HashMap<Integer, Inet4Address>();
+    @GetMapping(path ="/hosts")
+    public static Map<Integer,Inet4Address> getInstance() {
         System.out.println("hi");
         return hostsDB;
     }
