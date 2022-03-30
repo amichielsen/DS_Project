@@ -1,29 +1,16 @@
 package com.example.node;
 
-public class LifeCycleController implements LifeCycle {
+import com.example.node.lifeCycle.Discovery;
+import com.example.node.lifeCycle.State;
 
-    @Override
-    public void Discovery() {
+public class LifeCycleController {
+    private State currentState;
 
+    public LifeCycleController() {
+        this.currentState = new Discovery(this);
     }
-
-    @Override
-    public void Bootstrap() {
-
-    }
-
-    @Override
-    public void Running() {
-
-    }
-
-    @Override
-    public void Shutdown() {
-
-    }
-
-    @Override
-    public void Failure() {
-
+    
+    public void ChangeState(State newState) {
+        this.currentState = newState;
     }
 }
