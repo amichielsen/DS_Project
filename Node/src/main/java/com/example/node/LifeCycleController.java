@@ -9,7 +9,7 @@ public class LifeCycleController {
     public LifeCycleController() {
         this.currentState = new Discovery(this);
     }
-    
+
     public void ChangeState(State newState) {
         this.currentState = newState;
     }
