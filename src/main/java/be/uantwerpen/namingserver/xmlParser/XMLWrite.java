@@ -13,21 +13,29 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class XMLWrite {
-    private HashMap<Integer, String> serverList = new HashMap<>();
+    private Map<Integer, Inet4Address> serverList = new HashMap<Integer, Inet4Address>();
 
     public XMLWrite() {
-        serverList.put(1223, "192.168.1.1");
-        serverList.put(1223232, "192.168.1.2");
-        //saveServerList(serverList);
-        readServerList();
+        try {
+            serverList.put(1223, (Inet4Address) Inet4Address.getByName("192.168.1.1"));
+            serverList.put(1223232, (Inet4Address) Inet4Address.getByName("192.168.1.3"));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
+        saveServerList(serverList);
+        //readServerList();
     }
 
-    private void saveServerList(HashMap<Integer, String> list) {
+    private void saveServerList(Map<Integer, Inet4Address> list) {
         try {
             // create new `Document`
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -38,7 +46,7 @@ public class XMLWrite {
             Element root = dom.createElement("servers");
             dom.appendChild(root);
 
-            for(Map.Entry<Integer, String> entry : list.entrySet()){
+            for(Map.Entry<Integer, Inet4Address> entry : list.entrySet()){
                 Element element = dom.createElement("server");
                 root.appendChild(element);
                 // now create child elements (name, email, phone)
@@ -46,7 +54,7 @@ public class XMLWrite {
                 hash.setTextContent(String.valueOf(entry.getKey()));
 
                 Element ip = dom.createElement("ip");
-                ip.setTextContent(entry.getValue());
+                ip.setTextContent(entry.getValue().getHostAddress());
                 // add child nodes to root node
                 element.appendChild(hash);
                 element.appendChild(ip);
@@ -62,8 +70,8 @@ public class XMLWrite {
         }
     }
 
-    private HashMap<Integer, String> readServerList() {
-        HashMap<Integer, String> list = new HashMap<>();
+    private HashMap<Integer, Inet4Address> readServerList() {
+        HashMap<Integer, Inet4Address> list = new HashMap<>();
         try {
             // parse XML file to build DOM
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -87,7 +95,7 @@ public class XMLWrite {
                     Node node2 = elem.getElementsByTagName("ip").item(0);
                     String ip = node2.getTextContent();
 
-                    list.put(Integer.valueOf(hash), ip);
+                    list.put(Integer.valueOf(hash), (Inet4Address) InetAddress.getByName(ip));
 
                 }
             }
