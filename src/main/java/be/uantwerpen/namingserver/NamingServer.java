@@ -7,6 +7,7 @@ import be.uantwerpen.namingserver.xmlParser.XMLWrite;
 import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.Map;
@@ -27,6 +28,15 @@ public class NamingServer {
         NodeFinder nodeFinder = new NodeFinder(hashGen, database);
         int value = nodeFinder.findNodeFromFile(filename);
         return database.get(value);
+    }
+
+    public void addIpAddress(String ip) {
+        try {
+            database.put(Hash.generateHash(ip), (Inet4Address) InetAddress.getByName(ip));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        XMLWrite.saveServerList(database);
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {

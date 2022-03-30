@@ -7,7 +7,7 @@ public class Hash {
     int max = Integer.MAX_VALUE;
     int min = Integer.MIN_VALUE;
 
-    public int generateHash(String hostname){
+    public static int generateHash(String hostname){
         int hashCode = hostname.hashCode();
         int hashValue  = hashCode;
         return (int)hashValue;

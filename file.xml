@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <servers>
     <server>
-        <hash>1223232</hash>
-        <ip>192.168.1.3</ip>
+        <hash>111</hash>
+        <ip>8.8.8.8</ip>
     </server>
     <server>
         <hash>1223</hash>
         <ip>192.168.1.1</ip>
     </server>
     <server>
-        <hash>111</hash>
-        <ip>8.8.8.8</ip>
+        <hash>1223232</hash>
+        <ip>192.168.1.3</ip>
+    </server>
+    <server>
+        <hash>274989742</hash>
+        <ip>10.10.10.10</ip>
     </server>
 </servers>
