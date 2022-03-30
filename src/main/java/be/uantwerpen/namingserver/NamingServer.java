@@ -19,7 +19,7 @@ public class NamingServer {
     private TreeMap<Integer, Inet4Address> database = new TreeMap<>();
     private final Hash hashGen = new Hash();
 
-    public NamingServer() throws UnknownHostException {
+    public NamingServer() {
         database = XMLWrite.readServerList();
     }
 
@@ -29,7 +29,7 @@ public class NamingServer {
         return database.get(value);
     }
 
-    public Map<Integer, Inet4Address> getDatabase() {
+    public TreeMap<Integer, Inet4Address> getDatabase() {
         return database;
     }
 }

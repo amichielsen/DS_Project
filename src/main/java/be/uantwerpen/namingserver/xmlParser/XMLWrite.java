@@ -18,10 +18,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 public class XMLWrite {
-    private Map<Integer, Inet4Address> serverList = new HashMap<Integer, Inet4Address>();
+    private TreeMap<Integer, Inet4Address> serverList = new TreeMap<Integer, Inet4Address>();
 
     public XMLWrite() {
         try {
@@ -35,7 +36,7 @@ public class XMLWrite {
         //readServerList();
     }
 
-    private void saveServerList(Map<Integer, Inet4Address> list) {
+    private void saveServerList(TreeMap<Integer, Inet4Address> list) {
         try {
             // create new `Document`
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
@@ -70,8 +71,8 @@ public class XMLWrite {
         }
     }
 
-    public static HashMap<Integer, Inet4Address> readServerList() {
-        HashMap<Integer, Inet4Address> list = new HashMap<>();
+    public static TreeMap<Integer, Inet4Address> readServerList() {
+        TreeMap<Integer, Inet4Address> list = new TreeMap<>();
         System.out.print("Loading XML ... ");
         try {
             // parse XML file to build DOM

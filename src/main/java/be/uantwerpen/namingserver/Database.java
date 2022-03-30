@@ -7,19 +7,18 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 @RestController
 @RequestMapping("/db")
 public class Database {
 
-    private NamingServer namingServer= new NamingServer();
-
 
     private int hostId;
     private Inet4Address hostIp;
     private static final NamingServer namingServer = new NamingServer();
-    private static Map<Integer,Inet4Address> hostsDB = namingServer.getDatabase();
+    private static TreeMap<Integer,Inet4Address> hostsDB = namingServer.getDatabase();
 
     public Database() throws UnknownHostException {
     }
