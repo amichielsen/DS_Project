@@ -1,68 +1,60 @@
 package be.uantwerpen.namingserver;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+
 
 
 @RestController
 @RequestMapping("/db")
 public class Database {
 
+    private static HashMap<Integer,Inet4Address> hostsDB = null;
 
-    private int hostId;
-    private Inet4Address hostIp;
-    private static final NamingServer namingServer = new NamingServer();
-    private static TreeMap<Integer,Inet4Address> hostsDB = namingServer.getDatabase();
-
-    public Database() throws UnknownHostException {
-    }
-
-    /*{ Hosts:[
-        {"filename": "doc1.txt",
-                "hostId": "1",
-                "hostIp": "127.0.0.3",
-
-        },
-        {"filename": "doc2.txt",
-                "hostId": "17",
-                "hostIp": "127.0.0.231",
-        }]
-        }*/
-
-
-
-    @GetMapping(path ="/hosts")
-    public static Map<Integer,Inet4Address> getInstance() {
-        System.out.println("hi");
+    @GetMapping("/hosts")
+    public static HashMap<Integer,Inet4Address> getInstance() {
+        if(hostsDB == null)
+            hostsDB = new HashMap< >();
         return hostsDB;
     }
-    @PostMapping(path ="/host")
-    public static void addHost(@RequestParam(value = "host") String ip) {
-        namingServer.addIpAddress(ip);
+
+
+    //Add an entry into the hosts database using parameters
+    @PostMapping(
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            path = "/addEntryParam")
+    public String addEntryParam(@RequestParam Integer hostId, String hostIp) throws UnknownHostException {
+        Inet4Address tempIP = (Inet4Address) Inet4Address.getByName(hostIp);
+        Database.getInstance().put(hostId, tempIP);
+        return "added successfully";
     }
 
-    @GetMapping(path = "/filename")
-    public Inet4Address getId(@RequestParam(value = "fileName" ,defaultValue = "") String fileName){
-        return  namingServer.getIpAddress(fileName);
-    }
-
-    @GetMapping(path ="/hosts/{Node}")
-    public Inet4Address GetIP_ByNode(@PathVariable("Node") String Node){
-
-        if (Node != null){
-            return null;
-        }
-        else return hostIp;
-
+    //Add an entry into the hosts database using JSON body
+    @PostMapping(
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            path = "/addEntryBody")
+    public String addEntryBody(@RequestBody HostDetails hostDetails) throws UnknownHostException {
+        Inet4Address tempIP = (Inet4Address) Inet4Address.getByName(hostDetails.getHostIP());
+        Database.getInstance().put(   Integer.parseInt(hostDetails.getHostID()), tempIP                 );
+        return "added successfully";
     }
 
 
+    //sample GET request. Just for reference
+    @GetMapping(path = "/getHostDetails")
+    public HostDetails getHost(@RequestParam String hostId) throws UnknownHostException {
+
+        //test hostDetails entry
+        Inet4Address googleAdres = (Inet4Address) Inet4Address.getByName("www.google.com");
+        HostDetails host1 = new HostDetails(hostId,googleAdres.getHostAddress());
+        return  host1;
+    }
 
 
 
