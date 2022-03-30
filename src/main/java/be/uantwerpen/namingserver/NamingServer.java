@@ -1,8 +1,8 @@
 package be.uantwerpen.namingserver;
 
 import be.uantwerpen.namingserver.hash.Hash;
-import be.uantwerpen.namingserver.hash.Main;
 import be.uantwerpen.namingserver.hash.NodeFinder;
+import be.uantwerpen.namingserver.xmlParser.XMLRead;
 import be.uantwerpen.namingserver.xmlParser.XMLWrite;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class NamingServer {
     private final Hash hashGen = new Hash();
 
     public NamingServer() {
-        database = XMLWrite.readServerList();
+        database = XMLRead.serverList();
     }
 
     Inet4Address getIpAddress(String filename){
@@ -33,7 +33,7 @@ public class NamingServer {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        XMLWrite.saveServerList(database);
+        XMLWrite.serverList(database);
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {
