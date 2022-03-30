@@ -36,7 +36,7 @@ public class XMLWrite {
         //readServerList();
     }
 
-    private void saveServerList(TreeMap<Integer, Inet4Address> list) {
+    public static void saveServerList(TreeMap<Integer, Inet4Address> list) {
         try {
             // create new `Document`
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()

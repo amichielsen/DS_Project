@@ -42,6 +42,10 @@ public class Database {
         System.out.println("hi");
         return hostsDB;
     }
+    @PostMapping(path ="/host")
+    public static void addHost(@RequestParam(value = "host") String ip) {
+        namingServer.addIpAddress(ip);
+    }
 
     @GetMapping(path = "/filename")
     public Inet4Address getId(@RequestParam(value = "fileName" ,defaultValue = "") String fileName){
