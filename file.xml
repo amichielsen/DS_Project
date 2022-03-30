@@ -8,4 +8,8 @@
         <hash>1223</hash>
         <ip>192.168.1.1</ip>
     </server>
+    <server>
+        <hash>111</hash>
+        <ip>8.8.8.8</ip>
+    </server>
 </servers>
