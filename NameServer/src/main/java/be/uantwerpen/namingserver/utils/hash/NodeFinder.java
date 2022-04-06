@@ -3,6 +3,10 @@ package be.uantwerpen.namingserver.utils.hash;
 import java.net.Inet4Address;
 import java.util.*;
 
+/**
+ * Class for finding the corresponding node given a filename
+ * --Alexander Michielsen
+ */
 public class NodeFinder {
 
     private Hash hashGenerator;

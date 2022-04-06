@@ -2,6 +2,10 @@ package be.uantwerpen.namingserver.utils.hash;
 
 import static java.lang.Math.abs;
 
+/**
+ * Hashing class for generating a hash value within the 0-32768 range
+ * --Alexander Michielsen
+ */
 public class Hash {
 
     public static int generateHash(String hostname){
