@@ -22,7 +22,7 @@ public class NamingServer {
 
     // Adding 1 host
     @PostMapping(path ="/host")
-    public static String addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) throws JSONException {
+    public static String addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
         JSONObject jsonObject = new JSONObject();
         Integer hash = namingService.addIpAddress(hostname, ip);
         jsonObject.put("hostname", hostname);
