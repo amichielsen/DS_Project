@@ -1,6 +1,7 @@
 package be.uantwerpen.namingserver.servers;
 
 import be.uantwerpen.namingserver.services.NamingService;
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
@@ -20,8 +21,18 @@ public class NamingServer {
 
     // Adding 1 host
     @PostMapping(path ="/host")
-    public static void addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
-        namingService.addIpAddress(hostname, ip);
+    public static String addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
+        JSONObject jsonObject = new JSONObject();
+        Integer hash = namingService.addIpAddress(hostname, ip);
+        jsonObject.put("hostname", hostname);
+        jsonObject.put("ip", ip);
+        if (hash == -1) {
+            jsonObject.put("status", "failed - entry already exists");
+            return jsonObject.toJSONString();
+        }
+        jsonObject.put("hash", hash);
+        jsonObject.put("status", "success");
+        return jsonObject.toJSONString();
     }
 
     // Delete 1 host
@@ -33,7 +44,12 @@ public class NamingServer {
     // Get IP from filename
     @GetMapping(path ="/file2host")
     public static String getHostIp(@RequestParam(value = "filename") String filename) {
-        return namingService.getIpAddress(filename).getHostAddress();
+        JSONObject jsonObject = new JSONObject();
+        String ip = namingService.getIpAddress(filename).getHostAddress();
+
+        jsonObject.put("ip", ip);
+        jsonObject.put("filename", filename);
+        return jsonObject.toJSONString();
     }
 
 }
