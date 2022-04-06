@@ -59,11 +59,6 @@ public class NamingService {
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {
-        lock.lock();
-        try{
-            return database;
-        }finally {
-            lock.unlock();
-        }
+        return database;
     }
 }
