@@ -29,10 +29,17 @@ public class NamingServer {
 
     public void addIpAddress(String ip) {
         try {
-            database.put(Hash.generateHash(ip), (Inet4Address) InetAddress.getByName(ip));
+            if (!database.containsKey(Hash.generateHash(ip))) {
+                database.put(Hash.generateHash(ip), (Inet4Address) InetAddress.getByName(ip));
+                XMLWrite.serverList(database);
+            }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+    }
+
+    public void deleteIpAddress(String ip) {
+        database.keySet().removeIf(key -> key == Hash.generateHash(ip));
         XMLWrite.serverList(database);
     }
 
