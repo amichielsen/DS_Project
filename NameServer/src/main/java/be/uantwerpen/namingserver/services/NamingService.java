@@ -11,33 +11,43 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Service
 public class NamingService {
 
     private TreeMap<Integer, Inet4Address> database;
     private final Hash hashGen = new Hash();
-    private Lock lock = new ReentrantLock();
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Lock writeLock = lock.writeLock();
+    private Lock readLock = lock.readLock();
     public NamingService() {
         database = XMLRead.serverList();
     }
 
     public Inet4Address getIpAddress(String filename){
-        NodeFinder nodeFinder = new NodeFinder(hashGen, database);
-        int value = nodeFinder.findNodeFromFile(filename);
-        return database.get(value);
+        try{
+            readLock.lock();
+            NodeFinder nodeFinder = new NodeFinder(hashGen, database);
+            int value = nodeFinder.findNodeFromFile(filename);
+            return database.get(value);
+        }finally {
+            readLock.unlock();
+        }
+
     }
 
     public Integer addIpAddress(String hostname, String ip) {
         try {
             if (!database.containsKey(Hash.generateHash(hostname))) {
                 Integer hash = Hash.generateHash(hostname);
-                lock.lock();
                 try{
+                    writeLock.lock();
                     database.put(hash, (Inet4Address) InetAddress.getByName(ip));
                 }finally {
-                    lock.unlock();
+                    writeLock.unlock();
                 }
                 XMLWrite.serverList(database);
                 return hash;
@@ -50,17 +60,22 @@ public class NamingService {
 
     public boolean deleteIpAddress(String ip) {
         boolean status = false;
-        lock.lock();
         try{
+            writeLock.lock();
             status = database.keySet().removeIf(key -> key == Hash.generateHash(ip));
         }finally {
-            lock.unlock();
+            writeLock.unlock();
         }
         XMLWrite.serverList(database);
         return status;
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {
-        return database;
+        try{
+            readLock.lock();
+            return database;
+        }finally {
+            readLock.unlock();
+        }
     }
 }
