@@ -48,7 +48,7 @@ public class NamingServer {
 
     // Get IP from filename
     @GetMapping(path ="/file2host")
-    public static String getHostIp(@RequestParam(value = "filename") String filename) throws JSONException {
+    public static String getHostIp(@RequestParam(value = "filename") String filename) {
         JSONObject jsonObject = new JSONObject();
         String ip = namingService.getIpAddress(filename).getHostAddress();
         System.out.println(Hash.generateHash(filename));

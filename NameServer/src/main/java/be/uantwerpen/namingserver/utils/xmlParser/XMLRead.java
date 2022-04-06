@@ -24,7 +24,7 @@ public class XMLRead {
             // parse XML file to build DOM
             DocumentBuilder builder = DocumentBuilderFactory.newInstance()
                     .newDocumentBuilder();
-            Document dom = builder.parse(new File("NameServer/file.xml"));
+            Document dom = builder.parse(new File("file.xml"));
 
             // normalize XML structure
             dom.getDocumentElement().normalize();
