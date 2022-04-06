@@ -1,4 +1,4 @@
-package be.uantwerpen.namingserver.xmlParser;
+package be.uantwerpen.namingserver.utils.xmlParser;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

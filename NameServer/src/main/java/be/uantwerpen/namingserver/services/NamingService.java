@@ -1,9 +1,9 @@
-package be.uantwerpen.namingserver;
+package be.uantwerpen.namingserver.services;
 
-import be.uantwerpen.namingserver.hash.Hash;
-import be.uantwerpen.namingserver.hash.NodeFinder;
-import be.uantwerpen.namingserver.xmlParser.XMLRead;
-import be.uantwerpen.namingserver.xmlParser.XMLWrite;
+import be.uantwerpen.namingserver.utils.hash.Hash;
+import be.uantwerpen.namingserver.utils.hash.NodeFinder;
+import be.uantwerpen.namingserver.utils.xmlParser.XMLRead;
+import be.uantwerpen.namingserver.utils.xmlParser.XMLWrite;
 import org.springframework.stereotype.Service;
 
 import java.net.Inet4Address;
@@ -12,16 +12,16 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 @Service
-public class NamingServer {
+public class NamingService {
 
     private TreeMap<Integer, Inet4Address> database;
     private final Hash hashGen = new Hash();
 
-    public NamingServer() {
+    public NamingService() {
         database = XMLRead.serverList();
     }
 
-    Inet4Address getIpAddress(String filename){
+    public Inet4Address getIpAddress(String filename){
         NodeFinder nodeFinder = new NodeFinder(hashGen, database);
         int value = nodeFinder.findNodeFromFile(filename);
         return database.get(value);

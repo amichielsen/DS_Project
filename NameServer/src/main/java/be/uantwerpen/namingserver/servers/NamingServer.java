@@ -1,5 +1,6 @@
-package be.uantwerpen.namingserver;
+package be.uantwerpen.namingserver.servers;
 
+import be.uantwerpen.namingserver.services.NamingService;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
@@ -8,31 +9,31 @@ import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/db")
-public class Database {
-    private static final NamingServer namingServer = new NamingServer();
+public class NamingServer {
+    private static final NamingService namingService = new NamingService();
 
     // Getting all the hosts
     @GetMapping(path ="/hosts")
     public static TreeMap<Integer,Inet4Address> getHosts() {
-        return namingServer.getDatabase();
+        return namingService.getDatabase();
     }
 
     // Adding 1 host
     @PostMapping(path ="/host")
     public static void addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
-        namingServer.addIpAddress(hostname, ip);
+        namingService.addIpAddress(hostname, ip);
     }
 
     // Delete 1 host
     @DeleteMapping(path ="/host")
     public static void deleteHost(@RequestParam(value = "host") String ip) {
-        namingServer.deleteIpAddress(ip);
+        namingService.deleteIpAddress(ip);
     }
 
     // Get IP from filename
     @GetMapping(path ="/file2host")
     public static String getHostIp(@RequestParam(value = "filename") String filename) {
-        return namingServer.getIpAddress(filename).getHostAddress();
+        return namingService.getIpAddress(filename).getHostAddress();
     }
 
 }

@@ -1,4 +1,4 @@
-package be.uantwerpen.namingserver.hash;
+package be.uantwerpen.namingserver.utils.hash;
 
 import static java.lang.Math.abs;
 

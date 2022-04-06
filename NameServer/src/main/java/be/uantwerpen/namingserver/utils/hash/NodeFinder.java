@@ -1,4 +1,4 @@
-package be.uantwerpen.namingserver.hash;
+package be.uantwerpen.namingserver.utils.hash;
 
 import java.net.Inet4Address;
 import java.util.*;
