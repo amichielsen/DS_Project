@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 
 @RestController
-@RequestMapping("/db")
+@RequestMapping("/naming")
 public class NamingServer {
     private static final NamingService namingService = new NamingService();
 
