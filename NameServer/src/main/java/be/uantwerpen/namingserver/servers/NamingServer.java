@@ -1,6 +1,7 @@
 package be.uantwerpen.namingserver.servers;
 
 import be.uantwerpen.namingserver.services.NamingService;
+import be.uantwerpen.namingserver.utils.hash.Hash;
 import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,8 +38,12 @@ public class NamingServer {
 
     // Delete 1 host
     @DeleteMapping(path ="/host")
-    public static void deleteHost(@RequestParam(value = "host") String ip) {
-        namingService.deleteIpAddress(ip);
+    public static String deleteHost(@RequestParam(value = "host") String host) {
+        JSONObject jsonObject = new JSONObject();
+        String status = namingService.deleteIpAddress(host) ? "success": "failed";
+
+        jsonObject.put("status", status);
+        return jsonObject.toJSONString();
     }
 
     // Get IP from filename
@@ -46,7 +51,7 @@ public class NamingServer {
     public static String getHostIp(@RequestParam(value = "filename") String filename) {
         JSONObject jsonObject = new JSONObject();
         String ip = namingService.getIpAddress(filename).getHostAddress();
-
+        System.out.println(Hash.generateHash(filename));
         jsonObject.put("ip", ip);
         jsonObject.put("filename", filename);
         return jsonObject.toJSONString();
