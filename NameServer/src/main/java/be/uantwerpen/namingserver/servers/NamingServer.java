@@ -29,11 +29,11 @@ public class NamingServer {
         jsonObject.put("ip", ip);
         if (hash == -1) {
             jsonObject.put("status", "failed - entry already exists");
-            return jsonObject.toJSONString();
+            return jsonObject.toString();
         }
         jsonObject.put("hash", hash);
         jsonObject.put("status", "success");
-        return jsonObject.toJSONString();
+        return jsonObject.toString();
     }
 
     // Delete 1 host
@@ -44,13 +44,12 @@ public class NamingServer {
 
     // Get IP from filename
     @GetMapping(path ="/file2host")
-    public static String getHostIp(@RequestParam(value = "filename") String filename) {
+    public static String getHostIp(@RequestParam(value = "filename") String filename) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         String ip = namingService.getIpAddress(filename).getHostAddress();
 
         jsonObject.put("ip", ip);
         jsonObject.put("filename", filename);
-        return jsonObject.toJSONString();
+        return jsonObject.toString();
     }
-
 }

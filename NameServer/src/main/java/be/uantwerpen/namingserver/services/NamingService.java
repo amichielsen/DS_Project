@@ -10,13 +10,15 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 public class NamingService {
 
     private TreeMap<Integer, Inet4Address> database;
     private final Hash hashGen = new Hash();
-
+    private Lock lock = new ReentrantLock();
     public NamingService() {
         database = XMLRead.serverList();
     }
@@ -31,7 +33,12 @@ public class NamingService {
         try {
             if (!database.containsKey(Hash.generateHash(hostname))) {
                 Integer hash = Hash.generateHash(hostname);
-                database.put(hash, (Inet4Address) InetAddress.getByName(ip));
+                lock.lock();
+                try{
+                    database.put(hash, (Inet4Address) InetAddress.getByName(ip));
+                }finally {
+                    lock.unlock();
+                }
                 XMLWrite.serverList(database);
                 return hash;
             }
@@ -42,11 +49,21 @@ public class NamingService {
     }
 
     public void deleteIpAddress(String ip) {
-        database.keySet().removeIf(key -> key == Hash.generateHash(ip));
+        lock.lock();
+        try{
+            database.keySet().removeIf(key -> key == Hash.generateHash(ip));
+        }finally {
+            lock.unlock();
+        }
         XMLWrite.serverList(database);
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {
-        return database;
+        lock.lock();
+        try{
+            return database;
+        }finally {
+            lock.unlock();
+        }
     }
 }
