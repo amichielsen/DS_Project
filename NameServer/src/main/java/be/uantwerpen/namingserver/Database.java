@@ -19,8 +19,8 @@ public class Database {
 
     // Adding 1 host
     @PostMapping(path ="/host")
-    public static void addHost(@RequestParam(value = "host") String ip) {
-        namingServer.addIpAddress(ip);
+    public static void addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
+        namingServer.addIpAddress(hostname, ip);
     }
 
     // Delete 1 host
