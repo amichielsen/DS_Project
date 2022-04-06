@@ -13,11 +13,19 @@
         <ip>10.10.10.10</ip>
     </server>
     <server>
+        <hash>12331</hash>
+        <ip>10.2.2.2</ip>
+    </server>
+    <server>
         <hash>18482</hash>
         <ip>10.10.10.11</ip>
     </server>
     <server>
         <hash>23232</hash>
         <ip>192.168.1.3</ip>
+    </server>
+    <server>
+        <hash>23386</hash>
+        <ip>10.2.2.1</ip>
     </server>
 </servers>
