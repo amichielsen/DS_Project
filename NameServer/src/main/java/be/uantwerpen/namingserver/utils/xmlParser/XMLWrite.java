@@ -34,13 +34,13 @@ public class XMLWrite {
             for(Map.Entry<Integer, Inet4Address> entry : list.entrySet()){
                 Element element = dom.createElement("server");
                 root.appendChild(element);
-                // now create child elements (name, email, phone)
+
                 Element hash = dom.createElement("hash");
                 hash.setTextContent(String.valueOf(entry.getKey()));
 
                 Element ip = dom.createElement("ip");
                 ip.setTextContent(entry.getValue().getHostAddress());
-                // add child nodes to root node
+
                 element.appendChild(hash);
                 element.appendChild(ip);
             }
