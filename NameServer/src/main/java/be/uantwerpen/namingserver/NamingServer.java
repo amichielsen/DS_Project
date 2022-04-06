@@ -27,10 +27,10 @@ public class NamingServer {
         return database.get(value);
     }
 
-    public void addIpAddress(String ip) {
+    public void addIpAddress(String hostname, String ip) {
         try {
-            if (!database.containsKey(Hash.generateHash(ip))) {
-                database.put(Hash.generateHash(ip), (Inet4Address) InetAddress.getByName(ip));
+            if (!database.containsKey(Hash.generateHash(hostname))) {
+                database.put(Hash.generateHash(hostname), (Inet4Address) InetAddress.getByName(ip));
                 XMLWrite.serverList(database);
             }
         } catch (UnknownHostException e) {
