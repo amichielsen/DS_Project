@@ -27,14 +27,19 @@ public class NamingService {
         return database.get(value);
     }
 
-    public void addIpAddress(String hostname, String ip) {
+    public int addIpAddress(String hostname, String ip) {
         try {
             if (!database.containsKey(Hash.generateHash(hostname))) {
                 database.put(Hash.generateHash(hostname), (Inet4Address) InetAddress.getByName(ip));
                 XMLWrite.serverList(database);
+                return 1;
+            }
+            else{ //Hashvalue already present in the map
+                return -1;
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
+            return -1;
         }
     }
 

@@ -20,8 +20,9 @@ public class NamingServer {
 
     // Adding 1 host
     @PostMapping(path ="/host")
-    public static void addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
-        namingService.addIpAddress(hostname, ip);
+    public static int addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
+        int result = namingService.addIpAddress(hostname, ip);
+        return result;
     }
 
     // Delete 1 host
