@@ -48,14 +48,16 @@ public class NamingService {
         return -1;
     }
 
-    public void deleteIpAddress(String ip) {
+    public boolean deleteIpAddress(String ip) {
+        boolean status = false;
         lock.lock();
         try{
-            database.keySet().removeIf(key -> key == Hash.generateHash(ip));
+            status = database.keySet().removeIf(key -> key == Hash.generateHash(ip));
         }finally {
             lock.unlock();
         }
         XMLWrite.serverList(database);
+        return status;
     }
 
     public TreeMap<Integer, Inet4Address> getDatabase() {
