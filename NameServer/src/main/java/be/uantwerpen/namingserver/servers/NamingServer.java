@@ -1,6 +1,8 @@
 package be.uantwerpen.namingserver.servers;
 
 import be.uantwerpen.namingserver.services.NamingService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
@@ -20,7 +22,7 @@ public class NamingServer {
 
     // Adding 1 host
     @PostMapping(path ="/host")
-    public static String addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) {
+    public static String addHost(@RequestParam(value = "host") String hostname,@RequestParam(value = "ip") String ip ) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         Integer hash = namingService.addIpAddress(hostname, ip);
         jsonObject.put("hostname", hostname);

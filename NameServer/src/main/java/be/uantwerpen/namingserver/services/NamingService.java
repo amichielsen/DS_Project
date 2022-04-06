@@ -33,6 +33,7 @@ public class NamingService {
                 Integer hash = Hash.generateHash(hostname);
                 database.put(hash, (Inet4Address) InetAddress.getByName(ip));
                 XMLWrite.serverList(database);
+                return hash;
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
