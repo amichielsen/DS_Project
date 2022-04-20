@@ -1,7 +1,7 @@
-package com.example.node.cron;
+package be.uantwerpen.node.cron;
 
-import com.example.node.LifeCycleController;
-import com.example.node.lifeCycle.State;
+import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.lifeCycle.State;
 
 public class CronJobSchedular {
     private State stateStarted;

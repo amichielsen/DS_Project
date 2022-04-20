@@ -1,4 +1,4 @@
-package com.example.node;
+package be.uantwerpen.node;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

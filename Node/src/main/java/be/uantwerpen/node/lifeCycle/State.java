@@ -1,7 +1,7 @@
-package com.example.node.lifeCycle;
+package be.uantwerpen.node.lifeCycle;
 
-import com.example.node.LifeCycleController;
-import com.example.node.NodeParameters;
+import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.NodeParameters;
 
 public abstract class State {
     protected LifeCycleController lifeCycleController;

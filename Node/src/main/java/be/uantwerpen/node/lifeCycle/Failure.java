@@ -1,7 +1,7 @@
-package com.example.node.lifeCycle;
+package be.uantwerpen.node.lifeCycle;
 
-import com.example.node.LifeCycleController;
-import com.example.node.NodeParameters;
+import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.NodeParameters;
 
 import java.io.IOException;
 import java.net.Inet4Address;
@@ -22,6 +22,12 @@ public class Failure extends State {
 
 
     }
+
+    @Override
+    public void run() {
+
+    }
+
     //check if node is still detected
     public static void sendPingRequest()
             throws UnknownHostException, IOException {

@@ -1,6 +1,8 @@
-package com.example.node;
+package be.uantwerpen.node;
 
-import be.uantwerpen.namingserver.utils.hash.Hash;
+
+
+import be.uantwerpen.node.utils.Hash;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -17,7 +19,7 @@ public class NodeParameters {
 
     public void setup(String name, InetAddress ip, Integer ID) {
         NodeParameters.name = name;
-        NodeParameters.ID = Hash.generateHash(name);
+        NodeParameters.id = Hash.generateHash(name);
         try {
             if (ip == null) {
                 NodeParameters.ip = InetAddress.getLocalHost();

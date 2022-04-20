@@ -1,6 +1,6 @@
-package com.example.node.lifeCycle;
+package be.uantwerpen.node.lifeCycle;
 
-import com.example.node.LifeCycleController;
+import be.uantwerpen.node.LifeCycleController;
 
 /**
  * This is the second state
@@ -11,5 +11,10 @@ import com.example.node.LifeCycleController;
 public class Bootstrap extends State {
     public Bootstrap(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
+    }
+
+    @Override
+    public void run() {
+
     }
 }

@@ -1,4 +1,4 @@
-package com.example.node.cron;
+package be.uantwerpen.node.cron;
 
 public abstract class CronJobHandler implements Runnable {
     public CronJobHandler() {

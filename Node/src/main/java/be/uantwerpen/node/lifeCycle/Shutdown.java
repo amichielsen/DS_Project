@@ -1,6 +1,6 @@
-package com.example.node.lifeCycle;
+package be.uantwerpen.node.lifeCycle;
 
-import com.example.node.LifeCycleController;
+import be.uantwerpen.node.LifeCycleController;
 
 /**
  * The last and final state...
@@ -11,5 +11,10 @@ import com.example.node.LifeCycleController;
 public class Shutdown extends State {
     public Shutdown(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
+    }
+
+    @Override
+    public void run() {
+
     }
 }

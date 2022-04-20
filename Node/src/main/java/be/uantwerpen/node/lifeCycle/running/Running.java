@@ -1,12 +1,12 @@
-package com.example.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running;
 
 
 
-import com.example.node.LifeCycleController;
-import com.example.node.cron.CronJobSchedular;
-import com.example.node.cron.PingNeighboringNode;
-import com.example.node.cron.SendCurrentStatus;
-import com.example.node.lifeCycle.State;
+import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.cron.CronJobSchedular;
+import be.uantwerpen.node.cron.PingNeighboringNode;
+import be.uantwerpen.node.cron.SendCurrentStatus;
+import be.uantwerpen.node.lifeCycle.State;
 
 /**
  * This is the "main" running state.

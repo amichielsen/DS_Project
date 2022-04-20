@@ -1,6 +1,12 @@
-package com.example.node.lifeCycle;
+package be.uantwerpen.node.lifeCycle;
 
-import com.example.node.LifeCycleController;
+import be.uantwerpen.node.LifeCycleController;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.Inet4Address;
+import java.net.SocketException;
 
 /**
  * This is the first state
@@ -10,10 +16,21 @@ import com.example.node.LifeCycleController;
 public class Discovery extends State {
     private DatagramSocket socket;
 
-    public Discovery(LifeCycleController lifeCycleController) throws SocketException {
+    public Discovery(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
-        socket = new DatagramSocket();
-        socket.setBroadcast(true);
+        try {
+            socket = new DatagramSocket();
+            socket.setBroadcast(true);
+        } catch (SocketException e) {
+            System.out.println(e);
+            //throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public void run() {
+
     }
 
     public void sendBroadcast(String name, String IP) throws IOException {

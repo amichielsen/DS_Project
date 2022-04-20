@@ -1,7 +1,6 @@
-package com.example.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running;
 
-import com.example.node.LifeCycleController;
-import com.example.node.NodeParameters;
+import be.uantwerpen.node.NodeParameters;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

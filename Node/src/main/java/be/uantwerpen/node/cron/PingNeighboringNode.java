@@ -1,4 +1,4 @@
-package com.example.node.cron;
+package be.uantwerpen.node.cron;
 
 public class PingNeighboringNode extends CronJobHandler {
     @Override

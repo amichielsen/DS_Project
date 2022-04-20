@@ -1,7 +1,7 @@
-package com.example.node;
+package be.uantwerpen.node;
 
-import com.example.node.lifeCycle.Discovery;
-import com.example.node.lifeCycle.State;
+import be.uantwerpen.node.lifeCycle.State;
+import be.uantwerpen.node.lifeCycle.Discovery;
 
 public class LifeCycleController {
     private State currentState;
