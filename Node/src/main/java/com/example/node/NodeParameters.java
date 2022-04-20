@@ -4,10 +4,14 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class NodeParameters {
+    public static InetAddress nameServerIp;
     public static String name;
     public static InetAddress ip;
-    public static Integer PreviousID;
-    public static Integer NextID;
+    public static Integer id;
+    public static Integer previousID;
+    public static Integer nextID;
+
+    public static Integer DELAY_BETWEEN_PING_S = 60;
 
     public void setup(String name, InetAddress ip) {
         NodeParameters.name = name;
@@ -23,18 +27,18 @@ public class NodeParameters {
     }
 
     public static Integer getPreviousID() {
-        return PreviousID;
+        return previousID;
     }
 
     public static void setPreviousID(Integer previousID) {
-        PreviousID = previousID;
+        previousID = previousID;
     }
 
     public static Integer getNextID() {
-        return NextID;
+        return nextID;
     }
 
     public static void setNextID(Integer nextID) {
-        NextID = nextID;
+        nextID = nextID;
     }
 }

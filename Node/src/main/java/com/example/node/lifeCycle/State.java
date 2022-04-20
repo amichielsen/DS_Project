@@ -9,6 +9,9 @@ public abstract class State {
 
     public State(LifeCycleController lifeCycleController) {
         this.lifeCycleController = lifeCycleController;
+        run();
     }
+
+    public abstract void run();
 
 }

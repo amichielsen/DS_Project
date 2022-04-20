@@ -13,4 +13,8 @@ public class LifeCycleController {
     public void ChangeState(State newState) {
         this.currentState = newState;
     }
+
+    public State getCurrentState() {
+        return currentState;
+    }
 }
