@@ -16,7 +16,7 @@ public class CronJobSchedular {
     }
     public void run() {
         while (stateStarted == lifeCycleController.getCurrentState()) {
-            System.out.println("Cron has run");
+            //System.out.println("Cron has run");
         }
     }
 }

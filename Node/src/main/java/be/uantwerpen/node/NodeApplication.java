@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class NodeApplication {
 
     public static void main(String[] args) {
+        Thread t1 = new Thread(new LifeCycleController());
+        t1.start();
         SpringApplication.run(NodeApplication.class, args);
     }
 

@@ -2,12 +2,13 @@ package be.uantwerpen.node;
 
 import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.Discovery;
+import be.uantwerpen.node.lifeCycle.running.Running;
 
-public class LifeCycleController {
+public class LifeCycleController implements Runnable {
     private State currentState;
 
     public LifeCycleController() {
-        this.currentState = new Discovery(this);
+
     }
 
     public void ChangeState(State newState) {
@@ -16,5 +17,12 @@ public class LifeCycleController {
 
     public State getCurrentState() {
         return currentState;
+    }
+
+    @Override
+    public void run() {
+        System.out.println("Started in DISCOVERY");
+        this.currentState = new Running(this);
+        currentState.run();
     }
 }

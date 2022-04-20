@@ -27,6 +27,7 @@ public class Running extends State {
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(), 60);
         cron.addCronJob(new SendCurrentStatus(), 60);
+        cron.run();
     }
 
 
