@@ -2,7 +2,7 @@ package be.uantwerpen.namingserver.servers;
 
 import be.uantwerpen.namingserver.services.NamingService;
 import be.uantwerpen.namingserver.utils.hash.Hash;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
@@ -56,4 +56,5 @@ public class NamingServer {
         jsonObject.put("filename", filename);
         return jsonObject.toString();
     }
+
 }
