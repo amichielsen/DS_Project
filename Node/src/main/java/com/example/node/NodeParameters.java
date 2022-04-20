@@ -1,5 +1,7 @@
 package com.example.node;
 
+import be.uantwerpen.namingserver.utils.hash.Hash;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -13,8 +15,9 @@ public class NodeParameters {
 
     public static Integer DELAY_BETWEEN_PING_S = 60;
 
-    public void setup(String name, InetAddress ip) {
+    public void setup(String name, InetAddress ip, Integer ID) {
         NodeParameters.name = name;
+        NodeParameters.ID = Hash.generateHash(name);
         try {
             if (ip == null) {
                 NodeParameters.ip = InetAddress.getLocalHost();
