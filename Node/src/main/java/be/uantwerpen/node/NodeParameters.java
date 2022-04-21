@@ -46,4 +46,13 @@ public class NodeParameters {
     public static void setNextID(Integer nextID) {
         nextID = nextID;
     }
+
+    public static Integer getId() {
+        return id;
+    }
+
+    public static void setIDsAsOwn(){
+        nextID = id;
+        previousID = id;
+    }
 }

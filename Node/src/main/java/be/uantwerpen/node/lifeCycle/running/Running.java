@@ -24,6 +24,8 @@ public class Running extends State {
 
     @Override
     public void run() {
+        MulticastReceiver multicastReceiver = new MulticastReceiver();
+        multicastReceiver.start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(), 60);
         cron.addCronJob(new SendCurrentStatus(), 60);

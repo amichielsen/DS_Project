@@ -1,12 +1,11 @@
 package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.NodeParameters;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Inet4Address;
-import java.net.SocketException;
+import java.net.*;
 
 /**
  * This is the first state
@@ -31,16 +30,35 @@ public class Discovery extends State {
 
     @Override
     public void run() {
-
+        try {
+            this.multicast("fakename", "1.2.3.4");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void multicast(String name, String IP) throws IOException {
         String msg = name + " " + IP;
         byte[] buffer = msg.getBytes();
-        Inet4Address broadcastIP = (Inet4Address) Inet4Address.getByName("255.255.255.255");
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, broadcastIP, 8080);
+        Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0");
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 8080);
         socket.send(packet);
+        byte[] answerBuf = new byte[256];
+        DatagramPacket answerPacket = new DatagramPacket(answerBuf, answerBuf.length);
+        socket.receive(answerPacket);
+        String received = new String(answerPacket.getData(),0, answerPacket.getLength());
+        this.handleResponse(received);
         socket.close();
+    }
+
+    public void handleResponse(String received){
+        int number = Integer.parseInt(received);
+        if(number < 1){
+            NodeParameters.setIDsAsOwn();
+        }
+        else if (number > 1){
+
+        }
     }
 
 }
