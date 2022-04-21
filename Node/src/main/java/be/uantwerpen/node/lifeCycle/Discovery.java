@@ -15,6 +15,7 @@ import java.net.SocketException;
  */
 public class Discovery extends State {
     private DatagramSocket socket;
+    private InetAddress group;
 
     public Discovery(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
@@ -33,9 +34,8 @@ public class Discovery extends State {
 
     }
 
-    public void sendBroadcast(String name, String IP) throws IOException {
+    public void multicast(String name, String IP) throws IOException {
         String msg = name + " " + IP;
-
         byte[] buffer = msg.getBytes();
         Inet4Address broadcastIP = (Inet4Address) Inet4Address.getByName("255.255.255.255");
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, broadcastIP, 8080);

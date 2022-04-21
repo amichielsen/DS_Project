@@ -1,18 +1,24 @@
 package be.uantwerpen.namingserver.servers;
 
+import be.uantwerpen.namingserver.services.MulticastReceiver;
 import be.uantwerpen.namingserver.services.NamingService;
 import be.uantwerpen.namingserver.utils.hash.Hash;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
 import java.util.TreeMap;
 
-
 @RestController
 @RequestMapping("/naming")
 public class NamingServer {
     private static final NamingService namingService = new NamingService();
+    private MulticastReceiver multicastReceiver;
+
+    public NamingServer() {
+        this.multicastReceiver = new MulticastReceiver();
+        this.multicastReceiver.start();
+    }
 
     // Getting all the hosts
     @GetMapping(path ="/hosts")
@@ -55,6 +61,10 @@ public class NamingServer {
         jsonObject.put("ip", ip);
         jsonObject.put("filename", filename);
         return jsonObject.toString();
+    }
+
+    public static int getNumberOfNodes(){
+        return namingService.getNrOfNodes();
     }
 
 }

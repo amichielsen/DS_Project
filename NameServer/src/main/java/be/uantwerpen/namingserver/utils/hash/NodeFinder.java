@@ -20,8 +20,8 @@ public class NodeFinder {
     public int findNodeFromFile(String filename) {
         int hashCode = hashGenerator.generateHash(filename);
         Set<Integer> nodes = nodeMap.keySet();
-        TreeSet<Integer> mainList = new TreeSet<>(nodes);
-        Integer smaller = mainList.lower(hashCode);
-        return Objects.requireNonNullElse(smaller, mainList.last()); //Wrap around
+        TreeSet<Integer> treeNodes = new TreeSet<>(nodes);
+        Integer smaller = treeNodes.lower(hashCode);
+        return Objects.requireNonNullElse(smaller, treeNodes.last()); //Wrap around
     }
 }

@@ -78,4 +78,8 @@ public class NamingService {
             readLock.unlock();
         }
     }
+
+    public int getNrOfNodes(){
+        return this.database.size();
+    }
 }
