@@ -7,11 +7,17 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Class that receives multicast messages, processes them and respons adequately
+ */
 public class MulticastReceiver extends Thread{
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
 
 
+    /**
+     * Start multicast listener
+     */
     public void run() {
         try {
             socket = new MulticastSocket(8080);
@@ -45,6 +51,11 @@ public class MulticastReceiver extends Thread{
         }
     }
 
+    /**
+     * Process the multicast message
+     * @param packet the received packet
+     * @throws IOException thrown when packet can't be read
+     */
     public void processMulticast(DatagramPacket packet) throws IOException {
         String msg = new String(
                 packet.getData(), 0, packet.getLength());
@@ -57,6 +68,12 @@ public class MulticastReceiver extends Thread{
         this.respondToMC(responseIP, responsePort);
     }
 
+    /**
+     * Responds to receive multicast
+     * @param ip ip to which to respond
+     * @param port port to which to respond
+     * @throws IOException thrown when communication fails
+     */
     public void respondToMC(InetAddress ip, int port) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         String nrOfNodes = Integer.toString(NamingServer.getNumberOfNodes());

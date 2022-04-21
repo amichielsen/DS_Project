@@ -8,6 +8,11 @@ import static java.lang.Math.abs;
  */
 public class Hash {
 
+    /**
+     * Generates hash values and limits range
+     * @param hostname the value from which to generate the hash
+     * @return hash value
+     */
     public static int generateHash(String hostname){
         int hashCode = hostname.hashCode();
         double max = Integer.MAX_VALUE;

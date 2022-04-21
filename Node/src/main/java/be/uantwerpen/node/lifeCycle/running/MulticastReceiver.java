@@ -6,6 +6,9 @@ import be.uantwerpen.node.utils.Hash;
 import java.io.IOException;
 import java.net.*;
 
+/**
+ * Class that listens to receive multicasts, processes them and responds back
+ */
 public class MulticastReceiver extends Thread{
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
@@ -44,6 +47,11 @@ public class MulticastReceiver extends Thread{
         }
     }
 
+    /**
+     * Method that processes the multicast and acts appropriately
+     * @param packet the packat that has been received
+     * @throws IOException exception thrown whenever packet can't be accessed
+     */
     public void processMulticast(DatagramPacket packet) throws IOException {
         String msg = new String(
                 packet.getData(), 0, packet.getLength());
@@ -59,6 +67,12 @@ public class MulticastReceiver extends Thread{
         }
     }
 
+    /**
+     * Method that responds to the multicast message
+     * @param ip ip to which the respond has to be sent
+     * @param port port to which the respond has to be sent
+     * @throws IOException Thrown when communication fails
+     */
     public void respondToMC(InetAddress ip, int port) throws IOException {
         DatagramSocket socket = new DatagramSocket();
 

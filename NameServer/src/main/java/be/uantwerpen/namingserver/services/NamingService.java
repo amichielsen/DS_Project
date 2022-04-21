@@ -27,6 +27,11 @@ public class NamingService {
         database = XMLRead.serverList();
     }
 
+    /**
+     * Returns the IP address where the file can be found
+     * @param filename the filename to query
+     * @return the IP address where the file can be found
+     */
     public Inet4Address getIpAddress(String filename){
         try{
             readLock.lock();
@@ -39,6 +44,12 @@ public class NamingService {
 
     }
 
+    /**
+     * Add a host and its IP address to the database
+     * @param hostname the hostname to be added
+     * @param ip the ip address to be added
+     * @return hash value when success, -1 when failure
+     */
     public Integer addIpAddress(String hostname, String ip) {
         try {
             if (!database.containsKey(Hash.generateHash(hostname))) {
@@ -58,6 +69,11 @@ public class NamingService {
         return -1;
     }
 
+    /**
+     * Removes entry from database
+     * @param ip entry to be removed
+     * @return success or failure
+     */
     public boolean deleteIpAddress(String ip) {
         boolean status = false;
         try{
@@ -70,6 +86,10 @@ public class NamingService {
         return status;
     }
 
+    /**
+     * Returns the database
+     * @return the database containing <hash, IP> pairs
+     */
     public TreeMap<Integer, Inet4Address> getDatabase() {
         try{
             readLock.lock();

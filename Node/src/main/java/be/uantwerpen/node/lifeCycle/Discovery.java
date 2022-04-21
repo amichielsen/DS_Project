@@ -37,6 +37,12 @@ public class Discovery extends State {
         }
     }
 
+    /**
+     * Sends multicast message to all nodes and NS to discover them
+     * @param name name of this node
+     * @param IP ip of this node
+     * @throws IOException thrown when communication fails
+     */
     public void multicast(String name, String IP) throws IOException {
         String msg = name + " " + IP;
         byte[] buffer = msg.getBytes();
@@ -51,6 +57,10 @@ public class Discovery extends State {
         socket.close();
     }
 
+    /**
+     * Handle response of multicast
+     * @param received received package contents
+     */
     public void handleResponse(String received){
         int number = Integer.parseInt(received);
         if(number < 1){
