@@ -2,6 +2,7 @@ package be.uantwerpen.node.lifeCycle.running;
 
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.utils.Hash;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.*;
@@ -61,9 +62,11 @@ public class MulticastReceiver extends Thread{
         int nameHash = Hash.generateHash(name);
         if (nameHash < NodeParameters.nextID && nameHash > NodeParameters.id){
             NodeParameters.setNextID(nameHash);
+            this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
         }
         else if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){
             NodeParameters.setPreviousID(nameHash);
+            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
         }
     }
 
@@ -73,10 +76,10 @@ public class MulticastReceiver extends Thread{
      * @param port port to which the respond has to be sent
      * @throws IOException Thrown when communication fails
      */
-    public void respondToMC(InetAddress ip, int port) throws IOException {
+    public void respondToMC(InetAddress ip, int port, String msg) throws IOException {
         DatagramSocket socket = new DatagramSocket();
-
-        DatagramPacket responsePacket =new DatagramPacket(buf, buf.length, ip, port);
+        byte[] response = msg.getBytes();
+        DatagramPacket responsePacket =new DatagramPacket(response, response.length, ip, port);
         socket.send(responsePacket);
         socket.close();
     }
