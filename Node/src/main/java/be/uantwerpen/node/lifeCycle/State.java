@@ -5,7 +5,7 @@ import be.uantwerpen.node.NodeParameters;
 
 public abstract class State {
     protected LifeCycleController lifeCycleController;
-    protected NodeParameters nodeParameters = new NodeParameters();
+    protected NodeParameters nodeParameters = NodeParameters.getInstance();
 
     public State(LifeCycleController lifeCycleController) {
         this.lifeCycleController = lifeCycleController;

@@ -60,11 +60,11 @@ public class MulticastReceiver extends Thread{
         String name= data[0];
         String ip = data[1];
         int nameHash = Hash.generateHash(name);
-        if (nameHash < NodeParameters.nextID && nameHash > NodeParameters.id){
+        if (this.shouldBeNext(nameHash)){
             NodeParameters.setNextID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
         }
-        else if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){
+        else if(this.shouldBePrevious(nameHash)){
             NodeParameters.setPreviousID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
         }
@@ -82,5 +82,36 @@ public class MulticastReceiver extends Thread{
         DatagramPacket responsePacket =new DatagramPacket(response, response.length, ip, port);
         socket.send(responsePacket);
         socket.close();
+    }
+
+    private boolean shouldBeNext(int nameHash){
+        if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){
+            return true;
+        }
+        else if((NodeParameters.id.equals(NodeParameters.nextID))){
+            return true;
+        }
+        else if(NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID)){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    private boolean shouldBePrevious(int nameHash){
+        if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){
+            return  true;
+        }
+        else if(NodeParameters.id.equals(NodeParameters.previousID)){
+            return true;
+        }
+        else if(NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID)){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

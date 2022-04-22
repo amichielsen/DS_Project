@@ -13,8 +13,6 @@ import java.net.*;
  * 2. If no answer, retry after cooldown period
  */
 public class Discovery extends State {
-    private DatagramSocket socket;
-    private InetAddress group;
     private boolean allAnswersReceived = false;
     private int answerCounter = 0;
     private int nextTemp;
@@ -22,14 +20,6 @@ public class Discovery extends State {
 
     public Discovery(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
-        try {
-            socket = new DatagramSocket();
-            socket.setBroadcast(true);
-        } catch (SocketException e) {
-            System.out.println(e);
-            //throw new RuntimeException(e);
-        }
-
     }
 
     @Override
@@ -48,9 +38,11 @@ public class Discovery extends State {
      * @throws IOException thrown when communication fails
      */
     public void multicast(String name, String IP) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+        socket.setBroadcast(true);
         String msg = name + " " + IP;
         byte[] buffer = msg.getBytes();
-        Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0");
+        Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0"); //MC group
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 8080);
         socket.send(packet);
         while(!this.allAnswersReceived) {

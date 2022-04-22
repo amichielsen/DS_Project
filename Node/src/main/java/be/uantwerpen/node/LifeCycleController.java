@@ -22,7 +22,7 @@ public class LifeCycleController implements Runnable {
     @Override
     public void run() {
         System.out.println("Started in DISCOVERY");
-        this.currentState = new Running(this);
+        this.currentState = new Discovery(this);
         currentState.run();
     }
 }

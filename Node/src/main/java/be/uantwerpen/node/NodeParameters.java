@@ -8,12 +8,20 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class NodeParameters {
+    private static NodeParameters instance = new NodeParameters();
     public static InetAddress nameServerIp;
     public static String name;
     public static InetAddress ip;
     public static Integer id;
     public static Integer previousID;
     public static Integer nextID;
+
+    private NodeParameters() {
+    }
+
+    public static NodeParameters getInstance(){
+        return instance;
+    }
 
     public static Integer DELAY_BETWEEN_PING_S = 60;
 
@@ -30,7 +38,7 @@ public class NodeParameters {
             e.printStackTrace();
         }
     }
-
+    //Niet static want method gebruikt instance variables? Singleton?
     public static Integer getPreviousID() {
         return previousID;
     }
