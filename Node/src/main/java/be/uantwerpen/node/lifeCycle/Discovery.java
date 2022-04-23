@@ -2,7 +2,6 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
-import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.*;
@@ -40,7 +39,7 @@ public class Discovery extends State {
     public void multicast(String name, String IP) throws IOException {
         DatagramSocket socket = new DatagramSocket();
         socket.setBroadcast(true);
-        String msg = name + " " + IP;
+        String msg = "DSCVRY "+ name + " " + IP;
         byte[] buffer = msg.getBytes();
         Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0"); //MC group
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 8080);
@@ -61,36 +60,40 @@ public class Discovery extends State {
     public void handleResponse(DatagramPacket answerPacket){
         String received = new String(answerPacket.getData(),0, answerPacket.getLength());
         String[] contents = received.split(" ");
-        if(contents.length > 1){
-            String position = contents[0];
-            int answerID= Integer.parseInt(contents[1]);
-            if(position.equals("NEXT")){
-                this.nextTemp = answerID;
-                this.answerCounter += 1;
-            }
-            else if(position.equals("PREVIOUS")){
-                this.previousTemp = answerID;
-                this.answerCounter +=1;
-            }
-        }
-        else if(contents.length == 1){
-            int number = Integer.parseInt(contents[0]);
-            if(number < 1){
-                NodeParameters.setIDsAsOwn();
-                this.allAnswersReceived = true;
-            }
-            else {
-                this.answerCounter += 1;
-            }
-        }
         if(this.answerCounter == 3){
             NodeParameters.setNextID(this.nextTemp);
             NodeParameters.setPreviousID(this.previousTemp);
             this.allAnswersReceived = true;
             this.answerCounter = 0;
+            return;
         }
-
-
+        if(contents.length > 1){
+            String identifier = contents[0];
+            switch (identifier) {
+                case "NS" -> {
+                    int number = Integer.parseInt(contents[1]);
+                    if (number < 1) {
+                        NodeParameters.setIDsAsOwn();
+                        this.allAnswersReceived = true;
+                    } else {
+                        this.answerCounter += 1;
+                    }
+                }
+                case "NEXT+PREVIOUS" -> {
+                    this.nextTemp = Integer.parseInt(contents[1]);
+                    this.previousTemp = Integer.parseInt(contents[1]);
+                    this.answerCounter += 2;
+                }
+                case "NEXT" -> {
+                    this.nextTemp = Integer.parseInt(contents[1]);
+                    this.answerCounter += 1;
+                }
+                case "PREVIOUS" -> {
+                    this.previousTemp = Integer.parseInt(contents[1]);
+                    this.answerCounter += 1;
+                }
+            }
+        }
     }
 
 }

@@ -60,6 +60,11 @@ public class MulticastReceiver extends Thread{
         String name= data[0];
         String ip = data[1];
         int nameHash = Hash.generateHash(name);
+        if(NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)){
+            NodeParameters.setNextID(nameHash);
+            NodeParameters.setPreviousID(nameHash);
+            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS" + NodeParameters.id);
+        }
         if (this.shouldBeNext(nameHash)){
             NodeParameters.setNextID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);

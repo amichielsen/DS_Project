@@ -1,14 +1,12 @@
 package be.uantwerpen.namingserver.services;
 
 import be.uantwerpen.namingserver.servers.NamingServer;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 
 /**
- * Class that receives multicast messages, processes them and respons adequately
+ * Class that receives multicast messages, processes them and respond adequately
  */
 public class MulticastReceiver extends Thread{
     protected MulticastSocket socket = null;
@@ -59,13 +57,15 @@ public class MulticastReceiver extends Thread{
     public void processMulticast(DatagramPacket packet) throws IOException {
         String msg = new String(
                 packet.getData(), 0, packet.getLength());
-        String[] data = msg.split("");
-        String name= data[0];
-        String ip = data[1];
-        NamingServer.addHost(name, ip);
-        InetAddress responseIP = packet.getAddress();
-        int responsePort = packet.getPort();
-        this.respondToMC(responseIP, responsePort);
+        String[] data = msg.split(" ");
+        if(data[0].equals("DSCVRY")) {
+            String name = data[1];
+            String ip = data[2];
+            NamingServer.addHost(name, ip);
+            InetAddress responseIP = packet.getAddress();
+            int responsePort = packet.getPort();
+            this.respondToMC(responseIP, responsePort);
+        }
     }
 
     /**
@@ -76,8 +76,9 @@ public class MulticastReceiver extends Thread{
      */
     public void respondToMC(InetAddress ip, int port) throws IOException {
         DatagramSocket socket = new DatagramSocket();
-        String nrOfNodes = Integer.toString(NamingServer.getNumberOfNodes());
-        byte[] buf = nrOfNodes.getBytes();
+        String nrOfNodes = Integer.toString(NamingServer.getNumberOfNodes()-1); //-1 because current one added already
+        String response = "NS " + nrOfNodes;
+        byte[] buf = response.getBytes();
 
         DatagramPacket responsePacket =new DatagramPacket(buf, buf.length, ip, port);
         socket.send(responsePacket);
