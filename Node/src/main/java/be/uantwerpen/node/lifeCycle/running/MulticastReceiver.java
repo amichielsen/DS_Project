@@ -92,6 +92,7 @@ public class MulticastReceiver extends Thread{
         byte[] response = msg.getBytes();
         DatagramPacket responsePacket =new DatagramPacket(response, response.length, ip, port);
         socket.send(responsePacket);
+        System.out.println("Packet sent");
         socket.close();
     }
 
@@ -99,7 +100,7 @@ public class MulticastReceiver extends Thread{
         if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){
             return true;
         }
-        else if((NodeParameters.id.equals(NodeParameters.nextID))){
+        else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
             return true;
         }
         else if(NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID)){
@@ -115,7 +116,7 @@ public class MulticastReceiver extends Thread{
         if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){
             return  true;
         }
-        else if(NodeParameters.id.equals(NodeParameters.previousID)){
+        else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
             return true;
         }
         else if(NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID)){

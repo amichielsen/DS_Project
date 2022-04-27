@@ -80,6 +80,7 @@ public class DiscoveryBootstrap extends State {
         }
         if(contents.length > 1){
             String identifier = contents[0];
+            System.out.println(identifier);
             switch (identifier) {
                 case "NS" -> {
                     int number = Integer.parseInt(contents[1]);
