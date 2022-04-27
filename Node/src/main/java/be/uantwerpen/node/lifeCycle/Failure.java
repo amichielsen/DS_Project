@@ -16,11 +16,9 @@ import java.util.TreeMap;
  */
 public class Failure extends State {
     static TreeMap<Integer, Inet4Address> tree_map = new TreeMap<Integer, Inet4Address>();
-    private NodeParameters nodeParameters;
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
-        this.nodeParameters = NodeParameters.getInstance();
     }
 
     @Override
@@ -35,7 +33,7 @@ public class Failure extends State {
     }
 
     //check if node is still detected
-    public void sendPingRequest()
+    public static void sendPingRequest()
             throws UnknownHostException, IOException {
         String ip = null;
         Integer ID = 0;
@@ -50,8 +48,8 @@ public class Failure extends State {
             ID = tree_map.firstKey();
 
             // change update next node on previous node
-            int prevNode = this.nodeParameters.getPreviousID();
-            int nextNode = this.nodeParameters.getNextID();
+            int prevNode = NodeParameters.getPreviousID();
+            int nextNode = NodeParameters.getNextID();
             //change update previous node on next node
 
 

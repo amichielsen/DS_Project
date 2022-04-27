@@ -8,10 +8,10 @@ public abstract class State {
     protected NodeParameters nodeParameters = NodeParameters.getInstance();
 
     public State(LifeCycleController lifeCycleController) {
+        System.out.println("[STATE] [Info] started in mode: "+ getClass().getSimpleName());
         this.lifeCycleController = lifeCycleController;
         run();
     }
 
     public abstract void run();
-
 }
