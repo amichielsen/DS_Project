@@ -35,7 +35,7 @@ public class IpTableCache {
                 HttpURLConnection nsConnection = (HttpURLConnection) ns.openConnection();
                 nsConnection.setRequestMethod("GET");
 
-                if (nsConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                if (nsConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(nsConnection.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();
