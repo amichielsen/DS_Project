@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+
 /**
  * This is the "main" running state.
  * 1. We will respond to REST requests.
@@ -54,6 +56,28 @@ public class RunningRestController {
         jsonObject.put("previousNeighbor", NodeParameters.nextID);
         jsonObject.put("nextNeighbor", NodeParameters.previousID);
         return jsonObject.toString();
+    }
+
+    // Update next node id for
+    @PutMapping(path ="/updateNext")
+    public static  String updateNextNodeId(@RequestParam Integer hostId) {
+        if(Objects.nonNull(hostId))
+        {
+            NodeParameters.getInstance().setNextID(hostId);
+            return "successfully added next id as: "+hostId;
+        }
+        else return "could not add a null hostId";
+    }
+
+    // Update previous node id for
+    @PutMapping(path ="/updatePrevious")
+    public static  String updatePreviousNodeId(@RequestParam Integer hostId) {
+        if(Objects.nonNull(hostId))
+        {
+            NodeParameters.getInstance().setPreviousID(hostId);
+            return "successfully added previous id as:  "+hostId;
+        }
+        else return "could not add a null hostId";
     }
 
     /**
