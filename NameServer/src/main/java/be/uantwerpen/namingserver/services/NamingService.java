@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.KeyPair;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -71,19 +72,48 @@ public class NamingService {
 
     /**
      * Removes entry from database
-     * @param ip entry to be removed
+     * @param host entry to be removed
      * @return success or failure
      */
-    public boolean deleteIpAddress(String ip) {
+    public boolean deleteHost(String host) {
         boolean status = false;
         try{
             writeLock.lock();
-            status = database.keySet().removeIf(key -> key == Hash.generateHash(ip));
+            status = database.keySet().removeIf(key -> key == Hash.generateHash(host));
         }finally {
             writeLock.unlock();
         }
         XMLWrite.serverList(database);
         return status;
+    }
+
+    public boolean deleteID(int ID) {
+        boolean status = false;
+        try{
+            writeLock.lock();
+            status = database.keySet().removeIf(key -> key == ID);
+        }finally {
+            writeLock.unlock();
+        }
+        XMLWrite.serverList(database);
+        return status;
+    }
+
+    public ArrayList<Integer> getNeighbours(int ID){
+        boolean status = false;
+        ArrayList<Integer> neighbours = new ArrayList<>();
+        try{
+            writeLock.lock();
+            Set<Integer> nodes = database.keySet();
+            TreeSet<Integer> treeNodes = new TreeSet<>(nodes);
+            Integer previous = treeNodes.lower(ID);
+            Integer next = treeNodes.ceiling(ID);
+            neighbours.add(next);
+            neighbours.add(previous);
+        }finally {
+            writeLock.unlock();
+        }
+        return neighbours;
     }
 
     /**
