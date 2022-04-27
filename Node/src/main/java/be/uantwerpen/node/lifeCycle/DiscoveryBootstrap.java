@@ -26,7 +26,7 @@ public class DiscoveryBootstrap extends State {
     @Override
     public void run() {
         try {
-            this.multicast("fakename", "1.2.3.4");
+            this.multicast(NodeParameters.getInstance().getName(), (NodeParameters.getInstance().getIp()));
         } catch (IOException e) {
             e.printStackTrace();
         }
