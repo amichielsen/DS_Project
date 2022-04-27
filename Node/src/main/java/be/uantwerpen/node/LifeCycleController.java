@@ -22,12 +22,7 @@ public class LifeCycleController implements Runnable {
     @Override
     public void run() {
         System.out.println("Started in DISCOVERY");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        this.currentState = new Running(this);
+        this.currentState = new DiscoveryBootstrap(this);
         currentState.run();
     }
 }
