@@ -10,5 +10,5 @@ public abstract class CronJob implements Runnable {
 
     abstract public void run();
 
-    abstract public String getName();
+    abstract public String getCronName();
 }

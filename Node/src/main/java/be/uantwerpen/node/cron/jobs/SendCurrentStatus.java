@@ -14,7 +14,7 @@ public class SendCurrentStatus extends CronJob {
     }
 
     @Override
-    public String getName() {
+    public String getCronName() {
         return "SendCurrentStatusCron";
     }
 }

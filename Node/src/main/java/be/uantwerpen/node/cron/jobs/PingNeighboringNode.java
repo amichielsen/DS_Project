@@ -32,12 +32,12 @@ public class PingNeighboringNode extends CronJob {
             previousConnection.setRequestMethod("GET");
 
             if (previousConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                System.out.println("["+getName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
+                System.out.println("["+getCronName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
                 lifeCycleController.ChangeState(new Failure(lifeCycleController));
                 return;
             }
         } catch (IOException e) {
-            System.out.println("["+getName()+"] [Error] connection error with previous node (likely offline)");
+            System.out.println("["+getCronName()+"] [Error] connection error with previous node (likely offline)");
             lifeCycleController.ChangeState(new Failure(lifeCycleController));
             return;
             //throw new RuntimeException(e);
@@ -50,19 +50,19 @@ public class PingNeighboringNode extends CronJob {
             nextConnection.setRequestMethod("GET");
 
             if (nextConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
+                System.out.println("["+getCronName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
                 lifeCycleController.ChangeState(new Failure(lifeCycleController));
 
             }
         } catch (IOException e) {
-            System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");
+            System.out.println("["+getCronName()+"] [Error] connection error with next node (likely offline)");
             lifeCycleController.ChangeState(new Failure(lifeCycleController));
             //throw new RuntimeException(e);
         }
     }
 
     @Override
-    public String getName() {
+    public String getCronName() {
         return "PingNeighboringNodeCron";
     }
 }

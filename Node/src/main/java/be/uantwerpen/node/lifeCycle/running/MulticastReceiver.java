@@ -10,7 +10,7 @@ import java.net.*;
 /**
  * Class that listens to receive multicasts, processes them and responds back
  */
-public class MulticastReceiver extends Thread{
+public class MulticastReceiver extends Thread {
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
 
@@ -35,7 +35,7 @@ public class MulticastReceiver extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        while(true){
+        while (true){
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
                 socket.receive(packet);
@@ -103,12 +103,7 @@ public class MulticastReceiver extends Thread{
         else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
             return true;
         }
-        else if(NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        else return NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID);
 
     }
 
@@ -119,11 +114,6 @@ public class MulticastReceiver extends Thread{
         else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
             return true;
         }
-        else if(NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        else return NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID);
     }
 }

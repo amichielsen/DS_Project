@@ -3,9 +3,7 @@ package be.uantwerpen.node.lifeCycle.running;
 
 
 import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.cron.CronJobSchedular;
-import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
-import be.uantwerpen.node.cron.jobs.SendCurrentStatus;
+import be.uantwerpen.node.cron.CronJobScheduler;
 import be.uantwerpen.node.lifeCycle.State;
 
 /**
@@ -24,12 +22,13 @@ public class Running extends State {
 
     @Override
     public void run() {
-        MulticastReceiver multicastReceiver = new MulticastReceiver();
-        multicastReceiver.run();
-        CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
-        cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
+        //MulticastReceiver multicastReceiver = new MulticastReceiver();
+        //CronJobScheduler cron = new CronJobScheduler(lifeCycleController);
         //cron.addCronJob(new SendCurrentStatus(), 60);
-        cron.run();
+        System.out.println(getClass());
+        new MulticastReceiver().start();
+        new Thread(new CronJobScheduler(lifeCycleController)).start();
+        System.out.println("gets here");
     }
 
 
