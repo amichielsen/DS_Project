@@ -14,8 +14,10 @@ public class MulticastReceiver extends Thread{
     protected MulticastSocket socket = null;
     protected byte[] buf = new byte[256];
 
+    private NodeParameters nodeParameters;
 
     public void run() {
+        nodeParameters = NodeParameters.getInstance();
         try {
             socket = new MulticastSocket(8080);
         } catch (IOException e) {
@@ -61,16 +63,16 @@ public class MulticastReceiver extends Thread{
         String ip = data[1];
         int nameHash = Hash.generateHash(name);
         if(NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)){
-            NodeParameters.setNextID(nameHash);
-            NodeParameters.setPreviousID(nameHash);
+            nodeParameters.setNextID(nameHash);
+            nodeParameters.setPreviousID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS" + NodeParameters.id);
         }
         if (this.shouldBeNext(nameHash)){
-            NodeParameters.setNextID(nameHash);
+            nodeParameters.setNextID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
         }
         else if(this.shouldBePrevious(nameHash)){
-            NodeParameters.setPreviousID(nameHash);
+            nodeParameters.setPreviousID(nameHash);
             this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
         }
     }
