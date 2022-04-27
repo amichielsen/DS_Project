@@ -63,6 +63,7 @@ public class MulticastReceiver extends Thread{
         String name= data[0];
         String ip = data[1];
         int nameHash = Hash.generateHash(name);
+        System.out.println("namehash: " + nameHash + " name: " + name);
         if(NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)){
             nodeParameters.setNextID(nameHash);
             nodeParameters.setPreviousID(nameHash);
