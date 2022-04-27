@@ -17,7 +17,7 @@ public class MulticastReceiver extends Thread{
     private NodeParameters nodeParameters;
 
     public void run() {
-        System.out.println("Start MC");
+        System.out.println("[MULTICAST] [Info] receiver started");
         nodeParameters = NodeParameters.getInstance();
         try {
             socket = new MulticastSocket(8080);
@@ -35,6 +35,7 @@ public class MulticastReceiver extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("[MULTICAST] [Info] receiver listening");
         while(true){
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
@@ -106,12 +107,7 @@ public class MulticastReceiver extends Thread{
         else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
             return true;
         }
-        else if(NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        else return NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID);
 
     }
 
@@ -122,11 +118,6 @@ public class MulticastReceiver extends Thread{
         else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
             return true;
         }
-        else if(NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        else return NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID);
     }
 }

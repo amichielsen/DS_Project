@@ -25,7 +25,9 @@ public class Failure extends State {
 
     @Override
     public void run() {
-
+        while(true) {
+            System.out.println("i failed :(");
+        }
     }
     /**
      * Get prev and next node of failed node.

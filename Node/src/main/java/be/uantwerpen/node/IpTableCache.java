@@ -26,6 +26,7 @@ public class IpTableCache {
         cache.put(id,ip);
     }
     public InetAddress getIp(Integer id) {
+        System.out.println("Looking for node: "+id);
         if (cache.containsKey(id)) {
             return cache.get(id);
         } else {
@@ -35,7 +36,7 @@ public class IpTableCache {
                 HttpURLConnection nsConnection = (HttpURLConnection) ns.openConnection();
                 nsConnection.setRequestMethod("GET");
 
-                if (nsConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                if (nsConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(nsConnection.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();
@@ -48,7 +49,7 @@ public class IpTableCache {
                     System.out.println(response.toString());
                     return InetAddress.getByName(response.toString());
                 } else {
-                    System.out.println("[IPCACHE] [Error] name serevr send non 200 code (likely shutting down/busy)");
+                    System.out.println("[IPCACHE] [Error] name server send non 200 code (likely shutting down/busy)");
                     return null;
                 }
             } catch (IOException e) {
