@@ -1,6 +1,7 @@
 package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.NodeParameters;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,9 +22,11 @@ public class Shutdown extends State {
 
     @Override
     public void run() {
-    /*
+
         try {
-            getIPfromHash(123);
+            var previousIp =  getIPfromHostId(NodeParameters.getInstance().getPreviousID());
+            var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
+            getIPfromHostId(21926);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -36,13 +39,13 @@ public class Shutdown extends State {
 
     }
 
-    public void getIPfromHash(Integer hash) throws IOException, InterruptedException {
+    public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
         // create a client
         var client = HttpClient.newHttpClient();
 
         // create a request
         var request = HttpRequest.newBuilder(
-        URI.create("http://localhost:8080/naming/hosts"))
+        URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
         .header("accept", "application/json")
         .build();
 
@@ -51,8 +54,8 @@ public class Shutdown extends State {
 
         // the response:
         System.out.println(response.body());
+        return response.body();
 
-     */
     }
 
 }
