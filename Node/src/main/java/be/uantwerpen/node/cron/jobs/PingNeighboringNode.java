@@ -28,6 +28,7 @@ public class PingNeighboringNode extends CronJob {
         // Previous
         try {
             URL previous = new URL("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+"/api/status");
+            System.out.println(previous);
             HttpURLConnection previousConnection = (HttpURLConnection) previous.openConnection();
             previousConnection.setRequestMethod("GET");
 
