@@ -9,7 +9,16 @@ import java.net.UnknownHostException;
 
 public class NodeParameters {
     public static boolean DEBUG = true;
-    private static NodeParameters instance = new NodeParameters();
+    private static NodeParameters instance;
+
+    static {
+        try {
+            instance = new NodeParameters();
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static InetAddress nameServerIp;
     public static String name;
     public static InetAddress ip;
@@ -17,7 +26,7 @@ public class NodeParameters {
     public static Integer previousID;
     public static Integer nextID;
 
-    private NodeParameters() {
+    private NodeParameters() throws UnknownHostException {
     }
 
     public static NodeParameters getInstance(){
@@ -67,5 +76,13 @@ public class NodeParameters {
 
     public String getIP(Integer id){
         return "localhost:8080";
+    }
+
+    public static String getIp() {
+        return ip.getHostAddress();
+    }
+
+    public static String getName() {
+        return name;
     }
 }
