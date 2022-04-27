@@ -50,7 +50,6 @@ public class Shutdown extends State {
             // create a request
             var request = HttpRequest.newBuilder(
                     URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
-                    .header("accept", "application/json")
                     .build();
 
             // use the client to send the request

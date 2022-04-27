@@ -21,6 +21,7 @@ public class CronJobSchedular {
         allJobs.put(job, new TimeDetails(LocalDateTime.now(), timeInBetweenJobs));
     }
     public void run() {
+        System.out.println("[CRON] [Info] scheduler started");
         while (stateStarted == lifeCycleController.getCurrentState()) {
             for (Map.Entry<CronJob,TimeDetails> set : allJobs.entrySet()) {
                 LocalDateTime shouldRunOn = set.getValue().getLastRan().plusSeconds(set.getValue().getRunEach());

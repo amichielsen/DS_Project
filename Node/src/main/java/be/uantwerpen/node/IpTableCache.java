@@ -48,7 +48,7 @@ public class IpTableCache {
                     System.out.println(response.toString());
                     return InetAddress.getByName(response.toString());
                 } else {
-                    System.out.println("[IPCACHE] [Error] name serevr send non 200 code (likely shutting down/busy)");
+                    System.out.println("[IPCACHE] [Error] name server send non 200 code (likely shutting down/busy)");
                     return null;
                 }
             } catch (IOException e) {
