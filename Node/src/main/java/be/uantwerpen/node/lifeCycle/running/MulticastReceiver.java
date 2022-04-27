@@ -66,7 +66,7 @@ public class MulticastReceiver extends Thread{
         if(NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)){
             nodeParameters.setNextID(nameHash);
             nodeParameters.setPreviousID(nameHash);
-            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS" + NodeParameters.id);
+            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
             System.out.println("Sent Next+Previous");
         }
         if (this.shouldBeNext(nameHash)){
