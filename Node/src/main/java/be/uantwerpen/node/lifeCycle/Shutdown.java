@@ -16,5 +16,9 @@ public class Shutdown extends State {
     @Override
     public void run() {
 
+        //contact previous node to update its next
+        //contact next node to update its previous
+        //remove itself from Naming server map
+
     }
 }
