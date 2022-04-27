@@ -4,8 +4,8 @@ package be.uantwerpen.node.lifeCycle.running;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.cron.CronJobSchedular;
-import be.uantwerpen.node.cron.PingNeighboringNode;
-import be.uantwerpen.node.cron.SendCurrentStatus;
+import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
+import be.uantwerpen.node.cron.jobs.SendCurrentStatus;
 import be.uantwerpen.node.lifeCycle.State;
 
 /**
@@ -27,8 +27,8 @@ public class Running extends State {
         MulticastReceiver multicastReceiver = new MulticastReceiver();
         multicastReceiver.start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
-        cron.addCronJob(new PingNeighboringNode(), 60);
-        cron.addCronJob(new SendCurrentStatus(), 60);
+        cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
+        //cron.addCronJob(new SendCurrentStatus(), 60);
         cron.run();
     }
 

@@ -2,6 +2,7 @@ package be.uantwerpen.node;
 
 import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.DiscoveryBootstrap;
+import be.uantwerpen.node.lifeCycle.running.Running;
 
 public class LifeCycleController implements Runnable {
     private State currentState;
@@ -21,7 +22,12 @@ public class LifeCycleController implements Runnable {
     @Override
     public void run() {
         System.out.println("Started in DISCOVERY");
-        this.currentState = new DiscoveryBootstrap(this);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        this.currentState = new Running(this);
         currentState.run();
     }
 }
