@@ -20,38 +20,4 @@ public class NamingServerApplication {
         SpringApplication.run(NamingServerApplication.class, args);
     }
 
-/*
-    @Bean
-    public MessageChannel udpInboundChannel()
-    {
-        return new PublishSubscribeChannel();
-    }
-
-    @Bean
-    public MulticastReceivingChannelAdapter udpIn() {
-        MulticastReceivingChannelAdapter adapter = new MulticastReceivingChannelAdapter("224.0.0.0", 8080);
-        adapter.setOutputChannel(udpInboundChannel());
-        adapter.setOutputChannelName("udpInbound");
-        return adapter;
-    }
-
-    @Bean
-    public HttpRequestHandlingMessagingGateway inbound() {
-        HttpRequestHandlingMessagingGateway gateway =
-                new HttpRequestHandlingMessagingGateway(true);
-        gateway.setRequestMapping(mapping());
-        gateway.setRequestPayloadType(ResolvableType.forClass(String.class));
-        gateway.setRequestChannel(udpInboundChannel());
-        return gateway;
-    }
-
-    @Bean
-    public RequestMapping mapping() {
-        RequestMapping requestMapping = new RequestMapping();
-        requestMapping.setPathPatterns("/discovery");
-        requestMapping.setMethods(HttpMethod.POST);
-        requestMapping.setParams("name", "ip");
-        return requestMapping;
-    }
-    */
 }
