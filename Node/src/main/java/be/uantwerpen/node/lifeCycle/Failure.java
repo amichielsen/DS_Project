@@ -25,7 +25,13 @@ public class Failure extends State {
 
     @Override
     public void run() {
-
+        System.out.println("FAILURE");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("FAILURE2");
     }
 
     //check if node is still detected

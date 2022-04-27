@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class NodeParameters {
+    public static boolean DEBUG = true;
     private static NodeParameters instance = new NodeParameters();
     public static InetAddress nameServerIp;
     public static String name;
@@ -62,5 +63,9 @@ public class NodeParameters {
     public static void setIDsAsOwn(){
         nextID = id;
         previousID = id;
+    }
+
+    public static String getIP(Integer id){
+        return "localhost:8080";
     }
 }

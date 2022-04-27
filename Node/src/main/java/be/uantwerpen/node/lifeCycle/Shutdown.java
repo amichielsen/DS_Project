@@ -21,7 +21,7 @@ public class Shutdown extends State {
 
     @Override
     public void run() {
-
+    /*
         try {
             getIPfromHostId(21926);
         } catch (IOException e) {
@@ -51,5 +51,8 @@ public class Shutdown extends State {
 
         // the response:
         System.out.println(response.body());
+
+     */
     }
+
 }
