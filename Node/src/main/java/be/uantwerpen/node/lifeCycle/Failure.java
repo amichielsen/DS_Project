@@ -19,8 +19,6 @@ public class Failure extends State {
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
-
-
     }
 
     @Override

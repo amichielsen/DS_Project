@@ -19,6 +19,7 @@ public class DiscoveryBootstrap extends State {
     private int previousTemp;
 
     public DiscoveryBootstrap(LifeCycleController lifeCycleController) {
+        
         super(lifeCycleController);
     }
 
