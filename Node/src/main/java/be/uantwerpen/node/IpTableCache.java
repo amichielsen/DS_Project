@@ -26,6 +26,7 @@ public class IpTableCache {
         cache.put(id,ip);
     }
     public InetAddress getIp(Integer id) {
+        System.out.println("Looking for node: "+id);
         if (cache.containsKey(id)) {
             return cache.get(id);
         } else {
