@@ -21,7 +21,7 @@ public class LifeCycleController implements Runnable {
 
     @Override
     public void run() {
-        this.currentState = new Running(this);
+        this.currentState = new DiscoveryBootstrap(this);
         currentState.run();
     }
 }
