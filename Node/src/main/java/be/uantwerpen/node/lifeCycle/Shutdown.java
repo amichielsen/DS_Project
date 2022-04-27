@@ -25,8 +25,10 @@ public class Shutdown extends State {
     public void run() {
 
         try {
-            var previousIp =  getIPfromHostId(NodeParameters.getInstance().getPreviousID());
+            var previousIp = getIPfromHostId(NodeParameters.getInstance().getPreviousID());
             var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
+            updateNextIdOfPreviousNode(previousIp,12345);
+            updatePreviousIdOfNextNode(nextIp,67891);
             getIPfromHostId(21926);
         } catch (IOException e) {
             e.printStackTrace();
@@ -34,22 +36,18 @@ public class Shutdown extends State {
             e.printStackTrace();
         }
 
-        //contact previous node to update its next
-        //contact next node to update its previous
-        //remove itself from Naming server map
-
     }
 
-    public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
-
-        if(Objects.nonNull(hostId))
+    //contact previous node to update its next
+    public String updateNextIdOfPreviousNode(String hostIp, Integer nextHostId) throws IOException, InterruptedException {
+        if(Objects.nonNull(nextHostId))
         {
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request
             var request = HttpRequest.newBuilder(
-                    URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
+                    URI.create("http://"+hostIp+ ":8888/api/updateNext?hostId="+ nextHostId))
                     .build();
 
             // use the client to send the request
@@ -61,6 +59,60 @@ public class Shutdown extends State {
 
         }
         else return "error: hostID is null";
+    }
+
+    //contact previous node to update its next
+    public String updatePreviousIdOfNextNode(String hostIp, Integer previousHostId) throws IOException, InterruptedException {
+        if(Objects.nonNull(previousHostId))
+        {
+            // create a client
+            var client = HttpClient.newHttpClient();
+
+            // create a request
+            var request = HttpRequest.newBuilder(
+                    URI.create("http://"+hostIp+ ":8888/api/updatePrevious?hostId="+ previousHostId))
+                    .build();
+
+            // use the client to send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // the response:
+            System.out.println(response.body());
+            return response.body();
+
+        }
+        else return "error: hostID is null";
+    }
+
+
+
+
+
+        //remove itself from Naming server map
+
+
+
+    public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
+
+        if(Objects.nonNull(hostId))
+        {
+            // create a client
+            var client = HttpClient.newHttpClient();
+
+            // create a request
+            var request = HttpRequest.newBuilder(
+                    URI.create("http://localhost:8080/naming/host2IP?host="+ hostId))
+                    .build();
+
+            // use the client to send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // the response:
+            System.out.println(response.body());
+            return response.body();
+
+        }
+        else return "localhost";
 
 
 
