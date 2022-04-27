@@ -23,7 +23,7 @@ public class Shutdown extends State {
     public void run() {
 
         try {
-            getIPfromHash(123);
+            getIPfromHostId(21926);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -36,13 +36,13 @@ public class Shutdown extends State {
 
     }
 
-    public void getIPfromHash(Integer hash) throws IOException, InterruptedException {
+    public void getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
         // create a client
         var client = HttpClient.newHttpClient();
 
         // create a request
         var request = HttpRequest.newBuilder(
-        URI.create("http://localhost:8080/naming/hosts"))
+        URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
         .header("accept", "application/json")
         .build();
 
