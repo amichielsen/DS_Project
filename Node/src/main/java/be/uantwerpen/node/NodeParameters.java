@@ -63,7 +63,7 @@ public class NodeParameters {
     }
 
     public void setPreviousID(Integer previousID) {
-        previousID = previousID;
+        this.previousID = previousID;
     }
 
     public Integer getNextID() {
@@ -71,7 +71,7 @@ public class NodeParameters {
     }
 
     public void setNextID(Integer nextID) {
-        nextID = nextID;
+        this.nextID = nextID;
     }
 
     public Integer getId() {
