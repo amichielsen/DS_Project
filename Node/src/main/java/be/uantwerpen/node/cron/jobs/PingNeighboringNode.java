@@ -22,7 +22,7 @@ public class PingNeighboringNode extends CronJob {
     @Override
     public void run() {
         // !! Toevoegen van failure data -> veranderen van state verbeteren
-        if (Objects.equals(nodeParameters.getNextID(), nodeParameters.getPreviousID())) {
+        if (Objects.equals(nodeParameters.getNextID(), nodeParameters.getId()) | Objects.equals(nodeParameters.getPreviousID(), nodeParameters.getId())) {
             return;
         }
         // Previous
