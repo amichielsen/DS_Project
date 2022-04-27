@@ -26,7 +26,9 @@ public class DiscoveryBootstrap extends State {
     @Override
     public void run() {
         try {
-            this.multicast(NodeParameters.getInstance().getName(), (NodeParameters.getInstance().getIp()));
+            System.out.println(NodeParameters.getName());
+            System.out.println(NodeParameters.getIp());
+            this.multicast(NodeParameters.getName(), (NodeParameters.getIp()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -99,6 +101,8 @@ public class DiscoveryBootstrap extends State {
                 }
             }
             if(this.answerCounter == 3){
+                System.out.println("nextemp: "+this.nextTemp);
+                System.out.println("prevtemp: "+this.previousTemp);
                 NodeParameters.getInstance().setNextID(this.nextTemp);
                 NodeParameters.getInstance().setPreviousID(this.previousTemp);
                 this.allAnswersReceived = true;
