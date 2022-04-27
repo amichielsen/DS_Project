@@ -2,12 +2,10 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.lifeCycle.running.RunningRestController;
+import org.json.simple.JSONObject;
 
-import java.io.IOException;
 import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.TreeMap;
 
 /**
  * The failure mode.
@@ -15,46 +13,43 @@ import java.util.TreeMap;
  * 2. Find a new route!!!
  */
 public class Failure extends State {
-    static TreeMap<Integer, Inet4Address> tree_map = new TreeMap<Integer, Inet4Address>();
+
+    private int oldPrevNode;
+    private int OldNextNode;
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
+
+
     }
 
     @Override
     public void run() {
-        System.out.println("FAILURE");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("FAILURE2");
+
+    }
+    /**
+     * Get prev and next node of failed node.
+     * @param Id Id of failed node
+     * @param Ip Ip of failed node
+     */
+    public static void nodeFailure(int Id, Inet4Address Ip){
+
+
+        JSONObject prevNode = new JSONObject();
+        JSONObject nextNode = new JSONObject();
+        RunningRestController.getStatus();
+        prevNode.put("previousNeighbor", NodeParameters.nextID);
+
+        RunningRestController.getStatus();
+        nextNode.put("nextNeighbor", NodeParameters.previousID);
+
+        nextNode.replace("previousNeighbor", NodeParameters.nextID, prevNode.values());
+        prevNode.replace("nextNeighbor", NodeParameters.previousID, nextNode.values());
+
+
+
     }
 
-    //check if node is still detected
-    public static void sendPingRequest()
-            throws UnknownHostException, IOException {
-        String ip = null;
-        Integer ID = 0;
-        for (int i = 0; i < tree_map.size() ; i++) {
-            InetAddress node = InetAddress.getByName(ip);
-            System.out.println("Sending Ping to " + ip);
-            if (node.isReachable(3000)){
-                System.out.println("Host is reachable");
-            i++;}
-            else
-            System.out.println("Sorry ! We can't reach to this host");
-            ID = tree_map.firstKey();
-
-            // change update next node on previous node
-            int prevNode = NodeParameters.getInstance().getPreviousID();
-            int nextNode = NodeParameters.getInstance().getNextID();
-            //change update previous node on next node
 
 
-            //delete node from naming server
-            //NamingServer.deleteHost(ip);
-        }
-    }
 }
