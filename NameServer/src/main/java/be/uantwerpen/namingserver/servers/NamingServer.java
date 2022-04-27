@@ -7,6 +7,7 @@ import org.json.simple.JSONObject;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.Inet4Address;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 @RestController
@@ -52,7 +53,7 @@ public class NamingServer {
     @DeleteMapping(path ="/host")
     public static String deleteHost(@RequestParam(value = "host") String host) {
         JSONObject jsonObject = new JSONObject();
-        String status = namingService.deleteIpAddress(host) ? "success": "failed";
+        String status = namingService.deleteHost(host) ? "success": "failed";
 
         jsonObject.put("status", status);
         return jsonObject.toJSONString();
@@ -67,6 +68,16 @@ public class NamingServer {
         jsonObject.put("ip", ip);
         jsonObject.put("filename", filename);
         return jsonObject.toString();
+    }
+
+    @PostMapping(path="/failure")
+    public static String failure(@RequestParam(value = "id") int failedID){
+        JSONObject jsonObject = new JSONObject();
+        ArrayList<Integer> neighbours = namingService.getNeighbours(failedID);
+        namingService.deleteID(failedID);
+        jsonObject.put("previous", neighbours.get(0));
+        jsonObject.put("next", neighbours.get(1));
+        return jsonObject.toJSONString();
     }
 
     public static int getNumberOfNodes(){
