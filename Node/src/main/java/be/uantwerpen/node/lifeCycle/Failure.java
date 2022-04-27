@@ -48,8 +48,8 @@ public class Failure extends State {
             ID = tree_map.firstKey();
 
             // change update next node on previous node
-            int prevNode = NodeParameters.getPreviousID();
-            int nextNode = NodeParameters.getNextID();
+            int prevNode = NodeParameters.getInstance().getPreviousID();
+            int nextNode = NodeParameters.getInstance().getNextID();
             //change update previous node on next node
 
 
