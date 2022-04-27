@@ -26,6 +26,7 @@ public class IpTableCache {
         cache.put(id,ip);
     }
     public InetAddress getIp(Integer id) {
+        System.out.println("Looking for node: "+id);
         if (cache.containsKey(id)) {
             return cache.get(id);
         } else {
@@ -35,7 +36,7 @@ public class IpTableCache {
                 HttpURLConnection nsConnection = (HttpURLConnection) ns.openConnection();
                 nsConnection.setRequestMethod("GET");
 
-                if (nsConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                if (nsConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(nsConnection.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();

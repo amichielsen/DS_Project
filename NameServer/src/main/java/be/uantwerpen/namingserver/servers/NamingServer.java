@@ -29,8 +29,8 @@ public class NamingServer {
 
     // Getting IP address given a hostId
     @GetMapping(path ="/host2IP")
-    public static Inet4Address host2IP(@RequestParam(value = "host") Integer hostId) {
-        return namingService.getDatabase().get(hostId);
+    public static String host2IP(@RequestParam(value = "host") Integer hostId) {
+        return namingService.getDatabase().get(hostId).getHostAddress();
     }
 
     // Adding 1 host
