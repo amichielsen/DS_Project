@@ -50,7 +50,6 @@ public class DiscoveryBootstrap extends State {
             System.out.println("[DISCOVERY] [Info] multicast has been send");
         }
         while(!this.allAnswersReceived) {
-
             byte[] answerBuf = new byte[256];
             DatagramPacket answerPacket = new DatagramPacket(answerBuf, answerBuf.length);
             socket.receive(answerPacket);
@@ -71,13 +70,6 @@ public class DiscoveryBootstrap extends State {
     public void handleResponse(DatagramPacket answerPacket){
         String received = new String(answerPacket.getData(),0, answerPacket.getLength());
         String[] contents = received.split(" ");
-        if(this.answerCounter == 3){
-            NodeParameters.getInstance().setNextID(this.nextTemp);
-            NodeParameters.getInstance().setPreviousID(this.previousTemp);
-            this.allAnswersReceived = true;
-            this.answerCounter = 0;
-            return;
-        }
         if(contents.length > 1){
             String identifier = contents[0];
             System.out.println(identifier);
@@ -106,6 +98,12 @@ public class DiscoveryBootstrap extends State {
                     this.answerCounter += 1;
                 }
             }
+            if(this.answerCounter == 3){
+                NodeParameters.getInstance().setNextID(this.nextTemp);
+                NodeParameters.getInstance().setPreviousID(this.previousTemp);
+                this.allAnswersReceived = true;
+                this.answerCounter = 0;
+        }
         }
     }
 
