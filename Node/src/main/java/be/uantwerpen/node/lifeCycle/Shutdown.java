@@ -2,6 +2,12 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
 /**
  * The last and final state...
  * Here we send a REST to our current neighbors, updating them with their new neighbor.
@@ -16,9 +22,34 @@ public class Shutdown extends State {
     @Override
     public void run() {
 
+        try {
+            getIPfromHash(123);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         //contact previous node to update its next
         //contact next node to update its previous
         //remove itself from Naming server map
 
+    }
+
+    public void getIPfromHash(Integer hash) throws IOException, InterruptedException {
+        // create a client
+        var client = HttpClient.newHttpClient();
+
+        // create a request
+        var request = HttpRequest.newBuilder(
+        URI.create("http://localhost:8080/naming/hosts"))
+        .header("accept", "application/json")
+        .build();
+
+        // use the client to send the request
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // the response:
+        System.out.println(response.body());
     }
 }
