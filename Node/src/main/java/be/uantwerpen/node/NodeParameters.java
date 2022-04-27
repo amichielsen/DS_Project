@@ -55,6 +55,7 @@ public class NodeParameters {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        IpTableCache.getInstance().addIp(NodeParameters.id, InetAddress.getLoopbackAddress());
     }
     //Niet static want method gebruikt instance variables? Singleton?
     public Integer getPreviousID() {

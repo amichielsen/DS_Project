@@ -42,7 +42,7 @@ public class PingNeighboringNode extends CronJob {
 
         // Next
         try {
-            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+"/api/statuss");
+            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+"/api/status");
             HttpURLConnection nextConnection = (HttpURLConnection) next.openConnection();
             nextConnection.setRequestMethod("GET");
 
