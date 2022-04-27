@@ -76,6 +76,7 @@ public class DiscoveryBootstrap extends State {
             switch (identifier) {
                 case "NS" -> {
                     int number = Integer.parseInt(contents[1]);
+                    NodeParameters.setNameServerIp(answerPacket.getAddress());
                     if (number < 1) {
                         NodeParameters.getInstance().setIDsAsOwn();
                         this.allAnswersReceived = true;

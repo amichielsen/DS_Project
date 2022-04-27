@@ -20,6 +20,14 @@ public class NodeParameters {
     private NodeParameters() {
     }
 
+    public static InetAddress getNameServerIp() {
+        return nameServerIp;
+    }
+
+    public static void setNameServerIp(InetAddress nameServerIp) {
+        NodeParameters.nameServerIp = nameServerIp;
+    }
+
     public static NodeParameters getInstance(){
         return instance;
     }
@@ -65,7 +73,7 @@ public class NodeParameters {
         previousID = id;
     }
 
-    public String getIP(Integer id){
-        return "localhost:8080";
+    public InetAddress getIP(Integer id){
+        return IpTableCache.getInstance().getIp(id);
     }
 }
