@@ -17,6 +17,7 @@ public class MulticastReceiver extends Thread{
     private NodeParameters nodeParameters;
 
     public void run() {
+        System.out.println("Start MC");
         nodeParameters = NodeParameters.getInstance();
         try {
             socket = new MulticastSocket(8080);
