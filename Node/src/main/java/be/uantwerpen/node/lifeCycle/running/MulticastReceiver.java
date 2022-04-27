@@ -60,25 +60,27 @@ public class MulticastReceiver extends Thread{
         String msg = new String(
                 packet.getData(), 0, packet.getLength());
         String[] data = msg.split(" ");
-        String name= data[0];
-        String ip = data[1];
-        int nameHash = Hash.generateHash(name);
-        System.out.println("namehash: " + nameHash + " name: " + name);
-        if(NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)){
-            nodeParameters.setNextID(nameHash);
-            nodeParameters.setPreviousID(nameHash);
-            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
-            System.out.println("Sent Next+Previous");
-        }
-        if (this.shouldBeNext(nameHash)){
-            nodeParameters.setNextID(nameHash);
-            this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
-            System.out.println("Sent Previous");
-        }
-        else if(this.shouldBePrevious(nameHash)){
-            nodeParameters.setPreviousID(nameHash);
-            this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
-            System.out.println("Sent Next");
+        String identifier = data[0];
+        if(identifier.equals("DSCVRY")) {
+            String name = data[1];
+            String ip = data[2];
+            int nameHash = Hash.generateHash(name);
+            System.out.println("namehash: " + nameHash + " name: " + name);
+            if (NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)) {
+                nodeParameters.setNextID(nameHash);
+                nodeParameters.setPreviousID(nameHash);
+                this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
+                System.out.println("Sent Next+Previous");
+            }
+            if (this.shouldBeNext(nameHash)) {
+                nodeParameters.setNextID(nameHash);
+                this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
+                System.out.println("Sent Previous");
+            } else if (this.shouldBePrevious(nameHash)) {
+                nodeParameters.setPreviousID(nameHash);
+                this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
+                System.out.println("Sent Next");
+            }
         }
     }
 
