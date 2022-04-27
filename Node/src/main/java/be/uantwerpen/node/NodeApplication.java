@@ -16,7 +16,6 @@ public class NodeApplication {
         Thread t1 = new Thread(new LifeCycleController());
         t1.start();
         SpringApplication.run(NodeApplication.class, args);
-        System.out.println("test");
         //simulate a Shutdown (delete after use)
 //        Thread.sleep(10000);
 //        var t2 = new LifeCycleController();

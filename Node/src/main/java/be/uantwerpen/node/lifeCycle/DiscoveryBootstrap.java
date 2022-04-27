@@ -46,13 +46,20 @@ public class DiscoveryBootstrap extends State {
         Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0"); //MC group
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 8080);
         socket.send(packet);
+        if (NodeParameters.DEBUG) {
+            System.out.println("[DISCOVERY] [Info] multicast has been send");
+        }
         while(!this.allAnswersReceived) {
+
             byte[] answerBuf = new byte[256];
             DatagramPacket answerPacket = new DatagramPacket(answerBuf, answerBuf.length);
             socket.receive(answerPacket);
             this.handleResponse(answerPacket);
         }
         socket.close();
+        if (NodeParameters.DEBUG) {
+            System.out.println("[DISCOVERY] [Info] all responses have been handled -- Socket closed");
+        }
         lifeCycleController.ChangeState(new Running(lifeCycleController));
     }
 
