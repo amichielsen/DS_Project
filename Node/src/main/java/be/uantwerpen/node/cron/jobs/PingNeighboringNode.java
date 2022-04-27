@@ -9,6 +9,7 @@ import be.uantwerpen.node.lifeCycle.Shutdown;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class PingNeighboringNode extends CronJob {
     private NodeParameters nodeParameters;
@@ -21,7 +22,9 @@ public class PingNeighboringNode extends CronJob {
     @Override
     public void run() {
         // !! Toevoegen van failure data -> veranderen van state verbeteren
-
+        if (Objects.equals(nodeParameters.getNextID(), nodeParameters.getId()) | Objects.equals(nodeParameters.getPreviousID(), nodeParameters.getId())) {
+            return;
+        }
         // Previous
         try {
             URL previous = new URL("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+"/api/status");
@@ -42,7 +45,7 @@ public class PingNeighboringNode extends CronJob {
 
         // Next
         try {
-            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+"/api/statuss");
+            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+"/api/status");
             HttpURLConnection nextConnection = (HttpURLConnection) next.openConnection();
             nextConnection.setRequestMethod("GET");
 

@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 
 /**
  * The last and final state...
@@ -40,21 +41,29 @@ public class Shutdown extends State {
     }
 
     public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
-        // create a client
-        var client = HttpClient.newHttpClient();
 
-        // create a request
-        var request = HttpRequest.newBuilder(
-        URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
-        .header("accept", "application/json")
-        .build();
+        if(Objects.nonNull(hostId))
+        {
+            // create a client
+            var client = HttpClient.newHttpClient();
 
-        // use the client to send the request
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            // create a request
+            var request = HttpRequest.newBuilder(
+                    URI.create("http://localhost:8080/naming/host2IP?host="+hostId.toString()))
+                    .header("accept", "application/json")
+                    .build();
 
-        // the response:
-        System.out.println(response.body());
-        return response.body();
+            // use the client to send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // the response:
+            System.out.println(response.body());
+            return response.body();
+
+        }
+        else return "error: hostID is null";
+
+
 
     }
 
