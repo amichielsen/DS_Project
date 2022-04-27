@@ -11,13 +11,13 @@ import java.net.*;
  * 1. Try to find the Nameserver -> we will send 5 broadcasts
  * 2. If no answer, retry after cooldown period
  */
-public class Discovery extends State {
+public class DiscoveryBootstrap extends State {
     private boolean allAnswersReceived = false;
     private int answerCounter = 0;
     private int nextTemp;
     private int previousTemp;
 
-    public Discovery(LifeCycleController lifeCycleController) {
+    public DiscoveryBootstrap(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
     }
 
@@ -55,6 +55,7 @@ public class Discovery extends State {
 
     /**
      * Handle response of multicast
+     * TOEVOEGEN: na bepaalde tijd niet alle responses -> failure
      * @param answerPacket received packet
      */
     public void handleResponse(DatagramPacket answerPacket){

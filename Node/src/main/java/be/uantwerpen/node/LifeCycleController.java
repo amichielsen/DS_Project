@@ -1,8 +1,7 @@
 package be.uantwerpen.node;
 
 import be.uantwerpen.node.lifeCycle.State;
-import be.uantwerpen.node.lifeCycle.Discovery;
-import be.uantwerpen.node.lifeCycle.running.Running;
+import be.uantwerpen.node.lifeCycle.DiscoveryBootstrap;
 
 public class LifeCycleController implements Runnable {
     private State currentState;
@@ -22,7 +21,7 @@ public class LifeCycleController implements Runnable {
     @Override
     public void run() {
         System.out.println("Started in DISCOVERY");
-        this.currentState = new Discovery(this);
+        this.currentState = new DiscoveryBootstrap(this);
         currentState.run();
     }
 }
