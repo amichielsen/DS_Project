@@ -40,32 +40,32 @@ public class NodeParameters {
         }
     }
     //Niet static want method gebruikt instance variables? Singleton?
-    public static Integer getPreviousID() {
+    public Integer getPreviousID() {
         return previousID;
     }
 
-    public static void setPreviousID(Integer previousID) {
+    public void setPreviousID(Integer previousID) {
         previousID = previousID;
     }
 
-    public static Integer getNextID() {
+    public Integer getNextID() {
         return nextID;
     }
 
-    public static void setNextID(Integer nextID) {
+    public void setNextID(Integer nextID) {
         nextID = nextID;
     }
 
-    public static Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    public static void setIDsAsOwn(){
+    public void setIDsAsOwn(){
         nextID = id;
         previousID = id;
     }
 
-    public static String getIP(Integer id){
+    public String getIP(Integer id){
         return "localhost:8080";
     }
 }

@@ -65,8 +65,8 @@ public class DiscoveryBootstrap extends State {
         String received = new String(answerPacket.getData(),0, answerPacket.getLength());
         String[] contents = received.split(" ");
         if(this.answerCounter == 3){
-            NodeParameters.setNextID(this.nextTemp);
-            NodeParameters.setPreviousID(this.previousTemp);
+            NodeParameters.getInstance().setNextID(this.nextTemp);
+            NodeParameters.getInstance().setPreviousID(this.previousTemp);
             this.allAnswersReceived = true;
             this.answerCounter = 0;
             return;
@@ -77,7 +77,7 @@ public class DiscoveryBootstrap extends State {
                 case "NS" -> {
                     int number = Integer.parseInt(contents[1]);
                     if (number < 1) {
-                        NodeParameters.setIDsAsOwn();
+                        NodeParameters.getInstance().setIDsAsOwn();
                         this.allAnswersReceived = true;
                     } else {
                         this.answerCounter += 1;

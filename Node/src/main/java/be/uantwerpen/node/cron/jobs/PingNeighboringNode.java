@@ -11,8 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class PingNeighboringNode extends CronJob {
+    private NodeParameters nodeParameters;
+
     public PingNeighboringNode(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
+        this.nodeParameters = NodeParameters.getInstance();
     }
 
     @Override
@@ -21,7 +24,7 @@ public class PingNeighboringNode extends CronJob {
 
         // Previous
         try {
-            URL previous = new URL("http://"+NodeParameters.getIP(NodeParameters.getPreviousID())+"/api/status");
+            URL previous = new URL("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+"/api/status");
             HttpURLConnection previousConnection = (HttpURLConnection) previous.openConnection();
             previousConnection.setRequestMethod("GET");
 
@@ -39,7 +42,7 @@ public class PingNeighboringNode extends CronJob {
 
         // Next
         try {
-            URL next = new URL("http://"+NodeParameters.getIP(NodeParameters.getNextID())+"/api/statuss");
+            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+"/api/statuss");
             HttpURLConnection nextConnection = (HttpURLConnection) next.openConnection();
             nextConnection.setRequestMethod("GET");
 
