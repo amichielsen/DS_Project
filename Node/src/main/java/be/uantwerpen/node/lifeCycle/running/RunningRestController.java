@@ -51,8 +51,8 @@ public class RunningRestController {
         jsonObject.put("online", true);
         jsonObject.put("thisID", NodeParameters.id);
         jsonObject.put("thisIP", NodeParameters.ip);
-        jsonObject.put("previousNeighbor", NodeParameters.nextID);
-        jsonObject.put("nextNeighbor", NodeParameters.previousID);
+        jsonObject.put("previousNeighbor", NodeParameters.previousID);
+        jsonObject.put("nextNeighbor", NodeParameters.nextID);
         return jsonObject.toString();
     }
 
