@@ -30,8 +30,9 @@ public class IpTableCache {
             return cache.get(id);
         } else {
             try {
-                URL previous = new URL("http://"+NodeParameters.getNameServerIp()+"/naming/host2IP");
-                HttpURLConnection nsConnection = (HttpURLConnection) previous.openConnection();
+                URL ns = new URL("http://"+NodeParameters.getNameServerIp()+":8080/naming/host2IP");
+                System.out.println(ns);
+                HttpURLConnection nsConnection = (HttpURLConnection) ns.openConnection();
                 nsConnection.setRequestMethod("GET");
 
                 if (nsConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
