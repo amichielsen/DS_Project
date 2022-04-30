@@ -101,23 +101,23 @@ public class MulticastReceiver extends Thread{
     }
 
     private boolean shouldBeNext(int nameHash){
-        if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){
+        if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){ //Regular case
             return true;
         }
         else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
             return true;
         }
-        else return NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID);
+        else return NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID); //This node is last one in the network
 
     }
 
     private boolean shouldBePrevious(int nameHash){
-        if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){
+        if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){ //Regular case
             return  true;
         }
         else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
             return true;
         }
-        else return NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID);
+        else return NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID); //This node is the first one in the network
     }
 }
