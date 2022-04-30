@@ -5,7 +5,15 @@ import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.lifeCycle.running.RunningRestController;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * The failure mode.
@@ -16,25 +24,44 @@ public class Failure extends State {
 
     private int oldPrevNode;
     private int OldNextNode;
+    private int failedID = 0;
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
-
-
+    }
+    public Failure(LifeCycleController lifeCycleController, int failedID) {
+        super(lifeCycleController);
+        this.failedID = failedID;
     }
 
     @Override
     public void run() {
             System.out.println("i failed :(");
+        try {
+            this.nodeFailure(this.failedID);
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
+
     /**
      * Get prev and next node of failed node.
-     * @param Id Id of failed node
-     * @param Ip Ip of failed node
+     * @param ID Id of failed node
      */
-    public static void nodeFailure(int Id, Inet4Address Ip){
+    public void nodeFailure(int ID) throws IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newBuilder().build();
 
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("id", ID);
 
+        HttpRequest request = HttpRequest.newBuilder()
+                .POST(HttpRequest.BodyPublishers.ofString(jsonObject.toString()))
+                .uri(URI.create("http://" +NodeParameters.nameServerIp + ":8080/naming/failure"))
+                .build();
+
+        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        String responsebody = response.body();
         JSONObject prevNode = new JSONObject();
         JSONObject nextNode = new JSONObject();
         RunningRestController.getStatus();

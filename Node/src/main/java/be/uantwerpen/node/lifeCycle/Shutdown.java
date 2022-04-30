@@ -30,9 +30,7 @@ public class Shutdown extends State {
             updateNextIdOfPreviousNode(previousIp,12345);
             updatePreviousIdOfNextNode(nextIp,67891);
             getIPfromHostId(21926);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -113,9 +111,6 @@ public class Shutdown extends State {
 
         }
         else return "localhost";
-
-
-
     }
 
 }
