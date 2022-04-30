@@ -99,17 +99,32 @@ public class NamingService {
         return status;
     }
 
+    /**
+     * Returns the neighbours of a certain node
+     * @param ID the node of which the neighbours should be found
+     * @return Arraylist of the neighbouring nodes
+     */
     public ArrayList<Integer> getNeighbours(int ID){
-        boolean status = false;
         ArrayList<Integer> neighbours = new ArrayList<>();
         try{
             writeLock.lock();
             Set<Integer> nodes = database.keySet();
             TreeSet<Integer> treeNodes = new TreeSet<>(nodes);
-            Integer previous = treeNodes.lower(ID);
-            Integer next = treeNodes.ceiling(ID);
-            neighbours.add(next);
+            Integer previous;
+            Integer next;
+            if(ID == treeNodes.first()) {
+                previous = treeNodes.last();
+                next = treeNodes.higher(ID);
+            } else if (ID == treeNodes.last()) {
+                next = treeNodes.first();
+                previous = treeNodes.lower(ID);
+            }
+            else{
+                next = treeNodes.lower(ID);
+                previous = treeNodes.higher(ID);
+            }
             neighbours.add(previous);
+            neighbours.add(next);
         }finally {
             writeLock.unlock();
         }

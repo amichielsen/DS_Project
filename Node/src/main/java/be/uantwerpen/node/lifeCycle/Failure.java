@@ -3,9 +3,12 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.lifeCycle.running.RunningRestController;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.net.Inet4Address;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -51,17 +54,22 @@ public class Failure extends State {
     public void nodeFailure(int ID) throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
 
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", ID);
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("id", ID);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestBody = objectMapper
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(map);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(jsonObject.toString()))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .uri(URI.create("http://" +NodeParameters.nameServerIp + ":8080/naming/failure"))
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        String responsebody = response.body();
         JSONObject prevNode = new JSONObject();
         JSONObject nextNode = new JSONObject();
         RunningRestController.getStatus();
