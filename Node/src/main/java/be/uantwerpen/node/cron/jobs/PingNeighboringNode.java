@@ -38,7 +38,10 @@ public class PingNeighboringNode extends CronJob {
 
             if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
-                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
+                if (nodeParameters.getFailedPrevious() > NodeParameters.FAILURE_TRESHOLD)
+                    lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
+                else
+                    nodeParameters.incFailedPrevious();
                 return;
             }
         } catch (InterruptedException | IOException e) {
@@ -63,8 +66,10 @@ public class PingNeighboringNode extends CronJob {
 
             if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
-                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
-
+                if (nodeParameters.getFailedNext() > NodeParameters.FAILURE_TRESHOLD)
+                    lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
+                else
+                    nodeParameters.incFailedNext();
             }
         } catch (InterruptedException | IOException e) {
             System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");

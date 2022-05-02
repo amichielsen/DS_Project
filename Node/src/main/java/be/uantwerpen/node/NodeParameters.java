@@ -8,6 +8,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 public class NodeParameters {
+    public static final Integer FAILURE_TRESHOLD = 5;
     public static boolean DEBUG = true;
     private static NodeParameters instance;
 
@@ -25,6 +26,10 @@ public class NodeParameters {
     public static Integer id;
     public static Integer previousID;
     public static Integer nextID;
+
+    public static Integer failedPrevious;
+
+    public static Integer failedNext;
 
     private NodeParameters() throws UnknownHostException {
     }
@@ -93,5 +98,21 @@ public class NodeParameters {
 
     public static String getName() {
         return name;
+    }
+
+    public Integer getFailedPrevious() {
+        return failedPrevious;
+    }
+
+    public void incFailedPrevious() {
+        NodeParameters.failedPrevious += 1;
+    }
+
+    public Integer getFailedNext() {
+        return failedNext;
+    }
+
+    public void incFailedNext() {
+        NodeParameters.failedNext += 1;
     }
 }
