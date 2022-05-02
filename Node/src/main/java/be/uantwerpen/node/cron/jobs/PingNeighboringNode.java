@@ -31,7 +31,7 @@ public class PingNeighboringNode extends CronJob {
             var client = HttpClient.newHttpClient();
 
             var request = HttpRequest.newBuilder(
-                URI.create("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+":8080/api/status"))
+                URI.create("http://"+nodeParameters.getIP(nodeParameters.getPreviousID()).getHostAddress()+":8888/api/status"))
                 .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -55,7 +55,7 @@ public class PingNeighboringNode extends CronJob {
             var client = HttpClient.newHttpClient();
 
             var request = HttpRequest.newBuilder(
-                URI.create("http://"+nodeParameters.getIP(nodeParameters.getNextID())+":8888/api/status"))
+                URI.create("http://"+nodeParameters.getIP(nodeParameters.getNextID()).getHostAddress()+":8888/api/status"))
                 .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
