@@ -35,7 +35,7 @@ public class Failure extends State {
     public Failure(LifeCycleController lifeCycleController, int failedID) {
         super(lifeCycleController);
         this.failedID = failedID;
-        System.out.println(this.failedID);
+        System.out.println("Failed" + this.failedID);
     }
 
     @Override
