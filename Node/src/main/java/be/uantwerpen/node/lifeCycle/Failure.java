@@ -63,13 +63,14 @@ public class Failure extends State {
                 .writeValueAsString(map);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .header("Content-Type", "application/json")
+                .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .uri(URI.create("http://" +NodeParameters.nameServerIp + ":8080/naming/failure"))
                 .build();
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+        response.body();
+        System.out.println(response.body());
         JSONObject prevNode = new JSONObject();
         JSONObject nextNode = new JSONObject();
         RunningRestController.getStatus();
