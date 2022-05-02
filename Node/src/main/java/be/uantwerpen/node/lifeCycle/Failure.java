@@ -53,20 +53,9 @@ public class Failure extends State {
     public void nodeFailure(int ID) throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
 
-        HashMap<String, Integer> map = new HashMap<>();
-        map.put("id", ID);
-        if(NodeParameters.DEBUG){
-            System.out.println(map);
-        }
-
-        String requestBody = "id="+ ID;
-        if(NodeParameters.DEBUG) {
-            System.out.println(requestBody);
-        }
-
         HttpRequest request = HttpRequest.newBuilder()
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
+                .POST(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure?id=" + ID))
                 .build();
         if(NodeParameters.DEBUG) {
             System.out.println(request);
