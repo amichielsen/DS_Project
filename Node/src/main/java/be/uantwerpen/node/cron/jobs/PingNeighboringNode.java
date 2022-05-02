@@ -38,13 +38,14 @@ public class PingNeighboringNode extends CronJob {
 
             if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
-                lifeCycleController.ChangeState(new Failure(lifeCycleController));
+                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
                 return;
             }
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
             System.out.println("["+getName()+"] [Error] connection error with previous node (likely offline)");
-            lifeCycleController.ChangeState(new Failure(lifeCycleController));
+            System.out.println(nodeParameters.getPreviousID());
+            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
             return;
             //throw new RuntimeException(e);
         }
@@ -62,12 +63,12 @@ public class PingNeighboringNode extends CronJob {
 
             if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
-                lifeCycleController.ChangeState(new Failure(lifeCycleController));
+                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
 
             }
         } catch (InterruptedException | IOException e) {
             System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");
-            lifeCycleController.ChangeState(new Failure(lifeCycleController));
+            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
             //throw new RuntimeException(e);
         }
     }

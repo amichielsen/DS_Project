@@ -44,11 +44,6 @@ public class RunningRestController {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @GetMapping(path ="/ping")
-    public static int ping() {
-        return 200;
-    }
-
 
     // GET status -> returns: state + neighbors
     @GetMapping(path ="/status")
