@@ -56,6 +56,9 @@ public class Failure extends State {
 
         HashMap<String, Integer> map = new HashMap<>();
         map.put("id", ID);
+        if(NodeParameters.DEBUG){
+            System.out.println(map);
+        }
 
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper
@@ -69,8 +72,9 @@ public class Failure extends State {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        response.body();
-        System.out.println(response.body());
+        if(NodeParameters.DEBUG) {
+            System.out.println(response.body());
+        }
         JSONObject prevNode = new JSONObject();
         JSONObject nextNode = new JSONObject();
         RunningRestController.getStatus();
