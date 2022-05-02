@@ -61,6 +61,9 @@ public class Failure extends State {
         }
 
         String requestBody = "id="+ this.failedID;
+        if(NodeParameters.DEBUG) {
+            System.out.println(requestBody);
+        }
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
