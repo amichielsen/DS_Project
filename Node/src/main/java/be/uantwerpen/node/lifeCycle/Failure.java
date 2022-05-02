@@ -27,7 +27,7 @@ public class Failure extends State {
 
     private int oldPrevNode;
     private int OldNextNode;
-    private int failedID = 0;
+    private int failedID;
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
