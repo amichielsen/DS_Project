@@ -27,22 +27,20 @@ public class Failure extends State {
 
     private int oldPrevNode;
     private int OldNextNode;
-    private int failedID;
+
 
     public Failure(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
     }
     public Failure(LifeCycleController lifeCycleController, int failedID) {
-        super(lifeCycleController);
-        this.failedID = failedID;
-        System.out.println("Failed" + this.failedID);
+        super(lifeCycleController, failedID);
     }
 
     @Override
     public void run() {
             System.out.println("i failed :(");
         try {
-            this.nodeFailure(this.failedID);
+            this.nodeFailure(this.param);
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -61,7 +59,7 @@ public class Failure extends State {
             System.out.println(map);
         }
 
-        String requestBody = "id="+ this.failedID;
+        String requestBody = "id="+ ID;
         if(NodeParameters.DEBUG) {
             System.out.println(requestBody);
         }
