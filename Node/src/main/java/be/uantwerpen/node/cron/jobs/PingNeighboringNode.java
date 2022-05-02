@@ -40,7 +40,7 @@ public class PingNeighboringNode extends CronJob {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("["+getName()+"] [Error] connection error with previous node (likely offline)");
-            lifeCycleController.ChangeState(new Failure(lifeCycleController));
+            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
             return;
             //throw new RuntimeException(e);
         }
@@ -58,7 +58,7 @@ public class PingNeighboringNode extends CronJob {
             }
         } catch (IOException e) {
             System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");
-            lifeCycleController.ChangeState(new Failure(lifeCycleController));
+            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
             //throw new RuntimeException(e);
         }
     }
