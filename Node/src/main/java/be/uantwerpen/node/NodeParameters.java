@@ -49,6 +49,8 @@ public class NodeParameters {
     public static Integer DELAY_BETWEEN_PING_S = 60;
 
     public void setup(String name, InetAddress ip, Integer ID) {
+        failedNext = 0;
+        failedPrevious = 0;
         NodeParameters.name = name;
         NodeParameters.id = Hash.generateHash(name);
         try {
@@ -108,11 +110,19 @@ public class NodeParameters {
         NodeParameters.failedPrevious += 1;
     }
 
+    public void resFailedPrevious() {
+        NodeParameters.failedPrevious = 0;
+    }
+
     public Integer getFailedNext() {
         return failedNext;
     }
 
     public void incFailedNext() {
         NodeParameters.failedNext += 1;
+    }
+
+    public void resFailedNext() {
+        NodeParameters.failedNext = 0;
     }
 }
