@@ -4,15 +4,16 @@ import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cron.CronJob;
 import be.uantwerpen.node.lifeCycle.Failure;
-import be.uantwerpen.node.lifeCycle.Shutdown;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.Objects;
 
 public class PingNeighboringNode extends CronJob {
-    private NodeParameters nodeParameters;
+    private final NodeParameters nodeParameters;
 
     public PingNeighboringNode(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
@@ -27,17 +28,20 @@ public class PingNeighboringNode extends CronJob {
         }
         // Previous
         try {
-            URL previous = new URL("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+":8080/api/status");
-            System.out.println(previous);
-            HttpURLConnection previousConnection = (HttpURLConnection) previous.openConnection();
-            previousConnection.setRequestMethod("GET");
+            var client = HttpClient.newHttpClient();
 
-            if (previousConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            var request = HttpRequest.newBuilder(
+                            URI.create("http://"+nodeParameters.getIP(nodeParameters.getPreviousID())+":8080/api/status"))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
                 lifeCycleController.ChangeState(new Failure(lifeCycleController));
                 return;
             }
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             e.printStackTrace();
             System.out.println("["+getName()+"] [Error] connection error with previous node (likely offline)");
             lifeCycleController.ChangeState(new Failure(lifeCycleController));
@@ -47,16 +51,21 @@ public class PingNeighboringNode extends CronJob {
 
         // Next
         try {
-            URL next = new URL("http://"+nodeParameters.getIP(nodeParameters.getNextID())+":8888/api/status");
-            HttpURLConnection nextConnection = (HttpURLConnection) next.openConnection();
-            nextConnection.setRequestMethod("GET");
+            var client = HttpClient.newHttpClient();
 
-            if (nextConnection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            var request = HttpRequest.newBuilder(
+                            URI.create("http://"+nodeParameters.getIP(nodeParameters.getNextID())+":8888/api/status"))
+                    .build();
+
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
+            if (response.statusCode() != 200) {
                 System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
                 lifeCycleController.ChangeState(new Failure(lifeCycleController));
 
             }
-        } catch (IOException e) {
+        } catch (InterruptedException | IOException e) {
             System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");
             lifeCycleController.ChangeState(new Failure(lifeCycleController));
             //throw new RuntimeException(e);
