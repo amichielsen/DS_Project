@@ -69,7 +69,9 @@ public class Failure extends State {
                 .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
-
+        if(NodeParameters.DEBUG) {
+            System.out.println(request);
+        }
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if(NodeParameters.DEBUG) {
