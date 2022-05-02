@@ -35,6 +35,7 @@ public class Failure extends State {
     public Failure(LifeCycleController lifeCycleController, int failedID) {
         super(lifeCycleController);
         this.failedID = failedID;
+        System.out.println(this.failedID);
     }
 
     @Override
@@ -66,8 +67,8 @@ public class Failure extends State {
         }
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
                 .build();
         if(NodeParameters.DEBUG) {
             System.out.println(request);
