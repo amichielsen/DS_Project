@@ -60,10 +60,7 @@ public class Failure extends State {
             System.out.println(map);
         }
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String requestBody = objectMapper
-                .writerWithDefaultPrettyPrinter()
-                .writeValueAsString(map);
+        String requestBody = "id="+ this.failedID;
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure"))
@@ -72,6 +69,7 @@ public class Failure extends State {
         if(NodeParameters.DEBUG) {
             System.out.println(request);
         }
+
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         if(NodeParameters.DEBUG) {
