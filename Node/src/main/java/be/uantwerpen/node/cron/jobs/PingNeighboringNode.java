@@ -26,66 +26,72 @@ public class PingNeighboringNode extends CronJob {
         if (Objects.equals(nodeParameters.getNextID(), nodeParameters.getId()) | Objects.equals(nodeParameters.getPreviousID(), nodeParameters.getId())) {
             return;
         }
+
         // Previous
-        try {
-            var client = HttpClient.newHttpClient();
-
-            var request = HttpRequest.newBuilder(
-                URI.create("http://"+nodeParameters.getIP(nodeParameters.getPreviousID()).getHostAddress()+":8888/api/status"))
-                .build();
-
-            System.out.println(request);
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() != 200) {
-                System.out.println("["+getName()+"] [Error] previous node send non 200 code (likely shutting down/busy)");
-                if (nodeParameters.getFailedPrevious() > NodeParameters.FAILURE_TRESHOLD) {
+        for (int i = 0; i < 6; i++) {
+            try {
+                ping(nodeParameters.getIP(nodeParameters.getPreviousID()).getHostAddress());
+                break;
+            } catch (InterruptedException | IOException e) {
+                if (i < 4) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    e.printStackTrace();
+                    System.out.println("[" + getName() + "] [Error] connection error with previous node (likely offline)");
+                    System.out.println(nodeParameters.getPreviousID());
                     lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
-                    nodeParameters.resFailedPrevious();
+                    return;
                 }
-                else
-                    nodeParameters.incFailedPrevious();
-                return;
+                //throw new RuntimeException(e);
             }
-        } catch (InterruptedException | IOException e) {
-            e.printStackTrace();
-            System.out.println("["+getName()+"] [Error] connection error with previous node (likely offline)");
-            System.out.println(nodeParameters.getPreviousID());
-            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
-            return;
-            //throw new RuntimeException(e);
         }
-
-        // Next
-        try {
-            var client = HttpClient.newHttpClient();
-
-            var request = HttpRequest.newBuilder(
-                URI.create("http://"+nodeParameters.getIP(nodeParameters.getNextID()).getHostAddress()+":8888/api/status"))
-                .build();
-
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-
-            if (response.statusCode() != 200) {
-                System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
-                if (nodeParameters.getFailedNext() > NodeParameters.FAILURE_TRESHOLD) {
+        for (int i = 0; i < 6; i++) {
+            // Next
+            try {
+                ping(nodeParameters.getIP(nodeParameters.getNextID()).getHostAddress());
+            } catch (InterruptedException | IOException e) {
+                if (i < 4) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
                     lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
-                    nodeParameters.resFailedNext();
+                    //throw new RuntimeException(e);
                 }
-                else
-                    nodeParameters.incFailedNext();
             }
-        } catch (InterruptedException | IOException e) {
-            System.out.println("["+getName()+"] [Error] connection error with next node (likely offline)");
-            lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
-            //throw new RuntimeException(e);
         }
     }
 
     @Override
     public String getName() {
         return "PingNeighboringNodeCron";
+    }
+
+    private void ping(String ip) throws IOException, InterruptedException {
+        var client = HttpClient.newHttpClient();
+
+        var request = HttpRequest.newBuilder(
+                        URI.create("http://"+ip+":8888/api/status"))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+
+        if (response.statusCode() != 200) {
+            System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
+            if (nodeParameters.getFailedNext() > NodeParameters.FAILURE_TRESHOLD) {
+                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
+                nodeParameters.resFailedNext();
+            }
+            else
+                nodeParameters.incFailedNext();
+        }
     }
 }
