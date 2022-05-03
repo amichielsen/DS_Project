@@ -34,6 +34,8 @@ public class PingNeighboringNode extends CronJob {
                 URI.create("http://"+nodeParameters.getIP(nodeParameters.getPreviousID()).getHostAddress()+":8888/api/status"))
                 .build();
 
+            System.out.println(request);
+
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
