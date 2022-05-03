@@ -6,7 +6,9 @@ import be.uantwerpen.node.lifeCycle.running.RunningRestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.asm.TypeReference;
 
+import java.io.DataInput;
 import java.io.IOException;
 import java.io.Reader;
 import java.net.Inet4Address;
@@ -17,6 +19,7 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * The failure mode.
@@ -63,6 +66,9 @@ public class Failure extends State {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+        TreeMap responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
+        System.out.println(responseMap.firstEntry());
+        System.out.println(responseMap.lastEntry());
         if(NodeParameters.DEBUG) {
             System.out.println(response.body());
         }
