@@ -68,13 +68,15 @@ public class Failure extends State {
 
         TreeMap<String, Integer> responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
 
-        int previousNode = responseMap.get("previous");
-        int nextNode = responseMap.get("next");
-        if(NodeParameters.DEBUG) {
-            System.out.println(previousNode + " =prev, next= " + nextNode);
-        }
-        if(NodeParameters.DEBUG) {
-            System.out.println(response.body());
+        if(responseMap.size() > 0) {
+            int previousNode = responseMap.get("previous");
+            int nextNode = responseMap.get("next");
+            if (NodeParameters.DEBUG) {
+                System.out.println(previousNode + " =prev, next= " + nextNode);
+            }
+            if (NodeParameters.DEBUG) {
+                System.out.println(response.body());
+            }
         }
         /*JSONObject prevNode = new JSONObject();
         JSONObject nextNode = new JSONObject();
