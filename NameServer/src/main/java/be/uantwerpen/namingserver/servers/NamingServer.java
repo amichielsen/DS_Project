@@ -73,10 +73,12 @@ public class NamingServer {
     @PostMapping(path="/failure")
     public static String failure(@RequestParam(value = "id") int failedID){
         JSONObject jsonObject = new JSONObject();
-        ArrayList<Integer> neighbours = namingService.getNeighbours(failedID);
-        namingService.deleteID(failedID);
-        jsonObject.put("previous", neighbours.get(0));
-        jsonObject.put("next", neighbours.get(1));
+        //ArrayList<Integer> neighbours = namingService.getNeighbours(failedID);
+        //namingService.deleteID(failedID);
+        jsonObject.put("previous", 1);
+        jsonObject.put("next", 2);
+        //jsonObject.put("previous", neighbours.get(0));
+        //jsonObject.put("next", neighbours.get(1));
         return jsonObject.toJSONString();
     }
 
