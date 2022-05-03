@@ -53,6 +53,7 @@ public class PingNeighboringNode extends CronJob {
             // Next
             try {
                 ping(nodeParameters.getIP(nodeParameters.getNextID()).getHostAddress());
+                break;
             } catch (InterruptedException | IOException e) {
                 if (i < 4) {
                     try {
