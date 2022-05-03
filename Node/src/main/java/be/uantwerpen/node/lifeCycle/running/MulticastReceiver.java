@@ -107,7 +107,7 @@ public class MulticastReceiver extends Thread{
         else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
             return true;
         }
-        else return NodeParameters.nextID < NodeParameters.id & (nameHash < NodeParameters.nextID); //This node is last one in the network
+        else return NodeParameters.nextID < NodeParameters.id && ((nameHash < NodeParameters.nextID) | (nameHash > NodeParameters.id)); //This node is last one in the network
 
     }
 
@@ -118,6 +118,6 @@ public class MulticastReceiver extends Thread{
         else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
             return true;
         }
-        else return NodeParameters.previousID > NodeParameters.id & (nameHash > NodeParameters.previousID); //This node is the first one in the network
+        else return NodeParameters.previousID > NodeParameters.id && ((nameHash > NodeParameters.previousID) | (nameHash > NodeParameters.id)); //This node is the first one in the network
     }
 }
