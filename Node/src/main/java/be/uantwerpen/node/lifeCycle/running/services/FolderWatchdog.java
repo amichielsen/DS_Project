@@ -18,11 +18,7 @@ public class FolderWatchdog extends Thread {
 
         // wait for key to be signaled
         Path dir = null;
-        try {
-            dir = Path.of(FolderWatchdog.class.getResource("").toURI());
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
+        dir = Path.of("/root/data/");
         System.out.println(dir);
         try {
             WatchKey key = dir.register(watcher,
