@@ -99,7 +99,7 @@ public class Shutdown extends State {
 
             // create a request
             var request = HttpRequest.newBuilder(
-                    URI.create("http://localhost:8080/naming/host2IP?host="+ hostId))
+                    URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/host2IP?host="+ hostId))
                     .build();
 
             // use the client to send the request
