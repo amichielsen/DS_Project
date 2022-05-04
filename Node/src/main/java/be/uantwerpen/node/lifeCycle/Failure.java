@@ -3,7 +3,9 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.lifeCycle.running.Running;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.internal.runners.statements.Fail;
 import org.w3c.dom.Node;
 
 import java.io.IOException;
@@ -19,30 +21,24 @@ import java.util.TreeMap;
  * 1. If we detect a failure we will get here and report to the NameServer.
  * 2. Find a new route!!!
  */
-public class Failure extends State {
+public class Failure {
 
-    public Failure(LifeCycleController lifeCycleController) {
-        super(lifeCycleController);
-    }
-    public Failure(LifeCycleController lifeCycleController, int failedID) {
-        super(lifeCycleController, failedID);
+    private int failedID;
+    private static final Failure instance = new Failure();
+    private Failure() {
+        this.failedID = 0;
     }
 
-    @Override
-    public void run() {
-            System.out.println("i failed :(");
-        try {
-            this.nodeFailure(this.param);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public static Failure getInstance(){
+        return instance;
     }
+
 
     /**
      * Get prev and next node of failed node.
      * @param ID Id of failed node
      */
-    public void nodeFailure(int ID) throws IOException, InterruptedException {
+    public void nodeFailure(int ID)  {
         HttpClient httpClient = HttpClient.newBuilder().build();
 
         // create a request
@@ -54,9 +50,21 @@ public class Failure extends State {
             System.out.println(request);
         }
         // use the client to send the request
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = null;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        TreeMap<String, Integer> responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
+        TreeMap<String, Integer> responseMap = null;
+        try {
+            responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         if(responseMap.size() > 0) {
             int previousNode = responseMap.get("previous");
@@ -65,6 +73,7 @@ public class Failure extends State {
                 System.out.println(previousNode + " =prev, next= " + nextNode);
             }
             //update nodes
+            try{
             if(previousNode == NodeParameters.id){
                 NodeParameters.nextID = nextNode;
                 updatePreviousIdOfNextNode(previousNode, nextNode);
@@ -75,7 +84,11 @@ public class Failure extends State {
             else {
                 updateNextIdOfPreviousNode(nextNode, previousNode);
                 updatePreviousIdOfNextNode(previousNode, nextNode);
-            }
+            }}catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }{
+
+                }
 
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());

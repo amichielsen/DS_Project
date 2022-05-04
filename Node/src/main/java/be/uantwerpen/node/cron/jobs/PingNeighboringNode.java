@@ -4,6 +4,7 @@ import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cron.CronJob;
 import be.uantwerpen.node.lifeCycle.Failure;
+import org.junit.internal.runners.statements.Fail;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,7 +44,7 @@ public class PingNeighboringNode extends CronJob {
                     e.printStackTrace();
                     System.out.println("[" + getName() + "] [Error] connection error with previous node (likely offline)");
                     System.out.println(nodeParameters.getPreviousID());
-                    lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getPreviousID()));
+                    Failure.getInstance().nodeFailure(nodeParameters.getPreviousID());
                     return;
                 }
                 //throw new RuntimeException(e);
@@ -67,7 +68,7 @@ public class PingNeighboringNode extends CronJob {
                     }
                 } else {
                     System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
-                    lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
+                    Failure.getInstance().nodeFailure(nodeParameters.getNextID());
                     //throw new RuntimeException(e);
                 }
             }
@@ -92,7 +93,7 @@ public class PingNeighboringNode extends CronJob {
         if (response.statusCode() != 200) {
             System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
             if (nodeParameters.getFailedNext() > NodeParameters.FAILURE_TRESHOLD) {
-                lifeCycleController.ChangeState(new Failure(lifeCycleController, nodeParameters.getNextID()));
+                Failure.getInstance().nodeFailure(nodeParameters.getNextID());
                 nodeParameters.resFailedNext();
             }
             else
