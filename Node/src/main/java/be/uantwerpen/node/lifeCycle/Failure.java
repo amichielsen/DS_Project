@@ -81,7 +81,6 @@ public class Failure extends State {
                 System.out.println(response.body());
             }
         }
-        this.lifeCycleController.ChangeState(new Running(this.lifeCycleController));
     }
     public String updateNextIdOfPreviousNode(Integer nextNode, Integer prevNode) throws IOException, InterruptedException {
         if (Objects.nonNull(nextNode)) {
