@@ -1,4 +1,4 @@
-package be.uantwerpen.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.utils.Hash;
