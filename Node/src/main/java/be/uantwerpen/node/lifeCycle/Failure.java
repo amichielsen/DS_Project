@@ -65,8 +65,17 @@ public class Failure extends State {
                 System.out.println(previousNode + " =prev, next= " + nextNode);
             }
             //update nodes
-            updateNextIdOfPreviousNode(nextNode,previousNode);
-            updatePreviousIdOfNextNode(previousNode, nextNode);
+            if(previousNode == NodeParameters.id){
+                NodeParameters.nextID = nextNode;
+                updatePreviousIdOfNextNode(previousNode, nextNode);
+            } else if (nextNode == NodeParameters.id) {
+                NodeParameters.previousID = previousNode;
+                updateNextIdOfPreviousNode(nextNode, previousNode);
+            }
+            else {
+                updateNextIdOfPreviousNode(nextNode, previousNode);
+                updatePreviousIdOfNextNode(previousNode, nextNode);
+            }
 
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());
