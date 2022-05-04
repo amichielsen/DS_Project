@@ -89,7 +89,7 @@ public class Failure extends State {
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8888/api/updateNext?hostId=" + nextHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
                     .build();
 
             // use the client to send the request
@@ -120,7 +120,7 @@ public class Failure extends State {
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8888/api/updatePrevious?hostId=" + previousHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
                     .build();
 
             // use the client to send the request
