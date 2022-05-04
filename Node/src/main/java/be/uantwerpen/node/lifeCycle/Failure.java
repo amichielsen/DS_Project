@@ -56,6 +56,7 @@ public class Failure extends State {
     public void nodeFailure(int ID) throws IOException, InterruptedException {
         HttpClient httpClient = HttpClient.newBuilder().build();
 
+        // create a request
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure?id=" + ID))
@@ -63,7 +64,7 @@ public class Failure extends State {
         if(NodeParameters.DEBUG) {
             System.out.println(request);
         }
-
+        // use the client to send the request
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         TreeMap<String, Integer> responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
@@ -74,27 +75,54 @@ public class Failure extends State {
             if (NodeParameters.DEBUG) {
                 System.out.println(previousNode + " =prev, next= " + nextNode);
             }
+            //update nodes
+            updateNextIdOfPreviousNode(nextNode,previousNode);
+            updatePreviousIdOfNextNode(previousNode, nextNode);
+
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());
             }
         }
-        /*JSONObject prevNode = new JSONObject();
-        JSONObject nextNode = new JSONObject();
-        RunningRestController.getStatus();
-        prevNode.put("previousNeighbor", NodeParameters.nextID);
+    }
+    public String updateNextIdOfPreviousNode(Integer hostIp, Integer nextHostId) throws IOException, InterruptedException {
+        if (Objects.nonNull(nextHostId)) {
+            // create a client
+            var client = HttpClient.newHttpClient();
 
-        RunningRestController.getStatus();
-        nextNode.put("nextNeighbor", NodeParameters.previousID);
+            // create a request
+            var request = HttpRequest.newBuilder(
+                            URI.create("http://" + hostIp + ":8888/api/updateNext?hostId=" + nextHostId))
+                    .build();
 
-        nextNode.replace("previousNeighbor", NodeParameters.nextID, prevNode.values());
-        prevNode.replace("nextNeighbor", NodeParameters.previousID, nextNode.values());
+            // use the client to send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            // the response:
+            System.out.println(response.body());
+            return response.body();
 
-         */
-
-
+        } else return "error: hostID is null";
     }
 
+    public String updatePreviousIdOfNextNode(Integer hostIp, Integer previousHostId) throws IOException, InterruptedException {
+        if (Objects.nonNull(previousHostId)) {
+            // create a client
+            var client = HttpClient.newHttpClient();
+
+            // create a request
+            var request = HttpRequest.newBuilder(
+                            URI.create("http://" + hostIp + ":8888/api/updatePrevious?hostId=" + previousHostId))
+                    .build();
+
+            // use the client to send the request
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // the response:
+            System.out.println(response.body());
+            return response.body();
+
+        } else return "error: hostID is null";
+    }
 
 
 }
