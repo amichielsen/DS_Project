@@ -1,5 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
+import be.uantwerpen.node.cache.DataLocationCache;
+
 public class ReplicationService extends Thread {
 /*
   1. User adds file to directory by using a tcp socket
@@ -18,5 +20,17 @@ public class ReplicationService extends Thread {
   - Aangeroepen code die bekijkt naar waar alles moet - Louis
 
  */
+    private final DataLocationCache dataLocationCache = DataLocationCache.getInstance();
+    public void newFileDetected(String filepath) {
+        // 1. Get ID
 
+        // 2. Compare ID with itself to check where it belongs
+
+        // 3. Add to cache
+
+        // 4. Send to next node if needed
+
+        // {"id": [string filename, bool R/L, integer location replica] }
+
+    }
 }
