@@ -45,6 +45,17 @@ public class NamingService {
 
     }
 
+    public int getNodeID(String filename){
+        try{
+            readLock.lock();
+            NodeFinder nodeFinder = new NodeFinder(hashGen, database);
+            return nodeFinder.findNodeFromFile(filename);
+        }finally {
+            readLock.unlock();
+        }
+
+    }
+
     /**
      * Add a host and its IP address to the database
      * @param hostname the hostname to be added

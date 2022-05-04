@@ -64,8 +64,10 @@ public class NamingServer {
     public static String getHostIp(@RequestParam(value = "filename") String filename) {
         JSONObject jsonObject = new JSONObject();
         String ip = namingService.getIpAddress(filename).getHostAddress();
+        int id = namingService.getNodeID(filename);
         System.out.println(Hash.generateHash(filename));
         jsonObject.put("ip", ip);
+        jsonObject.put("id", id);
         jsonObject.put("filename", filename);
         return jsonObject.toString();
     }
