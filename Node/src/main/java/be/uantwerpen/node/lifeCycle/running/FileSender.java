@@ -6,31 +6,29 @@ import org.json.simple.JSONObject;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Objects;
 
 public class FileSender {
 
 
-    private static void sendFile(String path, InetAddress host) throws IOException {
+    public static void sendFile(String path, String host) throws IOException {
         Socket socket = new Socket(host,5044);
         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
         int bytes = 0;
         File file = new File(path);
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("status", "Running");
-        jsonObject.put("online", true);
-        jsonObject.put("thisID", NodeParameters.id);
-        jsonObject.put("thisIP", NodeParameters.ip);
-        jsonObject.put("previousNeighbor", NodeParameters.previousID);
-        jsonObject.put("nextNeighbor", NodeParameters.nextID);
-        jsonObject.toString();
+        jsonObject.put("name", file.getName());
+        jsonObject.put("length", file.length());
+        printWriter.println(jsonObject.toString());
+        System.out.println(jsonObject);
+        printWriter.flush();
+
+        while (!Objects.equals(bufferedReader.readLine(), "OK")){}
+        System.out.println("oke");
         FileInputStream fileInputStream = new FileInputStream(file);
-        String filename = file.getName() + "/";
-        // send file size
-        byte[] filenameBytes = filename.getBytes();
-        dataOutputStream.write(filenameBytes, 0, filenameBytes.length);
-        dataOutputStream.writeLong(file.length());
         // break file into chunks
         byte[] buffer = new byte[4*1024];
         while ((bytes=fileInputStream.read(buffer))!=-1){
