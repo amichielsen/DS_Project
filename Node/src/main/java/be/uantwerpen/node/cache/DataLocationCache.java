@@ -8,8 +8,8 @@ import java.util.HashMap;
 public class DataLocationCache {
     static DataLocationCache instance = new DataLocationCache();
     // To be implemented...
-    // {"id": [string filename, bool R/L, integer location replica] } 
-    //private HashMap<Integer, InetAddress> cache = new HashMap<Integer, InetAddress>();
+    // {"id": [string filename, bool R/L, integer location replica] }
+    //private TreeMap<Integer, InetAddress> cache = new TreeMap<Integer, InetAddress>();
 
     private DataLocationCache() {}
     public static DataLocationCache getInstance(){
