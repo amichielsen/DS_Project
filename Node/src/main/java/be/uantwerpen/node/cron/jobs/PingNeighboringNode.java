@@ -79,7 +79,7 @@ public class PingNeighboringNode extends CronJob {
         var client = HttpClient.newHttpClient();
 
         var request = HttpRequest.newBuilder(
-                        URI.create("http://"+ip+":8888/api/status"))
+                        URI.create("http://"+ip+":8080/api/status"))
                 .build();
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
