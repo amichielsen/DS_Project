@@ -3,7 +3,10 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.lifeCycle.running.Running;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.internal.runners.statements.Fail;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.URI;
@@ -18,30 +21,24 @@ import java.util.TreeMap;
  * 1. If we detect a failure we will get here and report to the NameServer.
  * 2. Find a new route!!!
  */
-public class Failure extends State {
+public class Failure {
 
-    public Failure(LifeCycleController lifeCycleController) {
-        super(lifeCycleController);
-    }
-    public Failure(LifeCycleController lifeCycleController, int failedID) {
-        super(lifeCycleController, failedID);
+    private int failedID;
+    private static final Failure instance = new Failure();
+    private Failure() {
+        this.failedID = 0;
     }
 
-    @Override
-    public void run() {
-            System.out.println("i failed :(");
-        try {
-            this.nodeFailure(this.param);
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+    public static Failure getInstance(){
+        return instance;
     }
+
 
     /**
      * Get prev and next node of failed node.
      * @param ID Id of failed node
      */
-    public void nodeFailure(int ID) throws IOException, InterruptedException {
+    public void nodeFailure(int ID)  {
         HttpClient httpClient = HttpClient.newBuilder().build();
 
         // create a request
@@ -53,9 +50,21 @@ public class Failure extends State {
             System.out.println(request);
         }
         // use the client to send the request
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = null;
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-        TreeMap<String, Integer> responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
+        TreeMap<String, Integer> responseMap = null;
+        try {
+            responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         if(responseMap.size() > 0) {
             int previousNode = responseMap.get("previous");
@@ -64,34 +73,51 @@ public class Failure extends State {
                 System.out.println(previousNode + " =prev, next= " + nextNode);
             }
             //update nodes
-            updateNextIdOfPreviousNode(nextNode,previousNode);
-            updatePreviousIdOfNextNode(previousNode, nextNode);
+            try{
+            if(previousNode == NodeParameters.id){
+                NodeParameters.nextID = nextNode;
+                updatePreviousIdOfNextNode(previousNode, nextNode);
+            } else if (nextNode == NodeParameters.id) {
+                NodeParameters.previousID = previousNode;
+                updateNextIdOfPreviousNode(nextNode, previousNode);
+            }
+            else {
+                updateNextIdOfPreviousNode(nextNode, previousNode);
+                updatePreviousIdOfNextNode(previousNode, nextNode);
+            }}catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }{
+
+                }
 
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());
             }
         }
-        this.lifeCycleController.ChangeState(new Running(this.lifeCycleController));
     }
-    public String updateNextIdOfPreviousNode(Integer hostId, Integer nextHostId) throws IOException, InterruptedException {
-        if (Objects.nonNull(nextHostId)) {
+    public String updateNextIdOfPreviousNode(Integer nextNode, Integer prevNode) throws IOException, InterruptedException {
+        if (Objects.nonNull(nextNode)) {
 
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request to get Ip from Id
             var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ hostId))
+                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
                     .build();
 
             // use the client to send the request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String hostIp = response.body();
 
+            if(NodeParameters.DEBUG){
+                System.out.println("Next: " + hostIp);
+            }
+
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextNode))
                     .build();
 
             // use the client to send the request
@@ -104,15 +130,15 @@ public class Failure extends State {
         } else return "error: hostID is null";
     }
 
-    public String updatePreviousIdOfNextNode(Integer hostId, Integer previousHostId) throws IOException, InterruptedException {
-        if (Objects.nonNull(previousHostId)) {
+    public String updatePreviousIdOfNextNode(Integer prevNode, Integer nextNode) throws IOException, InterruptedException {
+        if (Objects.nonNull(prevNode)) {
 
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request to get Ip from Id
             var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ hostId))
+                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ nextNode))
                     .build();
 
             // use the client to send the request
@@ -122,7 +148,7 @@ public class Failure extends State {
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + prevNode))
                     .build();
 
             // use the client to send the request

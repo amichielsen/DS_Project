@@ -27,9 +27,9 @@ public class Shutdown extends State {
         try {
             var previousIp = getIPfromHostId(NodeParameters.getInstance().getPreviousID());
             var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
-            updateNextIdOfPreviousNode(previousIp,12345);
-            updatePreviousIdOfNextNode(nextIp,67891);
-            getIPfromHostId(21926);
+            updateNextIdOfPreviousNode(previousIp,NodeParameters.nextID);
+            updatePreviousIdOfNextNode(nextIp,NodeParameters.previousID);
+
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

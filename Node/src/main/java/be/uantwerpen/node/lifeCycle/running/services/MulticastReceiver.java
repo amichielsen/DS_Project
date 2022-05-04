@@ -112,6 +112,6 @@ public class MulticastReceiver extends Thread{
         if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){ //Regular case
             return  true;
         }
-        else return NodeParameters.previousID > NodeParameters.id && ((nameHash > NodeParameters.previousID) | (nameHash > NodeParameters.id)); //This node is the first one in the network
+        else return NodeParameters.previousID > NodeParameters.id && ((nameHash > NodeParameters.previousID) | (nameHash < NodeParameters.id)); //This node is the first one in the network
     }
 }
