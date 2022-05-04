@@ -46,7 +46,7 @@ public class DiscoveryBootstrap extends State {
         String msg = "DSCVRY "+ name + " " + IP;
         byte[] buffer = msg.getBytes();
         Inet4Address multicastIP = (Inet4Address) Inet4Address.getByName("230.0.0.0"); //MC group
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 8080);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, multicastIP, 5000);
         socket.send(packet);
         if (NodeParameters.DEBUG) {
             System.out.println("[DISCOVERY] [Info] multicast has been send");

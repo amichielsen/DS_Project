@@ -18,7 +18,7 @@ public class MulticastReceiver extends Thread{
      */
     public void run() {
         try {
-            socket = new MulticastSocket(8080);
+            socket = new MulticastSocket(5000);
         } catch (IOException e) {
             e.printStackTrace();
         }

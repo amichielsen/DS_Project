@@ -41,9 +41,11 @@ public class IpTableCache {
                     while ((inputLine = in .readLine()) != null) {
                         response.append(inputLine);
                     } in .close();
+                    // Adding IP to cache for faster access
+                    addIp(id,InetAddress.getByName(response.toString()));
 
                     // print result
-                    System.out.println(response.toString());
+                    System.out.println("[IPCACHE] [Done] added following IP to cache: "+ response);
                     return InetAddress.getByName(response.toString());
                 } else {
                     System.out.println("[IPCACHE] [Error] name server send non 200 code (likely shutting down/busy)");
