@@ -1,9 +1,14 @@
 package be.uantwerpen.node.lifeCycle.running;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.Buffer;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class FileReceiver extends Thread{
 
@@ -13,26 +18,25 @@ public class FileReceiver extends Thread{
     public void run() {
 
         try{
-            ServerSocket serverSocket = new ServerSocket(5000);
+            ServerSocket serverSocket = new ServerSocket(5044);
             System.out.println("listening to port:5044");
             Socket clientSocket = serverSocket.accept();
             System.out.println(clientSocket+" connected.");
             DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+            Map responseMap = new ObjectMapper().readValue( bufferedReader.readLine(), Map.class);
+            System.out.println(responseMap);
+            String filename = (String) responseMap.get("name");
+            int size = (int) responseMap.get("length");
+            PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
+            printWriter.println("OK");
+            printWriter.flush();
+
+            FileOutputStream fileOutputStream = new FileOutputStream("/replica/" +filename);
+
             int bytes = 0;
-
-            int x;
-            StringBuffer stringBuffer = new StringBuffer();
-            int i = 0;
-            while (true) {
-                x = dataInputStream.read(); //Get a character
-                if (x == '/' || x == -1) break; //reads until stop character
-                stringBuffer.append((char) x);
-            }
-            String filename = stringBuffer.toString();
-            FileOutputStream fileOutputStream = new FileOutputStream(filename); //TODO: Pas pad aan
-            long size = dataInputStream.readLong();     // read file size
-
             byte[] buffer = new byte[4*1024];
             while (size > 0 && (bytes = dataInputStream.read(buffer, 0, (int)Math.min(buffer.length, size))) != -1) {
                 fileOutputStream.write(buffer,0,bytes);
@@ -47,7 +51,5 @@ public class FileReceiver extends Thread{
         }
 
     }
-
-
 
 }

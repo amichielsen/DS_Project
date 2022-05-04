@@ -14,7 +14,7 @@ public abstract class State {
         run();
     }
 
-    public State(LifeCycleController lifeCycleController, int param){
+    public State(LifeCycleController lifeCycleController, int param, State oldstate){
         System.out.println("[STATE] [Info] started in mode: "+ getClass().getSimpleName());
         this.lifeCycleController = lifeCycleController;
         this.param = param;
