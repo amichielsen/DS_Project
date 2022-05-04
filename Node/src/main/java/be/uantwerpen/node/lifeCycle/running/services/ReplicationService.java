@@ -89,7 +89,7 @@ public class ReplicationService extends Thread {
         }
 
         // 3. Add to cache
-        DataLocationCache.getInstance().addFile(hash, filename, true, id);
+        DataLocationCache.getInstance().addFile(hash, filename, true, id,0);
 
 
     }
