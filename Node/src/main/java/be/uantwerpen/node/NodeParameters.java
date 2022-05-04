@@ -32,6 +32,10 @@ public class NodeParameters {
 
     public static Integer failedNext;
 
+    public static String localFolder;
+
+    public static String replicaFolder;
+
     private NodeParameters() throws UnknownHostException {
     }
 
