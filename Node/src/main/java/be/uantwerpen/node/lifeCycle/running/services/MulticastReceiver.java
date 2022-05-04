@@ -73,7 +73,7 @@ public class MulticastReceiver extends Thread{
                 this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
                 System.out.println("Sent Next+Previous");
             }
-            if (this.shouldBeNext(nameHash)) {
+            else if (this.shouldBeNext(nameHash)) {
                 nodeParameters.setNextID(nameHash);
                 this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
                 System.out.println("Sent Previous");
