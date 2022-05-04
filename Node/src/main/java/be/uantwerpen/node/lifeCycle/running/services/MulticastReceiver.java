@@ -1,4 +1,4 @@
-package be.uantwerpen.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.utils.Hash;
@@ -20,7 +20,7 @@ public class MulticastReceiver extends Thread{
         System.out.println("[MULTICAST] [Info] receiver started");
         nodeParameters = NodeParameters.getInstance();
         try {
-            socket = new MulticastSocket(8080);
+            socket = new MulticastSocket(5000);
         } catch (IOException e) {
             e.printStackTrace();
         }
