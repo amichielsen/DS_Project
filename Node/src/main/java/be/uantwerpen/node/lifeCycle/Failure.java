@@ -2,6 +2,7 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.lifeCycle.running.Running;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -70,6 +71,7 @@ public class Failure extends State {
                 System.out.println(response.body());
             }
         }
+        this.lifeCycleController.ChangeState(new Running(this.lifeCycleController));
     }
     public String updateNextIdOfPreviousNode(Integer hostId, Integer nextHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(nextHostId)) {

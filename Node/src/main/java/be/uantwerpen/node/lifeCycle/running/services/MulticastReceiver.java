@@ -73,7 +73,7 @@ public class MulticastReceiver extends Thread{
                 this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
                 System.out.println("Sent Next+Previous");
             }
-            if (this.shouldBeNext(nameHash)) {
+            else if (this.shouldBeNext(nameHash)) {
                 nodeParameters.setNextID(nameHash);
                 this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
                 System.out.println("Sent Previous");
@@ -104,9 +104,6 @@ public class MulticastReceiver extends Thread{
         if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){ //Regular case
             return true;
         }
-        else if((NodeParameters.id.equals(NodeParameters.nextID)) && !NodeParameters.previousID.equals(NodeParameters.id)){
-            return true;
-        }
         else return NodeParameters.nextID < NodeParameters.id && ((nameHash < NodeParameters.nextID) | (nameHash > NodeParameters.id)); //This node is last one in the network
 
     }
@@ -114,9 +111,6 @@ public class MulticastReceiver extends Thread{
     private boolean shouldBePrevious(int nameHash){
         if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){ //Regular case
             return  true;
-        }
-        else if(NodeParameters.id.equals(NodeParameters.previousID) && !NodeParameters.id.equals(NodeParameters.nextID)){
-            return true;
         }
         else return NodeParameters.previousID > NodeParameters.id && ((nameHash > NodeParameters.previousID) | (nameHash > NodeParameters.id)); //This node is the first one in the network
     }
