@@ -4,6 +4,7 @@ import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.lifeCycle.running.Running;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.URI;
@@ -73,25 +74,29 @@ public class Failure extends State {
         }
         this.lifeCycleController.ChangeState(new Running(this.lifeCycleController));
     }
-    public String updateNextIdOfPreviousNode(Integer hostId, Integer nextHostId) throws IOException, InterruptedException {
-        if (Objects.nonNull(nextHostId)) {
+    public String updateNextIdOfPreviousNode(Integer nextNode, Integer prevNode) throws IOException, InterruptedException {
+        if (Objects.nonNull(nextNode)) {
 
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request to get Ip from Id
             var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ hostId))
+                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
                     .build();
 
             // use the client to send the request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             String hostIp = response.body();
 
+            if(NodeParameters.DEBUG){
+                System.out.println("Next: " + hostIp);
+            }
+
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextNode))
                     .build();
 
             // use the client to send the request
@@ -104,15 +109,15 @@ public class Failure extends State {
         } else return "error: hostID is null";
     }
 
-    public String updatePreviousIdOfNextNode(Integer hostId, Integer previousHostId) throws IOException, InterruptedException {
-        if (Objects.nonNull(previousHostId)) {
+    public String updatePreviousIdOfNextNode(Integer prevNode, Integer nextNode) throws IOException, InterruptedException {
+        if (Objects.nonNull(prevNode)) {
 
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request to get Ip from Id
             var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ hostId))
+                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ nextNode))
                     .build();
 
             // use the client to send the request
@@ -122,7 +127,7 @@ public class Failure extends State {
             // create a request
             request = HttpRequest.newBuilder()
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
+                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + prevNode))
                     .build();
 
             // use the client to send the request
