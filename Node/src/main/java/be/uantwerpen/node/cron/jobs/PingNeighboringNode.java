@@ -49,6 +49,10 @@ public class PingNeighboringNode extends CronJob {
                 //throw new RuntimeException(e);
             }
         }
+        if (Objects.equals(nodeParameters.getNextID(), nodeParameters.getPreviousID())) {
+            return;
+        }
+
         for (int i = 0; i < 6; i++) {
             // Next
             try {
