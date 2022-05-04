@@ -10,6 +10,13 @@ public class ReplicationService extends Thread {
     c. The file is neither, and we will contact the NS to ask it about the correct Node. -> send after we know ip
   4. IF a failure occurs -> data has to be send to new neighboring node
   5. IF a shutdown occurs -> data has to be send to previous node
+
+
+  - TCP sockets - lexiflexie superRTOS 2000
+  - Structuur van data (L of R met dan id van plek + naam bestand) - Vital
+  - Watchdog (nieuwe bestanden toegevoegd?) - Asif
+  - Aangeroepen code die bekijkt naar waar alles moet - Louis
+
  */
 
 }

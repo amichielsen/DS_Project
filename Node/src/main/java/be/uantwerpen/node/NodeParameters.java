@@ -2,6 +2,7 @@ package be.uantwerpen.node;
 
 
 
+import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.utils.Hash;
 
 import java.net.InetAddress;
