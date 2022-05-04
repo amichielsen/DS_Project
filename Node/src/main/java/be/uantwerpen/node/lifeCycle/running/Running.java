@@ -5,7 +5,6 @@ package be.uantwerpen.node.lifeCycle.running;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.cron.CronJobSchedular;
 import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
-import be.uantwerpen.node.cron.jobs.SendCurrentStatus;
 import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
 
