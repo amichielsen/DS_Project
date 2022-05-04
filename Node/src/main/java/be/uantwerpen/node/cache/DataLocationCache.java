@@ -15,4 +15,8 @@ public class DataLocationCache {
     public static DataLocationCache getInstance(){
         return instance;
     }
+
+    public void addFile(int hash, String name, boolean local, int location) {
+
+    }
 }
