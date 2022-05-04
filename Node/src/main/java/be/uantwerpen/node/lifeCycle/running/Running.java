@@ -6,7 +6,9 @@ import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.cron.CronJobSchedular;
 import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
 import be.uantwerpen.node.lifeCycle.State;
+import be.uantwerpen.node.lifeCycle.running.services.FolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
+import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 
 /**
  * This is the "main" running state.
@@ -26,6 +28,8 @@ public class Running extends State {
     public void run() {
         MulticastReceiver multicastReceiver = new MulticastReceiver();
         multicastReceiver.start();
+        FolderWatchdog folderWatchdog = new FolderWatchdog();
+        folderWatchdog.start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         //cron.addCronJob(new SendCurrentStatus(), 60);

@@ -9,35 +9,41 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 
 public class ReplicationService extends Thread {
-/*
-  1. User adds file to directory by using a tcp socket
-  2. The watchdog will constantly be looking inside that directory
-  3. When a new file is detected there are 3 options
-    a. The file will need to stay at this node and will be the MAIN
-    b. The file is lower than our id and needs to go to our previous node -> directly send
-    c. The file is neither, and we will contact the NS to ask it about the correct Node. -> send after we know ip
-  4. IF a failure occurs -> data has to be send to new neighboring node
-  5. IF a shutdown occurs -> data has to be send to previous node
+    private final Path filename;
+
+    public ReplicationService(Path filename) {
+        this.filename = filename;
+    }
+
+    /*
+      1. User adds file to directory by using a tcp socket
+      2. The watchdog will constantly be looking inside that directory
+      3. When a new file is detected there are 3 options
+        a. The file will need to stay at this node and will be the MAIN
+        b. The file is lower than our id and needs to go to our previous node -> directly send
+        c. The file is neither, and we will contact the NS to ask it about the correct Node. -> send after we know ip
+      4. IF a failure occurs -> data has to be send to new neighboring node
+      5. IF a shutdown occurs -> data has to be send to previous node
 
 
-  - TCP sockets - lexiflexie superRTOS 2000
-  - Structuur van data (L of R met dan id van plek + naam bestand) - Vital
-  - Watchdog (nieuwe bestanden toegevoegd?) - Asif
-  - Aangeroepen code die bekijkt naar waar alles moet - Louis
+      - TCP sockets - lexiflexie superRTOS 2000
+      - Structuur van data (L of R met dan id van plek + naam bestand) - Vital
+      - Watchdog (nieuwe bestanden toegevoegd?) - Asif
+      - Aangeroepen code die bekijkt naar waar alles moet - Louis
 
- */
+     */
     private final DataLocationCache dataLocationCache = DataLocationCache.getInstance();
-    public void newFileDetected(String filename) {
+    public void run() {
         // 1. Get ID
-        int hash = Hash.generateHash(filename);
+        int hash = Hash.generateHash(String.valueOf(this.filename));
         int id = NodeParameters.id;
         // 2. Compare ID with itself to check where it belongs
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
@@ -56,7 +62,7 @@ public class ReplicationService extends Thread {
                 var client = HttpClient.newHttpClient();
 
                 var request = HttpRequest.newBuilder(
-                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host"))
+                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+this.filename))
                     .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -89,7 +95,7 @@ public class ReplicationService extends Thread {
         }
 
         // 3. Add to cache
-        DataLocationCache.getInstance().addFile(hash, filename, true, id);
+        DataLocationCache.getInstance().addFile(hash, String.valueOf(filename), true, id);
 
 
     }
