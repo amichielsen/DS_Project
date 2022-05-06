@@ -21,7 +21,7 @@ import java.util.TreeMap;
  * 1. If we detect a failure we will get here and report to the NameServer.
  * 2. Find a new route!!!
  */
-public class Failure {
+public class Failure extends Thread {
 
     private int failedID;
     private static final Failure instance = new Failure();
@@ -33,6 +33,10 @@ public class Failure {
         return instance;
     }
 
+    @Override
+    public void run(){
+        this.nodeFailure(this.failedID);
+    }
 
     /**
      * Get prev and next node of failed node.
@@ -161,5 +165,7 @@ public class Failure {
         } else return "error: hostID is null";
     }
 
-
+    public void setFailedID(int failedID) {
+        this.failedID = failedID;
+    }
 }
