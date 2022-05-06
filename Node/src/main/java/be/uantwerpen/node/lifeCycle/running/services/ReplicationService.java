@@ -66,7 +66,7 @@ public class ReplicationService extends Thread {
                 var client = HttpClient.newHttpClient();
 
                 var request = HttpRequest.newBuilder(
-                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+this.filename))
+                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+f1.getName()))
                     .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
