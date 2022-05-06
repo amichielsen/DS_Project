@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class PingNeighboringNode extends CronJob {
     private final NodeParameters nodeParameters;
+    private Failure failure = new Failure();
 
     public PingNeighboringNode(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
@@ -43,8 +44,8 @@ public class PingNeighboringNode extends CronJob {
                 } else {
                     e.printStackTrace();
                     System.out.println("[" + getName() + "] [Error] connection error with previous node (likely offline)");
-                    System.out.println(nodeParameters.getPreviousID());
-                    Failure.getInstance().nodeFailure(nodeParameters.getPreviousID());
+                    failure.setFailedID(nodeParameters.getPreviousID());
+                    failure.start();
                     return;
                 }
                 //throw new RuntimeException(e);
@@ -68,7 +69,8 @@ public class PingNeighboringNode extends CronJob {
                     }
                 } else {
                     System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
-                    Failure.getInstance().nodeFailure(nodeParameters.getNextID());
+                    failure.setFailedID(nodeParameters.getNextID());
+                    failure.start();
                     return;
                     //throw new RuntimeException(e);
                 }

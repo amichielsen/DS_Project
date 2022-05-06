@@ -25,7 +25,7 @@ public class Failure extends Thread {
 
     private int failedID;
     private static final Failure instance = new Failure();
-    private Failure() {
+    public Failure() {
         this.failedID = 0;
     }
 
@@ -97,12 +97,11 @@ public class Failure extends Thread {
                 }
                 updateNextIdOfPreviousNode(nextNode, previousNode);
                 updatePreviousIdOfNextNode(previousNode, nextNode);
-            }}catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }{
-
-                }
-
+            }
+            }catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                return;
+            }
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());
             }
