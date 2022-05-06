@@ -79,13 +79,22 @@ public class Failure extends Thread {
             //update nodes
             try{
             if(previousNode == NodeParameters.id){
+                if(NodeParameters.DEBUG){
+                    System.out.println("I'm next ");
+                }
                 NodeParameters.nextID = nextNode;
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             } else if (nextNode == NodeParameters.id) {
+                if(NodeParameters.DEBUG){
+                    System.out.println("I'm prev ");
+                }
                 NodeParameters.previousID = previousNode;
                 updateNextIdOfPreviousNode(nextNode, previousNode);
             }
             else {
+                if(NodeParameters.DEBUG){
+                    System.out.println("Shouldn't come here");
+                }
                 updateNextIdOfPreviousNode(nextNode, previousNode);
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             }}catch (IOException | InterruptedException e) {
@@ -109,6 +118,10 @@ public class Failure extends Thread {
             var request = HttpRequest.newBuilder(
                             URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
                     .build();
+
+            if(NodeParameters.DEBUG){
+                System.out.println(request);
+            }
 
             // use the client to send the request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -158,6 +171,9 @@ public class Failure extends Thread {
             // use the client to send the request
             HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            if(NodeParameters.DEBUG){
+                System.out.println("Previous: " + hostIp);
+            }
             // the response:
             System.out.println(responses.body());
             return responses.body();
