@@ -3,11 +3,13 @@ package be.uantwerpen.node.lifeCycle.running.services;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.DataLocationCache;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.lifeCycle.running.FileSender;
 import be.uantwerpen.node.utils.Hash;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -42,9 +44,11 @@ public class ReplicationService extends Thread {
      */
     private final DataLocationCache dataLocationCache = DataLocationCache.getInstance();
     public void run() {
+        File f1 = new File(String.valueOf(this.filename));
         // 1. Get ID
-        int hash = Hash.generateHash(String.valueOf(this.filename));
+        int hash = Hash.generateHash(f1.getName());
         int id = NodeParameters.id;
+        String ip = "";
         // 2. Compare ID with itself to check where it belongs
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
             // For myself - LOCAL and REPLICA
@@ -72,6 +76,7 @@ public class ReplicationService extends Thread {
                     JSONObject json = (JSONObject) parser.parse(response.body());
                     // Adding to ip cache
                     id = (int) json.get("id");
+                    ip = (String) json.get("ip");
                     IpTableCache.getInstance().addIp((Integer) json.get("id"), InetAddress.getByName((String) json.get("ip")));
 
                     System.out.println("[RS] [Info] the correct node id/ip is: "+ json.get("id")+" | "+ json.get("ip"));
@@ -90,7 +95,11 @@ public class ReplicationService extends Thread {
             // Send to new
             // Werk van Lexieflexie superRTOS 2000
 
-
+            try {
+                FileSender.sendFile(this.filename.toString(), ip);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
         }
 

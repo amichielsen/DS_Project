@@ -8,6 +8,13 @@ import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 public class FolderWatchdog extends Thread {
+
+    private String path;
+
+    public FolderWatchdog(String path) {
+        this.path = path;
+    }
+
     public void run() {
         WatchService watcher = null;
         try {
@@ -18,7 +25,7 @@ public class FolderWatchdog extends Thread {
 
         // wait for key to be signaled
         Path dir = null;
-        dir = Path.of("/root/data/");
+        dir = Path.of(this.path);
         System.out.println(dir);
         try {
             WatchKey key = dir.register(watcher,
@@ -33,7 +40,7 @@ public class FolderWatchdog extends Thread {
             try {
                 key = watcher.take();
             } catch (InterruptedException x) {
-                System.out.println("exjeption");
+                System.out.println("exception");
                 return;
             }
             for (WatchEvent<?> event : key.pollEvents()) {
@@ -52,7 +59,7 @@ public class FolderWatchdog extends Thread {
                 System.out.format("New file %s%n", filename);
 
                 // Run replication service
-                ReplicationService replicationService = new ReplicationService(filename);
+                ReplicationService replicationService = new ReplicationService(Path.of(this.path+"/"+filename));
                 replicationService.start();
             }
 

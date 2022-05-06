@@ -10,6 +10,8 @@ import be.uantwerpen.node.lifeCycle.running.services.FolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 
+import java.io.File;
+
 /**
  * This is the "main" running state.
  * 1. We will respond to REST requests.
@@ -28,8 +30,16 @@ public class Running extends State {
     public void run() {
         MulticastReceiver multicastReceiver = new MulticastReceiver();
         multicastReceiver.start();
-        FolderWatchdog folderWatchdog = new FolderWatchdog();
-        folderWatchdog.start();
+        File localFolder = new File("/root/data/local");
+        localFolder.mkdir();
+        File replicaFolder = new File("/root/data/replica");
+        replicaFolder.mkdir();
+        FolderWatchdog folderWatchdogLocal = new FolderWatchdog(localFolder.getPath());
+        folderWatchdogLocal.start();
+        FolderWatchdog folderWatchdogReplica = new FolderWatchdog(replicaFolder.getPath());
+        folderWatchdogReplica.start();
+        FileReceiver receiver = new FileReceiver();
+        receiver.start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         //cron.addCronJob(new SendCurrentStatus(), 60);

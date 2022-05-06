@@ -34,7 +34,7 @@ public class FileReceiver extends Thread{
             printWriter.println("OK");
             printWriter.flush();
 
-            FileOutputStream fileOutputStream = new FileOutputStream("/replica/" +filename);
+            FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" +filename);
 
             int bytes = 0;
             byte[] buffer = new byte[4*1024];
