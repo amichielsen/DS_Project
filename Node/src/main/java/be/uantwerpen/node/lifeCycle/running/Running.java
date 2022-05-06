@@ -31,9 +31,9 @@ public class Running extends State {
         MulticastReceiver multicastReceiver = new MulticastReceiver();
         multicastReceiver.start();
         File localFolder = new File("/root/data/local");
-        System.out.println(localFolder.mkdir());
+        localFolder.mkdirs();
         File replicaFolder = new File("/root/data/replica");
-        replicaFolder.mkdir();
+        replicaFolder.mkdirs();
         FolderWatchdog folderWatchdogLocal = new FolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
         FolderWatchdog folderWatchdogReplica = new FolderWatchdog(replicaFolder.getPath());
