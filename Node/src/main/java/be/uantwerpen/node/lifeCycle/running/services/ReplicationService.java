@@ -74,8 +74,10 @@ public class ReplicationService extends Thread {
                     System.out.println(response.body());
                     JSONParser parser = new JSONParser();
                     JSONObject json = (JSONObject) parser.parse(response.body());
+                    System.out.println(response.body());
                     // Adding to ip cache
                     id = ((Long) json.get("id")).intValue();
+                    System.out.println(id);
                     ip = (String) json.get("ip");
                     IpTableCache.getInstance().addIp((Integer) json.get("id"), InetAddress.getByName((String) json.get("ip")));
 
