@@ -77,9 +77,9 @@ public class ReplicationService extends Thread {
                     // Adding to ip cache
                     id = ((Long) json.get("id")).intValue();
                     ip = Long.toString((Long)json.get("ip"));
-                    IpTableCache.getInstance().addIp((Integer) json.get("id"), InetAddress.getByName((String) json.get("ip")));
+                    IpTableCache.getInstance().addIp(id, InetAddress.getByName(ip));
 
-                    System.out.println("[RS] [Info] the correct node id/ip is: "+ json.get("id")+" | "+ json.get("ip"));
+                    System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
                 } else {
                     System.out.println("[RS] [Error] connection error with name server (likely offline)");
                     return;
