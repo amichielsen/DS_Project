@@ -43,9 +43,8 @@ public class PingNeighboringNode extends CronJob {
                 } else {
                     e.printStackTrace();
                     System.out.println("[" + getName() + "] [Error] connection error with previous node (likely offline)");
-                    Failure failure = new Failure();
-                    failure.setFailedID(nodeParameters.getPreviousID());
-                    failure.start();
+                    //Failure failure = new Failure();
+                    Failure.getInstance().nodeFailure(nodeParameters.getPreviousID());
                     return;
                 }
                 //throw new RuntimeException(e);
@@ -69,9 +68,7 @@ public class PingNeighboringNode extends CronJob {
                     }
                 } else {
                     System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
-                    Failure failure = new Failure();
-                    failure.setFailedID(nodeParameters.getNextID());
-                    failure.start();
+                    Failure.getInstance().nodeFailure(nodeParameters.getNextID());
                     return;
                     //throw new RuntimeException(e);
                 }

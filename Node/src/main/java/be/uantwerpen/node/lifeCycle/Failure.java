@@ -25,7 +25,7 @@ public class Failure extends Thread {
 
     private int failedID;
     private static final Failure instance = new Failure();
-    public Failure() {
+    private Failure() {
         this.failedID = 0;
     }
 

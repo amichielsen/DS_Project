@@ -131,8 +131,8 @@ public class NamingService {
                 previous = treeNodes.lower(ID);
             }
             else{
-                next = treeNodes.lower(ID);
-                previous = treeNodes.higher(ID);
+                next = treeNodes.higher(ID);
+                previous = treeNodes.lower(ID);
             }
             neighbours.add(previous);
             neighbours.add(next);
