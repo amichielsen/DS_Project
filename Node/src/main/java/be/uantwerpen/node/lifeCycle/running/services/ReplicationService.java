@@ -3,7 +3,6 @@ package be.uantwerpen.node.lifeCycle.running.services;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.DataLocationCache;
 import be.uantwerpen.node.cache.IpTableCache;
-import be.uantwerpen.node.lifeCycle.running.FileSender;
 import be.uantwerpen.node.utils.Hash;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

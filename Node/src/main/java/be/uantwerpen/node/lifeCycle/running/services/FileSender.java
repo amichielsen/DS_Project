@@ -1,4 +1,4 @@
-package be.uantwerpen.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
 import org.json.simple.JSONObject;
@@ -8,6 +8,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Objects;
 
+/**
+ * Service capable of sending files
+ * Starts by sending the name and length to the receiver. Waits for confirmation and then sends the whole file
+ */
 public class FileSender {
 
 

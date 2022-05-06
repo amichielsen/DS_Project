@@ -1,4 +1,4 @@
-package be.uantwerpen.node.lifeCycle.running;
+package be.uantwerpen.node.lifeCycle.running.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,6 +10,9 @@ import java.nio.Buffer;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Service listening to receive files
+ */
 public class FileReceiver extends Thread{
 
     public FileReceiver(){
