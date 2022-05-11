@@ -1,17 +1,16 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
-public class FolderWatchdog extends Thread {
+public class LocalFolderWatchdog extends Thread {
 
     private String path;
 
-    public FolderWatchdog(String path) {
+    public LocalFolderWatchdog(String path) {
         this.path = path;
     }
 
@@ -55,12 +54,16 @@ public class FolderWatchdog extends Thread {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 Path filename = ev.context();
 
+                if (ev.kind() == ENTRY_DELETE) {
+                    System.out.format("File Deteleted %s%n", filename);
+                }
+                else{
+                    System.out.format("New file %s%n", filename);
 
-                System.out.format("New file %s%n", filename);
-
-                // Run replication service
-                ReplicationService replicationService = new ReplicationService(Path.of(this.path+"/"+filename));
-                replicationService.start();
+                    // Run replication service
+                    ReplicationService replicationService = new ReplicationService(Path.of(this.path + "/" + filename));
+                    replicationService.start();
+                }
             }
 
             // Reset the key -- this step is critical if you want to

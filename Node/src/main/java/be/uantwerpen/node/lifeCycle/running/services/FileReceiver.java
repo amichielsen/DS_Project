@@ -1,5 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
+import be.uantwerpen.node.NodeParameters;
+import com.fasterxml.jackson.core.util.InternCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -7,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.Buffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -34,6 +37,7 @@ public class FileReceiver extends Thread{
                 System.out.println(responseMap);
                 String filename = (String) responseMap.get("name");
                 int size = (int) responseMap.get("length");
+                int id = (int) responseMap.get("id");
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
@@ -46,6 +50,11 @@ public class FileReceiver extends Thread{
                     fileOutputStream.write(buffer, 0, bytes);
                     size -= bytes;      // read upto file size
                 }
+
+                Map<String, Integer> places= new HashMap<>();
+                places.put("Local", id);
+                places.put("Replica", NodeParameters.id);
+                NodeParameters.bookkeeper.put(filename, places);
             }
             //fileOutputStream.close();
             //dataInputStream.close();

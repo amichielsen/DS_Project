@@ -2,12 +2,20 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.lifeCycle.running.services.FileSender;
+import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -29,7 +37,7 @@ public class Shutdown extends State {
             var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
             updateNextIdOfPreviousNode(previousIp,NodeParameters.nextID);
             updatePreviousIdOfNextNode(nextIp,NodeParameters.previousID);
-
+            this.sendFilesToPrevious();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -111,6 +119,51 @@ public class Shutdown extends State {
 
         }
         else return "localhost";
+    }
+
+
+    //File handling
+    public void sendFilesToPrevious(){
+        File dir = new File(NodeParameters.replicaFolder);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File child : directoryListing) {
+                HashMap<String, Integer> fileInfo = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
+                try {
+                    var client = HttpClient.newHttpClient();
+                    if(Objects.equals(fileInfo.get("Local"), NodeParameters.previousID)){
+                        var request = HttpRequest.newBuilder(
+                                        URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/status"))
+                                .build();
+                        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                        if (response.statusCode() == 200) {
+                            JSONParser parser = new JSONParser();
+                            JSONObject json = (JSONObject) parser.parse(response.body());
+                            // Adding to ip cache
+                            int previousID = ((Long) json.get("previousNeighbor")).intValue();
+                            FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(previousID).getHostAddress(),fileInfo.get("Local"));
+                            var request2 = HttpRequest.newBuilder(
+                                            URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/addLogEntry?filename="+child.getName()+"?log="+fileInfo))
+                                    .build();
+                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                        }
+                    }else{
+                        FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(),fileInfo.get("Local"));
+                        var request2 = HttpRequest.newBuilder(
+                                        URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/addLogEntry?filename="+child.getName()+"?log="+fileInfo))
+                                .build();
+                        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                    }
+                } catch (IOException | ParseException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    public void deleteLocalFiles(){
+
     }
 
 }

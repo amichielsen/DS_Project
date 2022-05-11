@@ -8,8 +8,9 @@ import be.uantwerpen.node.cron.CronJobSchedular;
 import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
 import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.FileReceiver;
-import be.uantwerpen.node.lifeCycle.running.services.FolderWatchdog;
+import be.uantwerpen.node.lifeCycle.running.services.LocalFolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
+import be.uantwerpen.node.lifeCycle.running.services.ReplicaFolderWatchdog;
 
 import java.io.File;
 
@@ -38,9 +39,9 @@ public class Running extends State {
         replicaFolder.mkdirs();
         NodeParameters.replicaFolder = replicaFolder.getPath();
         FileAnalyzer.run();
-        FolderWatchdog folderWatchdogLocal = new FolderWatchdog(localFolder.getPath());
+        LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        FolderWatchdog folderWatchdogReplica = new FolderWatchdog(replicaFolder.getPath());
+        ReplicaFolderWatchdog folderWatchdogReplica = new ReplicaFolderWatchdog(replicaFolder.getPath());
         folderWatchdogReplica.start();
         FileReceiver receiver = new FileReceiver();
         receiver.start();

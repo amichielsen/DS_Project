@@ -15,7 +15,7 @@ import java.util.Objects;
 public class FileSender {
 
 
-    public static void sendFile(String path, String host) throws IOException {
+    public static void sendFile(String path, String host, int id) throws IOException {
         Socket socket = new Socket(host,5044);
         DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -26,6 +26,7 @@ public class FileSender {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("name", file.getName());
         jsonObject.put("length", file.length());
+        jsonObject.put("id", id);
         printWriter.println(jsonObject.toString());
         System.out.println(jsonObject);
         printWriter.flush();

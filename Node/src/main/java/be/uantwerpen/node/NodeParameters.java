@@ -7,8 +7,12 @@ import be.uantwerpen.node.utils.Hash;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NodeParameters {
+
+    public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
     public static final Integer FAILURE_TRESHOLD = 5;
     public static boolean DEBUG = true;
     private static NodeParameters instance;
