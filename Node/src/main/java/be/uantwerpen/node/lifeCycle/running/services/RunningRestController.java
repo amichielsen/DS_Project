@@ -97,17 +97,17 @@ public class RunningRestController {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @DeleteMapping
+    @DeleteMapping(path ="/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
     }
 
-    @PutMapping
+    @PutMapping(path ="/addLogEntry")
     public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
          NodeParameters.bookkeeper.put(filename, log);
     }
 
-    @PostMapping
+    @PostMapping(path ="/localDeletion")
     public static void localDeletion(@RequestBody String filename){
         HashMap<String, Integer> info = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(filename);
         if(info.get("Download") != null){
