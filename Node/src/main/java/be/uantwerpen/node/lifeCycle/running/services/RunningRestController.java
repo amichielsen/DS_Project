@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -93,5 +94,15 @@ public class RunningRestController {
     @PostMapping(path ="/status")
     public static void postStatus(@RequestBody String payload) {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
+    }
+
+    @DeleteMapping
+    public static boolean deleteFile(@RequestBody String filename) {
+        return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
+    }
+
+    @PutMapping
+    public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
+         NodeParameters.bookkeeper.put(filename, log);
     }
 }

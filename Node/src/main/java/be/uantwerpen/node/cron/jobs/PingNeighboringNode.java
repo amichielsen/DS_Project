@@ -31,7 +31,7 @@ public class PingNeighboringNode extends CronJob {
         // Previous
         for (int i = 0; i < 6; i++) {
             try {
-                ping(nodeParameters.getIP(nodeParameters.getPreviousID()).getHostAddress());
+                ping(nodeParameters.getPreviousID());
                 break;
             } catch (InterruptedException | IOException e) {
                 if (i < 4) {
@@ -43,7 +43,7 @@ public class PingNeighboringNode extends CronJob {
                 } else {
                     e.printStackTrace();
                     System.out.println("[" + getName() + "] [Error] connection error with previous node (likely offline)");
-                    System.out.println(nodeParameters.getPreviousID());
+                    //Failure failure = new Failure();
                     Failure.getInstance().nodeFailure(nodeParameters.getPreviousID());
                     return;
                 }
@@ -57,7 +57,7 @@ public class PingNeighboringNode extends CronJob {
         for (int i = 0; i < 6; i++) {
             // Next
             try {
-                ping(nodeParameters.getIP(nodeParameters.getNextID()).getHostAddress());
+                ping(nodeParameters.getNextID());
                 break;
             } catch (InterruptedException | IOException e) {
                 if (i < 4) {
@@ -69,6 +69,7 @@ public class PingNeighboringNode extends CronJob {
                 } else {
                     System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
                     Failure.getInstance().nodeFailure(nodeParameters.getNextID());
+                    return;
                     //throw new RuntimeException(e);
                 }
             }
@@ -80,7 +81,8 @@ public class PingNeighboringNode extends CronJob {
         return "PingNeighboringNodeCron";
     }
 
-    private void ping(String ip) throws IOException, InterruptedException {
+    private void ping(int ID) throws IOException, InterruptedException {
+        String ip = nodeParameters.getIP(ID).getHostAddress();
         var client = HttpClient.newHttpClient();
 
         var request = HttpRequest.newBuilder(
@@ -91,9 +93,9 @@ public class PingNeighboringNode extends CronJob {
 
 
         if (response.statusCode() != 200) {
-            System.out.println("["+getName()+"] [Error] next node send non 200 code (likely shutting down/busy)");
+            System.out.println("["+getName()+"] [Error] node send non 200 code (likely shutting down/busy)");
             if (nodeParameters.getFailedNext() > NodeParameters.FAILURE_TRESHOLD) {
-                Failure.getInstance().nodeFailure(nodeParameters.getNextID());
+                Failure.getInstance().nodeFailure(ID);
                 nodeParameters.resFailedNext();
             }
             else

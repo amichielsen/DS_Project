@@ -21,7 +21,7 @@ import java.util.TreeMap;
  * 1. If we detect a failure we will get here and report to the NameServer.
  * 2. Find a new route!!!
  */
-public class Failure {
+public class Failure{
 
     private int failedID;
     private static final Failure instance = new Failure();
@@ -32,7 +32,6 @@ public class Failure {
     public static Failure getInstance(){
         return instance;
     }
-
 
     /**
      * Get prev and next node of failed node.
@@ -75,21 +74,29 @@ public class Failure {
             //update nodes
             try{
             if(previousNode == NodeParameters.id){
+                if(NodeParameters.DEBUG){
+                    System.out.println("I'm next ");
+                }
                 NodeParameters.nextID = nextNode;
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             } else if (nextNode == NodeParameters.id) {
+                if(NodeParameters.DEBUG){
+                    System.out.println("I'm prev ");
+                }
                 NodeParameters.previousID = previousNode;
                 updateNextIdOfPreviousNode(nextNode, previousNode);
             }
             else {
+                if(NodeParameters.DEBUG){
+                    System.out.println("Shouldn't come here");
+                }
                 updateNextIdOfPreviousNode(nextNode, previousNode);
                 updatePreviousIdOfNextNode(previousNode, nextNode);
-            }}catch (IOException | InterruptedException e) {
-                throw new RuntimeException(e);
-            }{
-
-                }
-
+            }
+            }catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                return;
+            }
             if (NodeParameters.DEBUG) {
                 System.out.println(response.body());
             }
@@ -105,6 +112,10 @@ public class Failure {
             var request = HttpRequest.newBuilder(
                             URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
                     .build();
+
+            if(NodeParameters.DEBUG){
+                System.out.println(request);
+            }
 
             // use the client to send the request
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -154,6 +165,9 @@ public class Failure {
             // use the client to send the request
             HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
+            if(NodeParameters.DEBUG){
+                System.out.println("Previous: " + hostIp);
+            }
             // the response:
             System.out.println(responses.body());
             return responses.body();
@@ -161,5 +175,7 @@ public class Failure {
         } else return "error: hostID is null";
     }
 
-
+    public void setFailedID(int failedID) {
+        this.failedID = failedID;
+    }
 }

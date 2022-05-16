@@ -100,6 +100,11 @@ public class MulticastReceiver extends Thread{
         socket.close();
     }
 
+    /**
+     * Checks whether this node should be the next of the node identified by nameHash
+     * @param nameHash the hash of the queried node
+     * @return returns true if this node is next otherwise false
+     */
     private boolean shouldBeNext(int nameHash){
         if((nameHash < NodeParameters.nextID && nameHash > NodeParameters.id)){ //Regular case
             return true;
@@ -108,6 +113,11 @@ public class MulticastReceiver extends Thread{
 
     }
 
+    /**
+     * Checks whether this node should be the previous one of the node identified by nameHash
+     * @param nameHash the hash of the queried node
+     * @return returns true if this node is the previous one otherwise false
+     */
     private boolean shouldBePrevious(int nameHash){
         if(nameHash > NodeParameters.previousID && nameHash < NodeParameters.id){ //Regular case
             return  true;

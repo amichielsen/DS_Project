@@ -1,13 +1,19 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
-public class FolderWatchdog extends Thread {
+public class LocalFolderWatchdog extends Thread {
+
+    private String path;
+
+    public LocalFolderWatchdog(String path) {
+        this.path = path;
+    }
+
     public void run() {
         WatchService watcher = null;
         try {
@@ -18,7 +24,7 @@ public class FolderWatchdog extends Thread {
 
         // wait for key to be signaled
         Path dir = null;
-        dir = Path.of("/root/data/");
+        dir = Path.of(this.path);
         System.out.println(dir);
         try {
             WatchKey key = dir.register(watcher,
@@ -33,7 +39,7 @@ public class FolderWatchdog extends Thread {
             try {
                 key = watcher.take();
             } catch (InterruptedException x) {
-                System.out.println("exjeption");
+                System.out.println("exception");
                 return;
             }
             for (WatchEvent<?> event : key.pollEvents()) {
@@ -48,12 +54,16 @@ public class FolderWatchdog extends Thread {
                 WatchEvent<Path> ev = (WatchEvent<Path>) event;
                 Path filename = ev.context();
 
+                if (ev.kind() == ENTRY_DELETE) {
+                    System.out.format("File Deteleted %s%n", filename);
+                }
+                else{
+                    System.out.format("New file %s%n", filename);
 
-                System.out.format("New file %s%n", filename);
-
-                // Run replication service
-                ReplicationService replicationService = new ReplicationService(filename);
-                replicationService.start();
+                    // Run replication service
+                    ReplicationService replicationService = new ReplicationService(Path.of(this.path + "/" + filename));
+                    replicationService.start();
+                }
             }
 
             // Reset the key -- this step is critical if you want to

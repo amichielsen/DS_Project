@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
@@ -42,9 +43,11 @@ public class ReplicationService extends Thread {
      */
     private final DataLocationCache dataLocationCache = DataLocationCache.getInstance();
     public void run() {
+        File f1 = new File(String.valueOf(this.filename));
         // 1. Get ID
-        int hash = Hash.generateHash(String.valueOf(this.filename));
+        int hash = Hash.generateHash(f1.getName());
         int id = NodeParameters.id;
+        String ip = "";
         // 2. Compare ID with itself to check where it belongs
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
             // For myself - LOCAL and REPLICA
@@ -62,7 +65,7 @@ public class ReplicationService extends Thread {
                 var client = HttpClient.newHttpClient();
 
                 var request = HttpRequest.newBuilder(
-                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+this.filename))
+                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+f1.getName()))
                     .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -71,10 +74,11 @@ public class ReplicationService extends Thread {
                     JSONParser parser = new JSONParser();
                     JSONObject json = (JSONObject) parser.parse(response.body());
                     // Adding to ip cache
-                    id = (int) json.get("id");
-                    IpTableCache.getInstance().addIp((Integer) json.get("id"), InetAddress.getByName((String) json.get("ip")));
+                    id = ((Long) json.get("id")).intValue();
+                    ip = String.valueOf(json.get("ip"));
+                    IpTableCache.getInstance().addIp(id, InetAddress.getByName(ip));
 
-                    System.out.println("[RS] [Info] the correct node id/ip is: "+ json.get("id")+" | "+ json.get("ip"));
+                    System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
                 } else {
                     System.out.println("[RS] [Error] connection error with name server (likely offline)");
                     return;
@@ -90,7 +94,11 @@ public class ReplicationService extends Thread {
             // Send to new
             // Werk van Lexieflexie superRTOS 2000
 
-
+            try {
+                FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
         }
 
