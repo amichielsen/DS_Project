@@ -1,4 +1,5 @@
 package be.uantwerpen.node.agents;
 
-public class FailureAgent {
+public class FailureAgent extends Agent{
+
 }

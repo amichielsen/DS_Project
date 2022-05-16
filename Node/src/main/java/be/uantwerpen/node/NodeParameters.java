@@ -13,6 +13,8 @@ import java.util.Map;
 public class NodeParameters {
 
     public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
+
+    public static Map<String, String> systemFiles = new HashMap<>();
     public static final Integer FAILURE_TRESHOLD = 5;
     public static boolean DEBUG = true;
     private static NodeParameters instance;

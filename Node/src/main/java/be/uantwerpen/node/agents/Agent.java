@@ -1,4 +1,10 @@
 package be.uantwerpen.node.agents;
 
-public class Agent {
+import java.io.Serializable;
+
+public class Agent implements Runnable, Serializable {
+    @Override
+    public void run() {
+
+    }
 }

@@ -132,14 +132,14 @@ public class Shutdown extends State {
                             JSONObject json = (JSONObject) parser.parse(response.body());
                             // Adding to ip cache
                             int previousID = ((Long) json.get("previousNeighbor")).intValue();
-                            FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(previousID).getHostAddress(), fileInfo.get("Local"));
+                            FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(previousID).getHostAddress(), fileInfo.get("Local"), "Owner");
                             var request2 = HttpRequest.newBuilder(
                                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/ipa/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
                                     .build();
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
                     } else {
-                        FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), fileInfo.get("Local"));
+                        FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), fileInfo.get("Local"), "Owner");
                         var request2 = HttpRequest.newBuilder(
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/ipa/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
                                 .build();

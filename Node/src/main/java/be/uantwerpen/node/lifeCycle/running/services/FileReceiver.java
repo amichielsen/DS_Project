@@ -38,6 +38,7 @@ public class FileReceiver extends Thread{
                 String filename = (String) responseMap.get("name");
                 int size = (int) responseMap.get("length");
                 int id = (int) responseMap.get("id");
+                String type = (String) responseMap.get("type");
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
@@ -46,15 +47,16 @@ public class FileReceiver extends Thread{
 
                 int bytes = 0;
                 byte[] buffer = new byte[4 * 1024];
-                while (size > 0 && (bytes = dataInputStream.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
+                while (size > 0 && (bytes = dataInputStream.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
                     fileOutputStream.write(buffer, 0, bytes);
                     size -= bytes;      // read upto file size
                 }
-
-                Map<String, Integer> places= new HashMap<>();
-                places.put("Local", id);
-                places.put("Replica", NodeParameters.id);
-                NodeParameters.bookkeeper.put(filename, places);
+                if(type.equals("Owner")) {
+                    Map<String, Integer> places = new HashMap<>();
+                    places.put("Local", id);
+                    places.put("Owner", NodeParameters.id);
+                    NodeParameters.bookkeeper.put(filename, places);
+                }
             }
             //fileOutputStream.close();
             //dataInputStream.close();

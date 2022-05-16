@@ -95,7 +95,7 @@ public class ReplicationService extends Thread {
             // Werk van Lexieflexie superRTOS 2000
 
             try {
-                FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id);
+                FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id, "Owner");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
