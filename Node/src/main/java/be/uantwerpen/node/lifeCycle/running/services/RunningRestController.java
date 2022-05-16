@@ -97,6 +97,21 @@ public class RunningRestController {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
+    /**
+     * POST agent -> changes settings on the fly (all the payload parameters are optional)
+     * {
+     *     "agent": SYNC | FAILURE
+     * }
+     * returns 200 if success, 503 if not in running, 500 if failed for other reason
+     */
+    @PostMapping(path ="/agent")
+    public static void postAgent(@RequestParam(value = "agent") String agent) {
+        System.out.println(agent);
+
+        throw new ResponseStatusException(HttpStatus.OK);
+    }
+
+
     @DeleteMapping(path ="/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
