@@ -90,7 +90,7 @@ public class RunningRestController {
      *     "newPreviousNeighbor: _new previousNeighbor for this node,
      *     "newNextNeighbor: _new nextNeighbor for this node,
      * }
-     * returns 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
+     * @return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/status")
     public static void postStatus(@RequestBody String payload) {
@@ -112,17 +112,17 @@ public class RunningRestController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping(path ="/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
     }
 
-    @PutMapping
+    @PutMapping(path ="/addLogEntry")
     public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
          NodeParameters.bookkeeper.put(filename, log);
     }
 
-    @PostMapping
+    @PostMapping(path ="/localDeletion")
     public static void localDeletion(@RequestBody String filename){
         HashMap<String, Integer> info = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(filename);
         if(info.get("Download") != null){

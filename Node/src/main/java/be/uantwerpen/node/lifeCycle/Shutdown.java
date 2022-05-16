@@ -9,7 +9,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.annotation.PreDestroy;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +24,6 @@ import java.util.Objects;
  * At the same time we also let this know to our NameServer.
  * Now we can peacefully go to sleep...
  */
-
 public class Shutdown extends State {
     public Shutdown(LifeCycleController lifeCycleController) {
         super(lifeCycleController);
@@ -33,7 +31,6 @@ public class Shutdown extends State {
 
     @Override
     public void run() {
-        System.out.println("Shutdown");
 
         try {
             var previousIp = getIPfromHostId(NodeParameters.getInstance().getPreviousID());
@@ -162,16 +159,17 @@ public class Shutdown extends State {
             for (File child : directoryListing) {
                 try {
                     var client = HttpClient.newHttpClient();
-                    String fileInfo = "a";
-                    var request2 = HttpRequest.newBuilder(
-                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/ipa/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
+                    var request = HttpRequest.newBuilder(
+                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/ipa/localDeletion?filename=" + child.getName()))
+                            .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();
-                    HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 } catch (IOException | InterruptedException e) {
                     throw new RuntimeException(e);
                 }
+
             }
         }
+
     }
 }
-
