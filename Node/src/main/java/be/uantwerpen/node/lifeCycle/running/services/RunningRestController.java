@@ -90,12 +90,27 @@ public class RunningRestController {
      *     "newPreviousNeighbor: _new previousNeighbor for this node,
      *     "newNextNeighbor: _new nextNeighbor for this node,
      * }
-     * @return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
+     * returns 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/status")
     public static void postStatus(@RequestBody String payload) {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
+
+    /**
+     * POST agent -> changes settings on the fly (all the payload parameters are optional)
+     * {
+     *     "agent": SYNC | FAILURE
+     * }
+     * returns 200 if success, 503 if not in running, 500 if failed for other reason
+     */
+    @PostMapping(path ="/agent")
+    public static void postAgent(@RequestParam(value = "agent") String agent) {
+        System.out.println(agent);
+
+        throw new ResponseStatusException(HttpStatus.OK);
+    }
+
 
     @DeleteMapping
     public static boolean deleteFile(@RequestBody String filename) {
