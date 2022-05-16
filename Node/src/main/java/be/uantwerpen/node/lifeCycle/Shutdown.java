@@ -163,7 +163,21 @@ public class Shutdown extends State {
     }
 
     public void deleteLocalFiles(){
-
+        File dir = new File(NodeParameters.localFolder);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            for (File child : directoryListing) {
+                try {
+                    var client = HttpClient.newHttpClient();
+                        var request2 = HttpRequest.newBuilder(
+                                        URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/addLogEntry?filename="+child.getName()+"?log="+fileInfo))
+                                .build();
+                        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                    }
+                } catch (IOException | ParseException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
     }
 
 }

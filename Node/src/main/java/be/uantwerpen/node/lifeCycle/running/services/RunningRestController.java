@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -104,5 +105,18 @@ public class RunningRestController {
     @PutMapping
     public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
          NodeParameters.bookkeeper.put(filename, log);
+    }
+
+    @PostMapping
+    public static void localDeletion(@RequestBody String filename){
+        HashMap<String, Integer> info = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(filename);
+        if(info.get("Download") != null){
+            NodeParameters.bookkeeper.get(filename).remove("Local");
+        }
+        else{
+            NodeParameters.bookkeeper.remove(filename);
+            File toDelete = new File(NodeParameters.replicaFolder + "/"+filename);
+            toDelete.delete();
+        }
     }
 }
