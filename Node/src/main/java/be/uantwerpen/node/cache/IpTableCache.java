@@ -45,6 +45,7 @@ public class IpTableCache {
 
                     // print result
                     System.out.println("[IPCACHE] [Done] added following IP to cache: "+ response);
+                    System.out.println(response.toString());
                     return InetAddress.getByName(response.toString());
                 } else {
                     System.out.println("[IPCACHE] [Error] name server send non 200 code (likely shutting down/busy)");
