@@ -10,7 +10,6 @@ import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.FileReceiver;
 import be.uantwerpen.node.lifeCycle.running.services.LocalFolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
-import be.uantwerpen.node.lifeCycle.running.services.ReplicaFolderWatchdog;
 
 import java.io.File;
 

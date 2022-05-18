@@ -14,10 +14,10 @@ import java.util.Queue;
 
 public class NodeParameters {
                 // Bestandsnaam - Local/replica - ID van houder
-    public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
+    //public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
 
     public static LifeCycleController lifeCycleController;
-    public static HashMap<String, Boolean> systemFiles = new HashMap<>();
+    //public static HashMap<String, Boolean> systemFiles = new HashMap<>();
     public static Queue<String> lockRequest = new LinkedList<>();
     public static Queue<String> removeLocks = new LinkedList<>();
     public static final Integer FAILURE_TRESHOLD = 5;
