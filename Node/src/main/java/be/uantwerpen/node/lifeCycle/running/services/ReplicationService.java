@@ -116,7 +116,7 @@ public class ReplicationService extends Thread {
 
 
         // 3. Add to Filesystem
-        FileSystem.addLocal(filename.toString(),id);
+        FileSystem.addLocal(f1.getName(),id);
 
 
     }
