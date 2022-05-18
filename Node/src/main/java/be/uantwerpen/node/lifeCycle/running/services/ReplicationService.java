@@ -16,6 +16,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReplicationService extends Thread {
     private final Path filename;
@@ -52,55 +54,65 @@ public class ReplicationService extends Thread {
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
             // For myself - LOCAL and REPLICA
             System.out.println("File is for me");
-        } else if (hash <= NodeParameters.id && hash > NodeParameters.previousID) {
-            // Send to previous - LOCAL
-            System.out.println("File is for previous");
-            id = NodeParameters.previousID;
-        } else {
-            // Send to other - LOCAL
-            System.out.println("File is for someone else");
+            Map<String, Integer> places = new HashMap<>();
+            places.put("Local", id);
+            places.put("Owner", NodeParameters.id);
+            NodeParameters.bookkeeper.put(this.filename.toString(), places);
+        }
+        else{
+            if (hash <= NodeParameters.id && hash > NodeParameters.previousID) {
+                // Send to previous - LOCAL
+                System.out.println("File is for previous");
+                id = NodeParameters.previousID;
+                ip = IpTableCache.getInstance().getIp(id).getHostAddress();
+            } else {
+                // Send to other - LOCAL
+                System.out.println("File is for someone else");
 
-            // Contact NS for correct id
-            try {
-                var client = HttpClient.newHttpClient();
+                // Contact NS for correct id
+                try {
+                    var client = HttpClient.newHttpClient();
 
-                var request = HttpRequest.newBuilder(
-                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+f1.getName()))
-                    .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    var request = HttpRequest.newBuilder(
+                                    URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+f1.getName()))
+                            .build();
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-                if (response.statusCode() == 200) {
-                    System.out.println(response.body());
-                    JSONParser parser = new JSONParser();
-                    JSONObject json = (JSONObject) parser.parse(response.body());
-                    // Adding to ip cache
-                    id = ((Long) json.get("id")).intValue();
-                    ip = String.valueOf(json.get("ip"));
-                    IpTableCache.getInstance().addIp(id, InetAddress.getByName(ip));
+                    if (response.statusCode() == 200) {
+                        System.out.println(response.body());
+                        JSONParser parser = new JSONParser();
+                        JSONObject json = (JSONObject) parser.parse(response.body());
+                        // Adding to ip cache
+                        id = ((Long) json.get("id")).intValue();
+                        ip = String.valueOf(json.get("ip"));
+                        IpTableCache.getInstance().addIp(id, InetAddress.getByName(ip));
 
-                    System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
-                } else {
-                    System.out.println("[RS] [Error] connection error with name server (likely offline)");
+                        System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
+                    } else {
+                        System.out.println("[RS] [Error] connection error with name server (likely offline)");
+                        return;
+                    }
+
+                } catch (IOException | InterruptedException e) {
+                    System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
                     return;
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
                 }
 
-            } catch (IOException | InterruptedException e) {
-                System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
-                return;
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
+                // Send to new
+                // Werk van Lexieflexie superRTOS 2000
             }
-
-            // Send to new
-            // Werk van Lexieflexie superRTOS 2000
-
             try {
+                if(NodeParameters.DEBUG){
+                    System.out.println("File is being sent");
+                }
                 FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id, "Owner");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
-
         }
+
 
         // 3. Add to cache
         DataLocationCache.getInstance().addFile(hash, String.valueOf(filename), true, id);

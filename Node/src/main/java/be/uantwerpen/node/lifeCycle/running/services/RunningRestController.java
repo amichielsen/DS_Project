@@ -4,10 +4,12 @@ import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.fileSystem.EntryType;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.lifeCycle.Shutdown;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.w3c.dom.Node;
 
 import java.io.File;
 import java.util.HashMap;
@@ -133,5 +135,10 @@ public class RunningRestController {
             FileSystem.removeFile(filename);
             new File(NodeParameters.replicaFolder + "/"+filename).delete();
         }
+    }
+
+    @PostMapping(path="/shutdown")
+    public static void shutdown(){
+        NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
 }

@@ -10,6 +10,7 @@ import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.FileReceiver;
 import be.uantwerpen.node.lifeCycle.running.services.LocalFolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
+import be.uantwerpen.node.lifeCycle.running.services.ReplicaFolderWatchdog;
 
 import java.io.File;
 
@@ -31,6 +32,8 @@ public class Running extends State {
     public void run() {
         MulticastReceiver multicastReceiver = new MulticastReceiver();
         multicastReceiver.start();
+        FileReceiver receiver = new FileReceiver();
+        receiver.start();
         File localFolder = new File("/root/data/local");
         localFolder.mkdirs();
         NodeParameters.localFolder = localFolder.getPath();
@@ -40,8 +43,8 @@ public class Running extends State {
         FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        FileReceiver receiver = new FileReceiver();
-        receiver.start();
+        //ReplicaFolderWatchdog folderWatchdogReplica = new ReplicaFolderWatchdog(replicaFolder.getPath());
+        //folderWatchdogReplica.start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         //cron.addCronJob(new SendCurrentStatus(), 60);

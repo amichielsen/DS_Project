@@ -13,7 +13,9 @@ public class NodeApplication {
 
     public static void main(String[] args) throws InterruptedException, UnknownHostException {
         NodeParameters.getInstance().setup(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost(), Hash.generateHash(InetAddress.getLocalHost().getHostName()) );
-        Thread t1 = new Thread(new LifeCycleController());
+        LifeCycleController lifeCycleController = new LifeCycleController();
+        Thread t1 = new Thread(lifeCycleController);
+        NodeParameters.lifeCycleController = lifeCycleController;
         t1.start();
         SpringApplication.run(NodeApplication.class, args);
     }

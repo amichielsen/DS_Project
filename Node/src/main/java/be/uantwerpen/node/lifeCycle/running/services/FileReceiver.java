@@ -42,7 +42,7 @@ public class FileReceiver extends Thread{
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
-
+                System.out.println("Delivered");
                 FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" + filename);
 
                 int bytes = 0;
@@ -57,6 +57,7 @@ public class FileReceiver extends Thread{
                     places.put("Owner", NodeParameters.id);
                     NodeParameters.bookkeeper.put(filename, places);
                 }
+                System.out.println(NodeParameters.bookkeeper);
             }
             //fileOutputStream.close();
             //dataInputStream.close();
