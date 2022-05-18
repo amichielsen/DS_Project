@@ -113,6 +113,7 @@ public class RunningRestController {
      */
     @PostMapping(path ="/agent")
     public static void postAgent(@RequestParam(value = "agent") Agent agent) {
+        if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
         agent.run();
 
         throw new ResponseStatusException(HttpStatus.OK);
