@@ -34,6 +34,7 @@ public class FailureAgent extends Agent {
         // 1. Find the new correct node
         // 2. Send the file to that instance
         // 3. Update list
+        /*
         FileSystem.getLocalFiles().entrySet()
                                 .stream()
                                 .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
@@ -67,11 +68,15 @@ public class FailureAgent extends Agent {
             String ip = String.valueOf(json.get("ip"));
 
             // Send file
-            FileSender.sendFile(String path, String host, int id, String type)
+            //FileSender.sendFile(String path, String host, int id, String type)
 
 
         } catch (IOException | InterruptedException | ParseException e) {
             throw new RuntimeException(e);
         }
+        */
     }
+
 }
+
+
