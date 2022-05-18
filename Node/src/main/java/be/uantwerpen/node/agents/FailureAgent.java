@@ -32,9 +32,9 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
-        System.out.println("[F-A] Node "+failedNode+ " has failed!");
+        System.out.println("[F-A] Node "+this.failedNode+ " has failed!");
         System.out.println("[F-A] Agent Started at node "+startingNode+ " !");
-        if (!(hasBeenRunTimes == 0) & startingNode == NodeParameters.id) return;
+        if (!(this.hasBeenRunTimes == 0) & this.startingNode == NodeParameters.id) return;
         // File has been uploaded to this node, is not a matching hash -> replicated instance has failed
         // 1. Find the new correct node
         // 2. Send the file to that instance
@@ -42,7 +42,7 @@ public class FailureAgent extends Agent {
         System.out.println("[F-A] Sending new replicated files.");
         FileSystem.getLocalFiles().entrySet()
                                 .stream()
-                                .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
+                                .filter( e -> e.getValue().getReplicatedOnNode() == this.failedNode)
                                 .forEach(e -> newReplication(e.getKey(),e.getValue()));
 
         // File has been replicated to this node, is a matching hash, local instance has failed -> delete
