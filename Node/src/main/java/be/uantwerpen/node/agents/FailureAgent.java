@@ -12,6 +12,7 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
+        /*
         for (Map.Entry<String, Map<String, Integer>> file : NodeParameters.bookkeeper.entrySet()) {
             for (Map.Entry<String, Integer> entry : file.getValue().entrySet()) {
 
@@ -30,6 +31,8 @@ public class FailureAgent extends Agent {
 
             System.out.println(file);
         }
+
+         */
 
     }
 }
