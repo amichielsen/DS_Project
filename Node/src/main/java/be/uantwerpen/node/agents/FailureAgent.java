@@ -32,32 +32,32 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
-        System.out.println("[F-A] Node "+this.failedNode+ " has failed!");
-        System.out.println("[F-A] Agent Started at node "+startingNode+ " !");
-        if (!(this.hasBeenRunTimes == 0) & this.startingNode == NodeParameters.id) return;
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Node "+failedNode+ " has failed!");
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Agent Started at node "+startingNode+ " !");
+        if (!(hasBeenRunTimes == 0) & startingNode == NodeParameters.id) return;
         // File has been uploaded to this node, is not a matching hash -> replicated instance has failed
         // 1. Find the new correct node
         // 2. Send the file to that instance
         // 3. Update list
-        System.out.println("[F-A] Sending new replicated files.");
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Sending new replicated files.");
         FileSystem.getLocalFiles().entrySet()
                                 .stream()
-                                .filter( e -> e.getValue().getReplicatedOnNode() == this.failedNode)
+                                .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
                                 .forEach(e -> newReplication(e.getKey(),e.getValue()));
 
         // File has been replicated to this node, is a matching hash, local instance has failed -> delete
-        System.out.println("[F-A] Deleting replicated files...");
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Deleting replicated files...");
         FileSystem.getReplicatedFiles(false).entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
 
 
         // File has been downloaded to this node -> delete
-        System.out.println("[F-A] Deleting downloaded files...");
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Deleting downloaded files...");
         FileSystem.getDownloadedFiles().entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
 
         // Sending
-        System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
         try {
             var request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent?agent="+this))
@@ -65,9 +65,9 @@ public class FailureAgent extends Agent {
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             hasBeenRunTimes++;
-            System.out.println("[F-A] Done. Agent has been ran "+hasBeenRunTimes+" times. The dude is getting old.");
-            if (hasBeenRunTimes > 50) System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
-            if (response.statusCode() != 200) System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
+            if(NodeParameters.DEBUG) System.out.println("[F-A] Done. Agent has been ran "+hasBeenRunTimes+" times. The dude is getting old.");
+            if (hasBeenRunTimes > 50) if(NodeParameters.DEBUG) System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
+            if (response.statusCode() != 200) if(NodeParameters.DEBUG) System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
 
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
@@ -95,7 +95,7 @@ public class FailureAgent extends Agent {
 
             // Send file
             FileSender.sendFile(NodeParameters.localFolder+"/"+file, ip, id, "Owner");
-            System.out.print(" [DONE]");
+            if(NodeParameters.DEBUG) System.out.print(" [DONE]");
 
 
         } catch (IOException | InterruptedException | ParseException e) {

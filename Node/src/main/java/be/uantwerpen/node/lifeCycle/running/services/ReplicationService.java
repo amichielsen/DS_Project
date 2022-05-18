@@ -3,6 +3,7 @@ package be.uantwerpen.node.lifeCycle.running.services;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.DataLocationCache;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -53,7 +54,7 @@ public class ReplicationService extends Thread {
         // 2. Compare ID with itself to check where it belongs
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
             // For myself - LOCAL and REPLICA
-            System.out.println("File is for me");
+            if(NodeParameters.DEBUG) System.out.println("File is for me");
             Map<String, Integer> places = new HashMap<>();
             places.put("Local", id);
             places.put("Owner", NodeParameters.id);
@@ -87,14 +88,14 @@ public class ReplicationService extends Thread {
                         ip = String.valueOf(json.get("ip"));
                         IpTableCache.getInstance().addIp(id, InetAddress.getByName(ip));
 
-                        System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
+                        if(NodeParameters.DEBUG) System.out.println("[RS] [Info] the correct node id/ip is: "+ id+" | "+ ip);
                     } else {
-                        System.out.println("[RS] [Error] connection error with name server (likely offline)");
+                        if(NodeParameters.DEBUG) System.out.println("[RS] [Error] connection error with name server (likely offline)");
                         return;
                     }
 
                 } catch (IOException | InterruptedException e) {
-                    System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
+                    if(NodeParameters.DEBUG) System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
                     return;
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
@@ -114,8 +115,8 @@ public class ReplicationService extends Thread {
         }
 
 
-        // 3. Add to cache
-        //DataLocationCache.getInstance().addFile(hash, String.valueOf(filename), true, id);
+        // 3. Add to Filesystem
+        FileSystem.addLocal(filename.toString(),id);
 
 
     }
