@@ -109,6 +109,7 @@ public class Shutdown extends State {
                         var request = HttpRequest.newBuilder(
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/status"))
                                 .build();
+                        System.out.println(request);
                         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
                         if (response.statusCode() == 200) {
