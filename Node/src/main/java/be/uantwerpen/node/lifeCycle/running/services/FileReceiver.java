@@ -1,32 +1,29 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import com.fasterxml.jackson.core.util.InternCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Service listening to receive files
  */
 public class FileReceiver extends Thread{
 
-    public FileReceiver(){
-    }
+    public FileReceiver(){}
 
     public void run() {
 
         try{
             ServerSocket serverSocket = new ServerSocket(5044);
             System.out.println("listening to port:5044");
-            while(true) {
+            while (true) {
+
                 Socket clientSocket = serverSocket.accept();
                 System.out.println(clientSocket + " connected.");
                 DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
@@ -38,23 +35,25 @@ public class FileReceiver extends Thread{
                 String filename = (String) responseMap.get("name");
                 int size = (int) responseMap.get("length");
                 int id = (int) responseMap.get("id");
+                String type = (String) responseMap.get("type");
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
-
+                System.out.println("Delivered");
                 FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" + filename);
 
                 int bytes = 0;
                 byte[] buffer = new byte[4 * 1024];
-                while (size > 0 && (bytes = dataInputStream.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
+                while (size > 0 && (bytes = dataInputStream.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
                     fileOutputStream.write(buffer, 0, bytes);
                     size -= bytes;      // read upto file size
                 }
-
-                Map<String, Integer> places= new HashMap<>();
-                places.put("Local", id);
-                places.put("Replica", NodeParameters.id);
-                NodeParameters.bookkeeper.put(filename, places);
+                if(type.equals("Owner")) {
+                    if(FileSystem.addReplica(filename, id) == -1){
+                        FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+                    }
+                }
+                //System.out.println(NodeParameters.bookkeeper);
             }
             //fileOutputStream.close();
             //dataInputStream.close();

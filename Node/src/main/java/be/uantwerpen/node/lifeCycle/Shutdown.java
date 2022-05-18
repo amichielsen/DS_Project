@@ -3,6 +3,8 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import org.json.simple.JSONObject;
@@ -15,7 +17,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -35,9 +39,10 @@ public class Shutdown extends State {
         try {
             var previousIp = getIPfromHostId(NodeParameters.getInstance().getPreviousID());
             var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
-            updateNextIdOfPreviousNode(previousIp,NodeParameters.nextID);
-            updatePreviousIdOfNextNode(nextIp,NodeParameters.previousID);
+            updateNextIdOfPreviousNode(previousIp, NodeParameters.nextID);
+            updatePreviousIdOfNextNode(nextIp, NodeParameters.previousID);
             this.sendFilesToPrevious();
+            this.deleteLocalFiles();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -46,14 +51,13 @@ public class Shutdown extends State {
 
     //contact previous node to update its next
     public String updateNextIdOfPreviousNode(String hostIp, Integer nextHostId) throws IOException, InterruptedException {
-        if(Objects.nonNull(nextHostId))
-        {
+        if (Objects.nonNull(nextHostId)) {
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request
             var request = HttpRequest.newBuilder(
-                    URI.create("http://"+hostIp+ ":8080/api/updateNext?hostId="+ nextHostId))
+                            URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
                     .build();
 
             // use the client to send the request
@@ -63,20 +67,18 @@ public class Shutdown extends State {
             System.out.println(response.body());
             return response.body();
 
-        }
-        else return "error: hostID is null";
+        } else return "error: hostID is null";
     }
 
     //contact previous node to update its next
     public String updatePreviousIdOfNextNode(String hostIp, Integer previousHostId) throws IOException, InterruptedException {
-        if(Objects.nonNull(previousHostId))
-        {
+        if (Objects.nonNull(previousHostId)) {
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request
             var request = HttpRequest.newBuilder(
-                    URI.create("http://"+hostIp+ ":8080/api/updatePrevious?hostId="+ previousHostId))
+                            URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
                     .build();
 
             // use the client to send the request
@@ -86,28 +88,22 @@ public class Shutdown extends State {
             System.out.println(response.body());
             return response.body();
 
-        }
-        else return "error: hostID is null";
+        } else return "error: hostID is null";
     }
 
 
-
-
-
-        //remove itself from Naming server map
-
+    //remove itself from Naming server map
 
 
     public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
 
-        if(Objects.nonNull(hostId))
-        {
+        if (Objects.nonNull(hostId)) {
             // create a client
             var client = HttpClient.newHttpClient();
 
             // create a request
             var request = HttpRequest.newBuilder(
-                    URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/host2IP?host="+ hostId))
+                            URI.create("http://" + NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/host2IP?host=" + hostId))
                     .build();
 
             // use the client to send the request
@@ -117,23 +113,24 @@ public class Shutdown extends State {
             System.out.println(response.body());
             return response.body();
 
-        }
-        else return "localhost";
+        } else return "localhost";
     }
 
 
     //File handling
-    public void sendFilesToPrevious(){
+    public void sendFilesToPrevious() {
         File dir = new File(NodeParameters.replicaFolder);
         File[] directoryListing = dir.listFiles();
+
         if (directoryListing != null) {
-            for (File child : directoryListing) {
-                HashMap<String, Integer> fileInfo = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
+            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> replicatedFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getReplicatedFiles(true);
+            for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
+                Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
                 try {
                     var client = HttpClient.newHttpClient();
-                    if(Objects.equals(fileInfo.get("Local"), NodeParameters.previousID)){
+                    if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
                         var request = HttpRequest.newBuilder(
-                                        URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/status"))
+                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/status"))
                                 .build();
                         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -142,16 +139,18 @@ public class Shutdown extends State {
                             JSONObject json = (JSONObject) parser.parse(response.body());
                             // Adding to ip cache
                             int previousID = ((Long) json.get("previousNeighbor")).intValue();
-                            FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(previousID).getHostAddress(),fileInfo.get("Local"));
+                            FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
+
                             var request2 = HttpRequest.newBuilder(
-                                            URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/addLogEntry?filename="+child.getName()+"?log="+fileInfo))
+                                            URI.create("http://" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                     .build();
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
-                    }else{
-                        FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(),fileInfo.get("Local"));
+                    } else {
+
+                        FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                         var request2 = HttpRequest.newBuilder(
-                                        URI.create("http://"+IpTableCache.getInstance().getIp(NodeParameters.previousID)+":8080/ipa/addLogEntry?filename="+child.getName()+"?log="+fileInfo))
+                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                 .build();
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                     }
@@ -162,8 +161,25 @@ public class Shutdown extends State {
         }
     }
 
-    public void deleteLocalFiles(){
+    public void deleteLocalFiles() {
+        File dir = new File(NodeParameters.localFolder);
+        File[] directoryListing = dir.listFiles();
+        if (directoryListing != null) {
+            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> localFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getLocalFiles();
+            for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
+                try {
+                    var client = HttpClient.newHttpClient();
+                    var request = HttpRequest.newBuilder(
+                                    URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
+                            .POST(HttpRequest.BodyPublishers.ofString(""))
+                            .build();
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                } catch (IOException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
 
     }
-
 }

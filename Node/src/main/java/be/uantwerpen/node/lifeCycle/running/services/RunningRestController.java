@@ -1,11 +1,17 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.fileSystem.EntryType;
+import be.uantwerpen.node.fileSystem.FileParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.lifeCycle.Shutdown;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.w3c.dom.Node;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -96,13 +102,48 @@ public class RunningRestController {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
-    @DeleteMapping
+    /**
+     * POST agent -> changes settings on the fly (all the payload parameters are optional)
+     * {
+     *     "agent": SYNC | FAILURE
+     * }
+     * returns 200 if success, 503 if not in running, 500 if failed for other reason
+     */
+    @PostMapping(path ="/agent")
+    public static void postAgent(@RequestParam(value = "agent") String agent) {
+        System.out.println(agent);
+
+        throw new ResponseStatusException(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(path ="/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
     }
 
-    @PutMapping
-    public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
-         NodeParameters.bookkeeper.put(filename, log);
+    @PutMapping(path ="/addLogEntry")
+    public static void addLogEntry(@RequestBody String filename, FileParameters parameters){
+         FileSystem.fs.put(filename, parameters);
+    }
+
+    @PutMapping(path="/changeOwner")
+    public static void changeOwner(@RequestBody String filename){
+        FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+    }
+
+    @PostMapping(path ="/localDeletion")
+    public static void localDeletion(@RequestBody String filename){
+        if (FileSystem.getFileParameters(filename).getEntryType() == EntryType.DOWNLOADED) {
+            FileSystem.removeFile(filename);
+        } else {
+            FileSystem.removeFile(filename);
+            new File(NodeParameters.replicaFolder + "/"+filename).delete();
+        }
+    }
+
+    @PostMapping(path="/shutdown")
+    public static void shutdown(){
+        NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
 }
