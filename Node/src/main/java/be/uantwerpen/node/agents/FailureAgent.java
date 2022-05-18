@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class FailureAgent extends Agent {
     private final int startingNode;
     private int hasBeenRunTimes;
-    private int failedNode;
+    private final int failedNode;
     public FailureAgent(int failedNode) {
         this.failedNode = failedNode;
         this.startingNode = NodeParameters.id;
