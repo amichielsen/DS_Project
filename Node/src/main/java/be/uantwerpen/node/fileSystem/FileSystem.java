@@ -38,6 +38,8 @@ public class FileSystem {
     public static int addReplica(String file, int LocalID) {
         if (fs.containsKey(file)) return -1;
         try {
+            if(NodeParameters.DEBUG)
+                System.out.println("File to be added: " + file);
             fs.put(file, new FileParameters(REPLICA, LocalID));
             return 0;
         } catch (InstantiationException e) {
