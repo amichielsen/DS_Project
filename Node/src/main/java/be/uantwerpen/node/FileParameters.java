@@ -6,17 +6,19 @@ public class FileParameters {
     public FileParameters() {
     }
 
-    public FileParameters(Integer FileId, String FileName, Boolean LocalOrReplica, Integer ReplicaLocation) {
+    public FileParameters(Integer FileId, String FileName, Boolean LocalOrReplica, Integer ReplicaLocation, Integer LocalLocation) {
         this.fileId = FileId;
         this.fileName = FileName;
         this.localOrReplica = LocalOrReplica;
         this.replicaLocation = ReplicaLocation;
+        this.localLocation = LocalLocation;
     }
 
     private Integer fileId;
     private String fileName;
     private Boolean localOrReplica;
     private Integer replicaLocation;
+    private Integer localLocation;
 
 
     public Integer FileId() {
@@ -48,6 +50,13 @@ public class FileParameters {
 
     public void setReplicaLocation(Integer ReplicaLocation) {
         this.replicaLocation = ReplicaLocation;
+    }
+    public Integer LocalLocation() {
+        return localLocation;
+    }
+
+    public void setLocalLocation(Integer LocalLocation) {
+        this.localLocation = LocalLocation;
     }
 
     @Override

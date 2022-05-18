@@ -1,6 +1,8 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.agents.Agent;
+import be.uantwerpen.node.agents.FailureAgent;
 import be.uantwerpen.node.fileSystem.EntryType;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
@@ -110,8 +112,8 @@ public class RunningRestController {
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/agent")
-    public static void postAgent(@RequestParam(value = "agent") String agent) {
-        System.out.println(agent);
+    public static void postAgent(@RequestParam(value = "agent") Agent agent) {
+        agent.run();
 
         throw new ResponseStatusException(HttpStatus.OK);
     }

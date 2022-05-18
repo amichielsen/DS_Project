@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <servers>
     <server>
+        <hash>5006</hash>
+        <ip>192.168.56.1</ip>
+    </server>
+    <server>
         <hash>28457</hash>
         <ip>127.0.0.1</ip>
     </server>
