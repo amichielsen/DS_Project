@@ -27,7 +27,7 @@ import java.util.Queue;
  */
 public class SyncAgent extends Agent {
 
-
+    private HashMap<String, Boolean> agentList = new HashMap<>();
 
     @Override
     public void run() {
@@ -36,8 +36,8 @@ public class SyncAgent extends Agent {
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 if(NodeParameters.bookkeeper.get(child.getName()) != null){
-                    if(!NodeParameters.systemFiles.containsKey(child.getName())){
-                        NodeParameters.systemFiles.put(child.getName(), false);
+                    if(!agentList.containsKey(child.getName())){
+                        agentList.put(child.getName(), false);
                     }
                 }
                 while(NodeParameters.lockRequest.size() > 0){

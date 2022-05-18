@@ -52,10 +52,12 @@ public class ReplicationService extends Thread {
         if (hash <= NodeParameters.nextID && hash > NodeParameters.id ) {
             // For myself - LOCAL and REPLICA
             System.out.println("File is for me");
+            id = NodeParameters.id;
         } else if (hash <= NodeParameters.id && hash > NodeParameters.previousID) {
             // Send to previous - LOCAL
             System.out.println("File is for previous");
             id = NodeParameters.previousID;
+            ip = IpTableCache.getInstance().getIp(id).getHostAddress();
         } else {
             // Send to other - LOCAL
             System.out.println("File is for someone else");
@@ -93,13 +95,11 @@ public class ReplicationService extends Thread {
 
             // Send to new
             // Werk van Lexieflexie superRTOS 2000
-
-            try {
-                FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id, "Owner");
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
+        }
+        try {
+            FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id, "Owner");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
         // 3. Add to cache
