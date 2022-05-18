@@ -27,9 +27,6 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
-
-
-
         // File has been uploaded to this node, is not a matching hash -> replicated instance has failed
         // 1. Find the new correct node
         // 2. Send the file to that instance
@@ -37,10 +34,9 @@ public class FailureAgent extends Agent {
         FileSystem.getLocalFiles().entrySet()
                                 .stream()
                                 .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
-                                .forEach();
+                                .forEach(e -> newReplication(e.getKey(),e.getValue()));
 
-        // File has been replicated to this node, is a matching hash -> local instance has failed
-        // 1. Remove file
+        // File has been replicated to this node, is a matching hash, local instance has failed -> delete
         FileSystem.getReplicatedFiles(false).entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
 
@@ -48,6 +44,21 @@ public class FailureAgent extends Agent {
         // File has been downloaded to this node -> delete
         FileSystem.getDownloadedFiles().entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
+
+        // Sending
+        try {
+            var request = HttpRequest.newBuilder(
+                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent?agent="+this))
+                    .build();
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) return;
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     private void newReplication(String file, FileParameters parameters) {
@@ -67,7 +78,8 @@ public class FailureAgent extends Agent {
             String ip = String.valueOf(json.get("ip"));
 
             // Send file
-            FileSender.sendFile(String path, String host, int id, String type)
+            FileSender.sendFile(NodeParameters.localFolder+"/"+file, ip, id, "Owner");
+
 
 
         } catch (IOException | InterruptedException | ParseException e) {
