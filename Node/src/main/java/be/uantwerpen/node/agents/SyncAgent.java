@@ -37,16 +37,16 @@ public class SyncAgent extends Agent {
             for (File child : directoryListing) {
                 if(NodeParameters.bookkeeper.get(child.getName()) != null){
                     if(!NodeParameters.systemFiles.containsKey(child.getName())){
-                        NodeParameters.systemFiles.put(child.getName(), 0);
+                        NodeParameters.systemFiles.put(child.getName(), false);
                     }
                 }
                 while(NodeParameters.lockRequest.size() > 0){
                     String lockedFile = NodeParameters.lockRequest.poll();
-                    NodeParameters.systemFiles.put(lockedFile, 1);
+                    NodeParameters.systemFiles.put(lockedFile, true);
                 }
                 while(NodeParameters.removeLocks.size() > 0){
                     String lockedFile = NodeParameters.removeLocks.poll();
-                    NodeParameters.systemFiles.put(lockedFile, 0);
+                    NodeParameters.systemFiles.put(lockedFile, false);
                 }
                 if(NodeParameters.nextID < Hash.generateHash(child.getName())){
                     try {

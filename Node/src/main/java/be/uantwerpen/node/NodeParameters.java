@@ -17,7 +17,7 @@ public class NodeParameters {
     public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
 
     enum nodeRoles {LOCAL,}
-    public static HashMap<String, Integer> systemFiles = new HashMap<>();
+    public static HashMap<String, Boolean> systemFiles = new HashMap<>();
 
     public static Queue<String> lockRequest = new LinkedList<>();
     public static Queue<String> removeLocks = new LinkedList<>();
