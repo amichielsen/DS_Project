@@ -1,10 +1,12 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.lifeCycle.Shutdown;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.w3c.dom.Node;
 
 import java.io.File;
 import java.util.HashMap;
@@ -133,5 +135,10 @@ public class RunningRestController {
             File toDelete = new File(NodeParameters.replicaFolder + "/"+filename);
             toDelete.delete();
         }
+    }
+
+    @PostMapping(path="/shutdown")
+    public static void shutdown(){
+        NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
 }
