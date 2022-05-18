@@ -1,6 +1,9 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.fileSystem.EntryType;
+import be.uantwerpen.node.fileSystem.FileParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -118,20 +121,17 @@ public class RunningRestController {
     }
 
     @PutMapping(path ="/addLogEntry")
-    public static void addLogEntry(@RequestBody String filename, HashMap<String, Integer> log){
-         NodeParameters.bookkeeper.put(filename, log);
+    public static void addLogEntry(@RequestBody String filename, FileParameters parameters){
+         FileSystem.fs.put(filename, parameters);
     }
 
     @PostMapping(path ="/localDeletion")
     public static void localDeletion(@RequestBody String filename){
-        HashMap<String, Integer> info = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(filename);
-        if(info.get("Download") != null){
-            NodeParameters.bookkeeper.get(filename).remove("Local");
-        }
-        else{
-            NodeParameters.bookkeeper.remove(filename);
-            File toDelete = new File(NodeParameters.replicaFolder + "/"+filename);
-            toDelete.delete();
+        if (FileSystem.getFileParameters(filename).getEntryType() == EntryType.DOWNLOADED) {
+            FileSystem.removeFile(filename);
+        } else {
+            FileSystem.removeFile(filename);
+            new File(NodeParameters.replicaFolder + "/"+filename).delete();
         }
     }
 }

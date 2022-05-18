@@ -18,15 +18,15 @@ import java.util.TreeMap;
  */
 public class FileReceiver extends Thread{
 
-    public FileReceiver(){
-    }
+    public FileReceiver(){}
 
     public void run() {
 
         try{
             ServerSocket serverSocket = new ServerSocket(5044);
             System.out.println("listening to port:5044");
-            while(true) {
+            while (true) {
+
                 Socket clientSocket = serverSocket.accept();
                 System.out.println(clientSocket + " connected.");
                 DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());

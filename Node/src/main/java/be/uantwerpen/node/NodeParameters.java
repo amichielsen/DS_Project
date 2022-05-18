@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NodeParameters {
-
+                // Bestandsnaam - Local/replica - ID van houder
     public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
 
     public static Map<String, String> systemFiles = new HashMap<>();
