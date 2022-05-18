@@ -120,7 +120,7 @@ public class Shutdown extends State {
 
         if (directoryListing != null) {
             for (File child : directoryListing) {
-                HashMap<String, Integer> fileInfo = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
+                HashMap<String, Integer> fileInfo = new HashMap<>();//(HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
                 try {
                     var client = HttpClient.newHttpClient();
                     if (Objects.equals(fileInfo.get("Local"), NodeParameters.previousID)) {

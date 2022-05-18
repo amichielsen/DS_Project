@@ -57,7 +57,7 @@ public class ReplicationService extends Thread {
             Map<String, Integer> places = new HashMap<>();
             places.put("Local", id);
             places.put("Owner", NodeParameters.id);
-            NodeParameters.bookkeeper.put(this.filename.toString(), places);
+            //NodeParameters.bookkeeper.put(this.filename.toString(), places);
         }
         else{
             if (hash <= NodeParameters.id && hash > NodeParameters.previousID) {
