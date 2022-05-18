@@ -122,6 +122,7 @@ public class Shutdown extends State {
 
                             var request2 = HttpRequest.newBuilder(
                                             URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
+                                    .PUT(HttpRequest.BodyPublishers.ofString(""))
                                     .build();
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
@@ -130,6 +131,7 @@ public class Shutdown extends State {
                         FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                         var request2 = HttpRequest.newBuilder(
                                         URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
+                                .PUT(HttpRequest.BodyPublishers.ofString(""))
                                 .build();
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                     }
