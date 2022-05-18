@@ -42,7 +42,7 @@ public class FileReceiver extends Thread{
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
-
+                System.out.println("Delivered");
                 FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" + filename);
 
                 int bytes = 0;

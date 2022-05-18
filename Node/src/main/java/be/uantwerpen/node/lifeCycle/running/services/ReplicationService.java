@@ -99,7 +99,7 @@ public class ReplicationService extends Thread {
         try {
             FileSender.sendFile(this.filename.toString(), ip, NodeParameters.id, "Owner");
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
 
         // 3. Add to cache

@@ -25,6 +25,12 @@ public class FileSender {
             NodeParameters.bookkeeper.put(new File(path).getName(), places);
         }
         else {
+            if(NodeParameters.DEBUG){
+                System.out.println(path);
+                System.out.println(host);
+                System.out.println(id);
+                System.out.println(type);
+            }
             Socket socket = new Socket(host, 5044);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
