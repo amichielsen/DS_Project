@@ -67,6 +67,14 @@ public class RunningRestController {
         return jsonObject.toString();
     }
 
+    @GetMapping(path="/neighbours")
+    public static String getNeighbours(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("previousNeighbor", NodeParameters.previousID);
+        jsonObject.put("nextNeighbor", NodeParameters.nextID);
+        return jsonObject.toString();
+    }
+
     // Update next node id for
     @PutMapping(path ="/updateNext")
     public static  String updateNextNodeId(@RequestParam Integer hostId) {
