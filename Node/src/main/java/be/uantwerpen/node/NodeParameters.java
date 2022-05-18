@@ -8,13 +8,19 @@ import be.uantwerpen.node.utils.Hash;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public class NodeParameters {
 
     public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
 
-    public static Map<String, String> systemFiles = new HashMap<>();
+    enum nodeRoles {LOCAL,}
+    public static HashMap<String, Integer> systemFiles = new HashMap<>();
+
+    public static Queue<String> lockRequest = new LinkedList<>();
+    public static Queue<String> removeLocks = new LinkedList<>();
     public static final Integer FAILURE_TRESHOLD = 5;
     public static boolean DEBUG = true;
     private static NodeParameters instance;
@@ -135,5 +141,13 @@ public class NodeParameters {
 
     public void resFailedNext() {
         NodeParameters.failedNext = 0;
+    }
+
+    public static void addLockRequest(String filename){
+        lockRequest.add(filename);
+    }
+
+    public static void removeLock(String filename){
+        removeLocks.add(filename);
     }
 }

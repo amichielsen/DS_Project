@@ -5,6 +5,7 @@ import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import be.uantwerpen.node.utils.Hash;
+import org.w3c.dom.Node;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +26,8 @@ import java.util.Queue;
  * 4. Checks whether Next Node should be the owner of the file
  */
 public class SyncAgent extends Agent {
-    private HashMap<String, Integer> systemFiles = new HashMap<>();
-    private static Queue<String> lockRequest = new LinkedList<>();
-    private static Queue<String> removeLocks = new LinkedList<>();
+
+
 
     @Override
     public void run() {
@@ -36,17 +36,17 @@ public class SyncAgent extends Agent {
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 if(NodeParameters.bookkeeper.get(child.getName()) != null){
-                    if(!systemFiles.containsKey(child.getName())){
-                        systemFiles.put(child.getName(), 0);
+                    if(!NodeParameters.systemFiles.containsKey(child.getName())){
+                        NodeParameters.systemFiles.put(child.getName(), 0);
                     }
                 }
-                while(lockRequest.size() > 0){
-                    String lockedFile = lockRequest.poll();
-                    systemFiles.put(child.getName(), 1);
+                while(NodeParameters.lockRequest.size() > 0){
+                    String lockedFile = NodeParameters.lockRequest.poll();
+                    NodeParameters.systemFiles.put(lockedFile, 1);
                 }
-                while(removeLocks.size() > 0){
-                    String lockedFile = removeLocks.poll();
-                    systemFiles.put(child.getName(), 0);
+                while(NodeParameters.removeLocks.size() > 0){
+                    String lockedFile = NodeParameters.removeLocks.poll();
+                    NodeParameters.systemFiles.put(lockedFile, 0);
                 }
                 if(NodeParameters.nextID < Hash.generateHash(child.getName())){
                     try {
@@ -66,13 +66,5 @@ public class SyncAgent extends Agent {
 
             }
         }
-    }
-
-    public static void addLockRequest(String filename){
-        lockRequest.add(filename);
-    }
-
-    public static void removeLock(String filename){
-        removeLocks.add(filename);
     }
 }
