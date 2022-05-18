@@ -118,6 +118,7 @@ public class Shutdown extends State {
                             JSONObject json = (JSONObject) parser.parse(response.body());
                             // Adding to ip cache
                             int previousID = ((Long) json.get("previousNeighbor")).intValue();
+                            System.out.println("FIlepath: "+filepath);
                             FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
 
                             var request2 = HttpRequest.newBuilder(
