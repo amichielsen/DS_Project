@@ -122,8 +122,8 @@ public class Shutdown extends State {
                             FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
 
                             var request2 = HttpRequest.newBuilder(
-                                            URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
-                                    .PUT(HttpRequest.BodyPublishers.ofString(""))
+                                            URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner"))
+                                    .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                                     .build();
                             if(NodeParameters.DEBUG)
                                 System.out.println("Request change owner: " +request2);
@@ -133,8 +133,8 @@ public class Shutdown extends State {
                         System.out.println("FIlepath: "+filepath);
                         FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                         var request2 = HttpRequest.newBuilder(
-                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
-                                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
+                                .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                                 .build();
                         System.out.println("Request change owner: " +request2);
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
