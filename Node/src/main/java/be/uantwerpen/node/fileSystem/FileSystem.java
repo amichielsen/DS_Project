@@ -71,10 +71,17 @@ public class FileSystem {
         return 0;
     }
 
-    public static Map<String, FileParameters> getMyFiles() {
+    public static Map<String, FileParameters> getReplicatedFiles() {
         return fs.entrySet()
                 .stream()
                 .filter( e -> !e.getValue().isLocalOnThisNode())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static Map<String, FileParameters> getLocalFiles() {
+        return fs.entrySet()
+                .stream()
+                .filter( e -> e.getValue().isLocalOnThisNode())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
