@@ -58,6 +58,7 @@ public class Shutdown extends State {
             // create a request
             var request = HttpRequest.newBuilder(
                             URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
+                    .PUT(HttpRequest.BodyPublishers.ofString(""))
                     .build();
 
             // use the client to send the request
@@ -79,6 +80,7 @@ public class Shutdown extends State {
             // create a request
             var request = HttpRequest.newBuilder(
                             URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
+                    .PUT(HttpRequest.BodyPublishers.ofString(""))
                     .build();
 
             // use the client to send the request
