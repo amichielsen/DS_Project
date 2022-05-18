@@ -32,7 +32,8 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
-        System.out.println("[F-A] Previous node has failed!");
+        System.out.println("[F-A] Node "+failedNode+ " has failed!");
+        System.out.println("[F-A] Agent Started at node "+startingNode+ " !");
         if (!(hasBeenRunTimes == 0) & startingNode == NodeParameters.id) return;
         // File has been uploaded to this node, is not a matching hash -> replicated instance has failed
         // 1. Find the new correct node
