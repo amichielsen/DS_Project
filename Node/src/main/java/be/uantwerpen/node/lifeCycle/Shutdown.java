@@ -111,7 +111,7 @@ public class Shutdown extends State {
                                 .build();
                         System.out.println(request);
                         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+                        System.out.println(response);
                         if (response.statusCode() == 200) {
                             JSONParser parser = new JSONParser();
                             JSONObject json = (JSONObject) parser.parse(response.body());
