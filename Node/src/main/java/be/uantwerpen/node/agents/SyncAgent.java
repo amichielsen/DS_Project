@@ -55,7 +55,7 @@ public class SyncAgent extends Agent {
                         FileSender.sendFile(child.getPath(), ipNext, fileInfo.get("Local"), "Owner");
                         var client = HttpClient.newHttpClient();
                         var request2 = HttpRequest.newBuilder(
-                                        URI.create("http://" + ipNext+ ":8080/ipa/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
+                                        URI.create("http://" + ipNext+ ":8080/api/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
                                 .build();
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         child.delete();
