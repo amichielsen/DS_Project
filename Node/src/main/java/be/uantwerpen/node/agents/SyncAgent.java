@@ -54,15 +54,13 @@ public class SyncAgent extends Agent {
                 FileSystem.getFileParameters(lockedFile).unLock();
             }
             if(NodeParameters.nextID < Hash.generateHash(child.getName())){
-                /*
                 try {
 
                     String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
-                    HashMap<String, Integer> fileInfo = new HashMap<>();//(HashMap) NodeParameters.bookkeeper.get(child.getName());
-                    FileSender.sendFile(child.getPath(), ipNext, fileInfo.get("Local"), "Owner");
+                    FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
                     var client = HttpClient.newHttpClient();
                     var request2 = HttpRequest.newBuilder(
-                                    URI.create("http://" + ipNext+ ":8080/api/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
+                                    URI.create("http://" + ipNext+ ":8080/api/changeOwner?filename=" + child.getName()))
                             .build();
                     HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                     child.delete();
@@ -72,7 +70,7 @@ public class SyncAgent extends Agent {
                     throw new RuntimeException(e);
                 }
 
-                     */
+
             }
 
         }

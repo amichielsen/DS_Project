@@ -129,6 +129,11 @@ public class RunningRestController {
          FileSystem.fs.put(filename, parameters);
     }
 
+    @PutMapping(path="/changeOwner")
+    public static void changeOwner(@RequestBody String filename){
+        FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+    }
+
     @PostMapping(path ="/localDeletion")
     public static void localDeletion(@RequestBody String filename){
         if (FileSystem.getFileParameters(filename).getEntryType() == EntryType.DOWNLOADED) {
