@@ -54,5 +54,4 @@ public class FileSender {
             dataInputStream.close();
             dataInputStream.close();
         }
-    }
 }
