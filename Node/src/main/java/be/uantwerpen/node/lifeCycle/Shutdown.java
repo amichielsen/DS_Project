@@ -125,6 +125,8 @@ public class Shutdown extends State {
                                             URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                     .PUT(HttpRequest.BodyPublishers.ofString(""))
                                     .build();
+                            if(NodeParameters.DEBUG)
+                                System.out.println("Request change owner: " +request2);
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
                     } else {
@@ -134,6 +136,7 @@ public class Shutdown extends State {
                                         URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                 .PUT(HttpRequest.BodyPublishers.ofString(""))
                                 .build();
+                        System.out.println("Request change owner: " +request2);
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                     }
                 } catch (IOException | ParseException | InterruptedException e) {
