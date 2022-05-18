@@ -57,6 +57,7 @@ public class FileReceiver extends Thread{
                     places.put("Owner", NodeParameters.id);
                     NodeParameters.bookkeeper.put(filename, places);
                 }
+                System.out.println(NodeParameters.bookkeeper);
             }
             //fileOutputStream.close();
             //dataInputStream.close();

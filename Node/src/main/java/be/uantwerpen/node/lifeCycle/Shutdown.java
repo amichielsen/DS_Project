@@ -117,6 +117,7 @@ public class Shutdown extends State {
     public void sendFilesToPrevious() {
         File dir = new File(NodeParameters.replicaFolder);
         File[] directoryListing = dir.listFiles();
+
         if (directoryListing != null) {
             for (File child : directoryListing) {
                 HashMap<String, Integer> fileInfo = (HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
