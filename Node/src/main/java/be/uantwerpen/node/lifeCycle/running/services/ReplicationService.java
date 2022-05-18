@@ -3,6 +3,7 @@ package be.uantwerpen.node.lifeCycle.running.services;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.DataLocationCache;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -114,8 +115,8 @@ public class ReplicationService extends Thread {
         }
 
 
-        // 3. Add to cache
-        DataLocationCache.getInstance().addFile(hash, String.valueOf(filename), true, id);
+        // 3. Add to Filesystem
+        FileSystem.addLocal(filename.toString(),id);
 
 
     }
