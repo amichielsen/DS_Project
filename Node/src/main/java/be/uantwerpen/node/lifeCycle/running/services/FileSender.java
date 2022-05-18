@@ -19,16 +19,18 @@ public class FileSender {
 
     public static void sendFile(String path, String host, int id, String type) throws IOException {
             if(NodeParameters.DEBUG){
-                System.out.println(path);
-                System.out.println(host);
-                System.out.println(id);
-                System.out.println(type);
+                System.out.println("Path: " +path);
+                System.out.println("Host: " +host);
+                System.out.println("ID: "+ id);
+                System.out.println("Type: "+type);
             }
             Socket socket = new Socket(host, 5044);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             int bytes = 0;
             File file = new File(path);
+            if(NodeParameters.DEBUG)
+                System.out.println(file.getName());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
             JSONObject jsonObject = new JSONObject();
