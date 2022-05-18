@@ -108,7 +108,7 @@ public class ReplicationService extends Thread {
                 if(NodeParameters.DEBUG){
                     System.out.println("File is being sent");
                 }
-                FileSender.sendFile(f1.getName(), ip, NodeParameters.id, "Owner");
+                FileSender.sendFile(f1.getPath(), ip, NodeParameters.id, "Owner");
             } catch (IOException e) {
                 e.printStackTrace();
             }

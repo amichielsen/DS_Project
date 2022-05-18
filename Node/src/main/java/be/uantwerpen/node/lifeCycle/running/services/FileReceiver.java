@@ -53,7 +53,7 @@ public class FileReceiver extends Thread{
                         FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
                     }
                 }
-                //System.out.println(NodeParameters.bookkeeper);
+                System.out.println(FileSystem.fs);
             }
             //fileOutputStream.close();
             //dataInputStream.close();
