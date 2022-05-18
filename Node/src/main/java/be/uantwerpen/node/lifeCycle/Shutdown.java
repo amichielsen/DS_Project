@@ -107,11 +107,11 @@ public class Shutdown extends State {
                     var client = HttpClient.newHttpClient();
                     if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
                         var request = HttpRequest.newBuilder(
-                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/status"))
+                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/status"))
                                 .build();
                         System.out.println(request);
                         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
+                        System.out.println(response);
                         if (response.statusCode() == 200) {
                             JSONParser parser = new JSONParser();
                             JSONObject json = (JSONObject) parser.parse(response.body());
