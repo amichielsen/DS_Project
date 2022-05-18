@@ -127,7 +127,7 @@ public class Shutdown extends State {
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
                     } else {
-
+                        System.out.println("FIlepath: "+filepath);
                         FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                         var request2 = HttpRequest.newBuilder(
                                         URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
