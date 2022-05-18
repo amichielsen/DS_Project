@@ -5,6 +5,7 @@ import be.uantwerpen.node.NodeParameters;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static be.uantwerpen.node.fileSystem.EntryType.*;
 
@@ -68,6 +69,13 @@ public class FileSystem {
 
         fs.remove(file);
         return 0;
+    }
+
+    public static Map<String, FileParameters> getMyFiles() {
+        return fs.entrySet()
+                .stream()
+                .filter( e -> !e.getValue().isLocalOnThisNode())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static FileParameters getFileParameters(String file) {
