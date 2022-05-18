@@ -2,6 +2,7 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.agents.FailureAgent;
 import be.uantwerpen.node.lifeCycle.running.Running;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +39,9 @@ public class Failure{
      * @param ID Id of failed node
      */
     public void nodeFailure(int ID)  {
+        // Getting the Agent ready to fix all nodes -> will go round
+        if (ID == NodeParameters.previousID) new FailureAgent(ID).run();
+
         HttpClient httpClient = HttpClient.newBuilder().build();
 
         // create a request
