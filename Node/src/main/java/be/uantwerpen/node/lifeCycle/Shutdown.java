@@ -160,7 +160,7 @@ public class Shutdown extends State {
                 try {
                     var client = HttpClient.newHttpClient();
                     var request = HttpRequest.newBuilder(
-                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/ipa/localDeletion?filename=" + child.getName()))
+                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/localDeletion?filename=" + child.getName()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();
                     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
