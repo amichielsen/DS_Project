@@ -1,17 +1,14 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import com.fasterxml.jackson.core.util.InternCache;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.Buffer;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Service listening to receive files
@@ -52,10 +49,9 @@ public class FileReceiver extends Thread{
                     size -= bytes;      // read upto file size
                 }
                 if(type.equals("Owner")) {
-                    Map<String, Integer> places = new HashMap<>();
-                    places.put("Local", id);
-                    places.put("Owner", NodeParameters.id);
-                    //NodeParameters.bookkeeper.put(filename, places);
+                    if(FileSystem.addReplica(filename, id) == -1){
+                        FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+                    }
                 }
                 //System.out.println(NodeParameters.bookkeeper);
             }

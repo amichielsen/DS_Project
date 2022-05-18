@@ -3,6 +3,8 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileParameters;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import org.json.simple.JSONObject;
@@ -15,7 +17,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,7 +42,7 @@ public class Shutdown extends State {
             updateNextIdOfPreviousNode(previousIp, NodeParameters.nextID);
             updatePreviousIdOfNextNode(nextIp, NodeParameters.previousID);
             this.sendFilesToPrevious();
-            //this.deleteLocalFiles();
+            this.deleteLocalFiles();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -119,11 +123,12 @@ public class Shutdown extends State {
         File[] directoryListing = dir.listFiles();
 
         if (directoryListing != null) {
-            for (File child : directoryListing) {
-                HashMap<String, Integer> fileInfo = new HashMap<>();//(HashMap<String, Integer>) NodeParameters.bookkeeper.get(child.getName());
+            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> replicatedFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getReplicatedFiles(true);
+            for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
+                Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
                 try {
                     var client = HttpClient.newHttpClient();
-                    if (Objects.equals(fileInfo.get("Local"), NodeParameters.previousID)) {
+                    if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
                         var request = HttpRequest.newBuilder(
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/status"))
                                 .build();
@@ -134,20 +139,18 @@ public class Shutdown extends State {
                             JSONObject json = (JSONObject) parser.parse(response.body());
                             // Adding to ip cache
                             int previousID = ((Long) json.get("previousNeighbor")).intValue();
-                            FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(previousID).getHostAddress(), fileInfo.get("Local"), "Owner");
-                            fileInfo.remove("Owner");
-                            fileInfo.put("Owner", previousID);
+                            FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
+
                             var request2 = HttpRequest.newBuilder(
-                                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
+                                            URI.create("http://" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                     .build();
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                         }
                     } else {
-                        fileInfo.remove("Owner");
-                        fileInfo.put("Owner", NodeParameters.previousID);
-                        FileSender.sendFile(child.getPath(), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), fileInfo.get("Local"), "Owner");
+
+                        FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                         var request2 = HttpRequest.newBuilder(
-                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/addLogEntry?filename=" + child.getName() + "?log=" + fileInfo))
+                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner?filename=" + entry.getKey()))
                                 .build();
                         HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                     }
@@ -162,11 +165,12 @@ public class Shutdown extends State {
         File dir = new File(NodeParameters.localFolder);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
-            for (File child : directoryListing) {
+            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> localFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getLocalFiles();
+            for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
                 try {
                     var client = HttpClient.newHttpClient();
                     var request = HttpRequest.newBuilder(
-                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/localDeletion?filename=" + child.getName()))
+                                    URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();
                     HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
