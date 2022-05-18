@@ -18,13 +18,6 @@ public class FileSender {
 
 
     public static void sendFile(String path, String host, int id, String type) throws IOException {
-        if(NodeParameters.id == id){
-            Map<String, Integer> places = new HashMap<>();
-            places.put("Local", id);
-            places.put("Owner", NodeParameters.id);
-            NodeParameters.bookkeeper.put(new File(path).getName(), places);
-        }
-        else {
             if(NodeParameters.DEBUG){
                 System.out.println(path);
                 System.out.println(host);
