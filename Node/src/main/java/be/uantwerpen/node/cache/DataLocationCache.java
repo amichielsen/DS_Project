@@ -5,6 +5,7 @@ import be.uantwerpen.node.CustomMap;
 import be.uantwerpen.node.FileParameters;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // Bevat: bestandsnaam, bastandsid, local-replica, locatie van replica
@@ -17,16 +18,16 @@ public class DataLocationCache {
     //Create a new instance
     CustomMap<Integer, FileParameters> FileMap = new CustomMap<>();
 
-    public void AddFIle(FileParameters f1){
-        FileMap.put(1, new FileParameters(f1.FileId(), f1.getFileName(),f1.LocalOrReplica(), f1.ReplicaLocation()));
-    }
 
     private DataLocationCache() {}
     public static DataLocationCache getInstance(){
         return instance;
     }
 
-    public void addFile(int hash, String name, boolean local, int location) {
+    public void addFile(int hash, String name, boolean local, int replicaLocation, int localLocation) {
+        FileMap.put(1, new FileParameters(hash, name, local, replicaLocation, localLocation));
+    }
+    public  void deleteFile(String name){
 
     }
 }
