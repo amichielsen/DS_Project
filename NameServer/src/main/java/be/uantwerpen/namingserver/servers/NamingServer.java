@@ -58,6 +58,14 @@ public class NamingServer {
         jsonObject.put("status", status);
         return jsonObject.toJSONString();
     }
+    @DeleteMapping(path ="/Id")
+    public static String deleteId(@RequestParam(value = "Id") int Id) {
+        JSONObject jsonObject = new JSONObject();
+        String status = namingService.deleteID(Id) ? "success": "failed";
+
+        jsonObject.put("status", status);
+        return jsonObject.toJSONString();
+    }
 
     // Get IP from filename
     @GetMapping(path ="/file2host")
