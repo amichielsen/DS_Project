@@ -117,4 +117,12 @@ public class FileParameters {
     public void setLocalOnNode(int localOnNode) {
         this.localOnNode = localOnNode;
     }
+
+    public boolean isDownloaded() {
+        return isDownloaded;
+    }
+
+    public void setDownloaded(boolean downloaded) {
+        isDownloaded = downloaded;
+    }
 }

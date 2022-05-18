@@ -71,7 +71,13 @@ public class FileSystem {
         return 0;
     }
 
-    public static Map<String, FileParameters> getReplicatedFiles() {
+    public static Map<String, FileParameters> getReplicatedFiles(boolean onlyThisNode) {
+        if (onlyThisNode) return fs.entrySet()
+                                    .stream()
+                                    .filter( e -> !e.getValue().isLocalOnThisNode())
+                                    .filter( e -> e.getValue().getReplicatedOnNode() == NodeParameters.id)
+                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         return fs.entrySet()
                 .stream()
                 .filter( e -> !e.getValue().isLocalOnThisNode())
@@ -82,6 +88,13 @@ public class FileSystem {
         return fs.entrySet()
                 .stream()
                 .filter( e -> e.getValue().isLocalOnThisNode())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    public static Map<String, FileParameters> getDownloadedFiles() {
+        return fs.entrySet()
+                .stream()
+                .filter( e -> e.getValue().isDownloaded())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
