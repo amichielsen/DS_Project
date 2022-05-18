@@ -37,8 +37,8 @@ public class Shutdown extends State {
     public void run() {
 
         try {
-            var previousIp = getIPfromHostId(NodeParameters.getInstance().getPreviousID());
-            var nextIp = getIPfromHostId(NodeParameters.getInstance().getNextID());
+            var previousIp = IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress();
+            var nextIp = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
             updateNextIdOfPreviousNode(previousIp, NodeParameters.nextID);
             updatePreviousIdOfNextNode(nextIp, NodeParameters.previousID);
             this.sendFilesToPrevious();
@@ -89,31 +89,6 @@ public class Shutdown extends State {
             return response.body();
 
         } else return "error: hostID is null";
-    }
-
-
-    //remove itself from Naming server map
-
-
-    public String getIPfromHostId(Integer hostId) throws IOException, InterruptedException {
-
-        if (Objects.nonNull(hostId)) {
-            // create a client
-            var client = HttpClient.newHttpClient();
-
-            // create a request
-            var request = HttpRequest.newBuilder(
-                            URI.create("http://" + NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/host2IP?host=" + hostId))
-                    .build();
-
-            // use the client to send the request
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // the response:
-            System.out.println(response.body());
-            return response.body();
-
-        } else return "localhost";
     }
 
 
