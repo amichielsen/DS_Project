@@ -33,6 +33,8 @@ public class FileReceiver extends Thread{
                 Map responseMap = new ObjectMapper().readValue(bufferedReader.readLine(), Map.class);
                 System.out.println(responseMap);
                 String filename = (String) responseMap.get("name");
+                if(NodeParameters.DEBUG)
+                    System.out.println("Filename: " + filename);
                 int size = (int) responseMap.get("length");
                 int id = (int) responseMap.get("id");
                 String type = (String) responseMap.get("type");

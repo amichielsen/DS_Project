@@ -43,6 +43,7 @@ public class Shutdown extends State {
             updatePreviousIdOfNextNode(nextIp, NodeParameters.previousID);
             this.sendFilesToPrevious();
             this.deleteLocalFiles();
+            System.exit(0);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
