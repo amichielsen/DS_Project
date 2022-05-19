@@ -4,10 +4,10 @@ import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.agents.FailureAgent;
 import be.uantwerpen.node.lifeCycle.running.Running;
+import ch.qos.logback.core.pattern.parser.Node;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.internal.runners.statements.Fail;
-import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.URI;
@@ -40,9 +40,7 @@ public class Failure{
      */
     public void nodeFailure(int ID)  {
         // Getting the Agent ready to fix all nodes -> will go round
-        if (ID == NodeParameters.previousID) new FailureAgent(ID).run();
-
-        HttpClient httpClient = HttpClient.newBuilder().build();
+        if (ID == NodeParameters.previousID && ID != NodeParameters.nextID) new FailureAgent(ID).run();
 
         // create a request
         HttpRequest request = HttpRequest.newBuilder()
@@ -55,10 +53,8 @@ public class Failure{
         // use the client to send the request
         HttpResponse<String> response = null;
         try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+            response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
