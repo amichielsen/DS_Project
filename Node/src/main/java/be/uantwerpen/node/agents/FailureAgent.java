@@ -5,6 +5,7 @@ import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -54,8 +55,9 @@ public class FailureAgent extends Agent {
         // Sending
         if(NodeParameters.DEBUG) System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
         try {
-            var request = HttpRequest.newBuilder(
+            HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent?agent="+this))
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                     .build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
