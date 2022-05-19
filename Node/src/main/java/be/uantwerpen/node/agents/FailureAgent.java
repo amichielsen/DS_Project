@@ -5,20 +5,15 @@ import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
-import be.uantwerpen.node.utils.Hash;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.w3c.dom.Node;
 
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class FailureAgent extends Agent {
     private final int startingNode;

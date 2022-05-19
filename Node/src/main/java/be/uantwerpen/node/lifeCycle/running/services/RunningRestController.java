@@ -120,7 +120,7 @@ public class RunningRestController {
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/agent")
-    public static void postAgent(@RequestParam(value = "agent") Agent agent) {
+    public static void postAgent(@RequestBody Agent agent) {
         if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
         agent.run();
 
