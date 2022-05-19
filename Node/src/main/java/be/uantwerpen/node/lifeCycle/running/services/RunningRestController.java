@@ -7,6 +7,8 @@ import be.uantwerpen.node.fileSystem.EntryType;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.Shutdown;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -120,9 +122,19 @@ public class RunningRestController {
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/agent")
-    public static void postAgent(@RequestBody Agent agent) {
+    public static void postAgent(@RequestBody String agentString) {
         if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
-        agent.run();
+        ObjectMapper mapper = new ObjectMapper();
+
+
+        //JSON string to Java Object
+
+        try {
+            Agent agent = mapper.readValue(agentString, Agent.class);
+            agent.run();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         throw new ResponseStatusException(HttpStatus.OK);
     }
