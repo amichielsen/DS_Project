@@ -125,6 +125,7 @@ public class RunningRestController {
     public static void postAgent(@RequestBody String agentString) {
         if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
         ObjectMapper mapper = new ObjectMapper();
+        System.out.println(agentString);
 
 
         //JSON string to Java Object
