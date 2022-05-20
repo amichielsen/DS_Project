@@ -2,6 +2,7 @@ package be.uantwerpen.node.lifeCycle;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.agents.Agent;
 import be.uantwerpen.node.agents.FailureAgent;
 import be.uantwerpen.node.lifeCycle.running.Running;
 import ch.qos.logback.core.pattern.parser.Node;
@@ -42,7 +43,15 @@ public class Failure{
      */
     public void nodeFailure(int ID)  {
         // Getting the Agent ready to fix all nodes -> will go round
-        if (ID == NodeParameters.previousID && ID != NodeParameters.nextID) new FailureAgent(ID).run();
+        if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
+            Agent failureAgent = new FailureAgent(ID);
+            failureAgent.run();
+            try {
+                System.out.println("Serialized: " + new ObjectMapper().writeValueAsString(failureAgent));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         // create a request
         HttpRequest request = HttpRequest.newBuilder()
