@@ -59,9 +59,9 @@ public class FailureAgent extends Agent {
         try {
             HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
-                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.clone())))
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                     .build();
-            if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this.clone()));;
+            if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this));;
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             hasBeenRunTimes++;
@@ -69,7 +69,7 @@ public class FailureAgent extends Agent {
             if (hasBeenRunTimes > 50) if(NodeParameters.DEBUG) System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
             if (response.statusCode() != 200) if(NodeParameters.DEBUG) System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
 
-        } catch (IOException | InterruptedException | CloneNotSupportedException e) {
+        } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
