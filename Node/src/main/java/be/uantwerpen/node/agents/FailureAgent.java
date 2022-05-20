@@ -59,9 +59,9 @@ public class FailureAgent extends Agent {
         try {
             HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
-                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.getClass())))
                     .build();
-            if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this));;
+            if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this.getClass()));;
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             hasBeenRunTimes++;
