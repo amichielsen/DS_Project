@@ -61,7 +61,7 @@ public class FailureAgent extends Agent {
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
                     .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                     .build();
-            if(NodeParameters.DEBUG) System.out.println(request);;
+            if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this));;
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
             hasBeenRunTimes++;
