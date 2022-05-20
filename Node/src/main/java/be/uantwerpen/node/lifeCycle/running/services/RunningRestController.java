@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.w3c.dom.Node;
 
@@ -122,14 +123,15 @@ public class RunningRestController {
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/agent")
-    public static void postAgent(@RequestBody String agentString) {
+    public static void postAgent(@RequestBody Agent agent) {
         if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
+        agent.run();
         ObjectMapper mapper = new ObjectMapper();
-        System.out.println(agentString);
+        System.out.println(agent);
 
 
         //JSON string to Java Object
-
+        /*
         try {
             Agent agent = mapper.readValue(agentString, Agent.class);
             agent.run();
@@ -138,6 +140,7 @@ public class RunningRestController {
         }
 
         throw new ResponseStatusException(HttpStatus.OK);
+         */
     }
 
 

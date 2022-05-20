@@ -9,12 +9,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
 
 public class FailureAgent extends Agent {
     private final int startingNode;
@@ -56,7 +58,7 @@ public class FailureAgent extends Agent {
         if(NodeParameters.DEBUG) System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
         try {
             HttpRequest request = HttpRequest.newBuilder(
-                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent?agent="+this))
+                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
                     .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                     .build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -76,7 +78,7 @@ public class FailureAgent extends Agent {
     private void newReplication(String file, FileParameters parameters) {
         try {
             System.out.println("[F-A] Sending file:" + file);
-            var request = HttpRequest.newBuilder(
+            HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+file))
                             .build();
 
