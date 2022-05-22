@@ -4,6 +4,7 @@ import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.lifeCycle.Failure;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import be.uantwerpen.node.utils.Hash;
@@ -47,6 +48,7 @@ public class SyncAgent extends Agent {
     public void run() {
         if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
+        while (true) {
             FileSystem.fs.putAll(agentList); //Update local list according to agent
 
             File[] directoryListing = dir.listFiles();
@@ -96,22 +98,35 @@ public class SyncAgent extends Agent {
                 agentList.get(lockedFile).unLock();
             }
             if(this.origList != this.agentList && !Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
-                try { //Pass agentList to next one
-                    HttpRequest request = HttpRequest.newBuilder(
-                                    URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
-                            .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.agentList)))
-                            .build();
-                    if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
-                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                    //if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
-                    if (response.statusCode() != 200) if (NodeParameters.DEBUG)
-                        System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
-
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                for (int i = 0; i < 6; i++) {
+                    try { //Pass agentList to next one
+                        HttpRequest request = HttpRequest.newBuilder(
+                                        URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
+                                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.agentList)))
+                                .build();
+                        if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
+                        HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                        //if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
+                        if (response.statusCode() != 200) if (NodeParameters.DEBUG)
+                            System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
+                        break;
+                    } catch (IOException | InterruptedException e) {
+                        if (i < 4) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        } else {
+                            System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
+                            throw new RuntimeException(e);
+                            //throw new RuntimeException(e);
+                        }
+                    }
                 }
             }
         }
+    }
 
     public HashMap<String, FileParameters> getAgentList() {
         return agentList;
@@ -119,6 +134,8 @@ public class SyncAgent extends Agent {
 
     public void setAgentList(HashMap<String, FileParameters> agentList) {
         this.origList = this.agentList;
+        if(NodeParameters.DEBUG) System.out.println("Old Agent's list: " + this.agentList);
         this.agentList = agentList;
+        if(NodeParameters.DEBUG) System.out.println("New Agent's list: " + this.agentList);
     }
 }

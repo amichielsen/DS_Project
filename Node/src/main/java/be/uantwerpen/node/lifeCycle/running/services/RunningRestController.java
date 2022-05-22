@@ -146,7 +146,6 @@ public class RunningRestController {
         }
         if(NodeParameters.DEBUG) System.out.println("Received list: " + list);
         SyncAgent.getInstance().setAgentList(list);
-        SyncAgent.getInstance().start();
     }
 
 
