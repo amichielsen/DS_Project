@@ -40,7 +40,7 @@ public class Running extends State {
         File replicaFolder = new File("/root/data/replica");
         replicaFolder.mkdirs();
         NodeParameters.replicaFolder = replicaFolder.getPath();
-        FileAnalyzer.run();
+        new FileAnalyzer().run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
         SyncAgent syncAgent = SyncAgent.getInstance();

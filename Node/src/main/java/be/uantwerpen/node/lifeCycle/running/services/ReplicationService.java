@@ -58,7 +58,7 @@ public class ReplicationService extends Thread {
         else {
             if (hash <= NodeParameters.nextID && hash > NodeParameters.id) {
                 // For myself - LOCAL and REPLICA
-                if (NodeParameters.DEBUG) System.out.println("File is for me");
+                if (NodeParameters.DEBUG) System.out.println("File is for me"); //TODO Fix this
                 Map<String, Integer> places = new HashMap<>();
                 places.put("Local", id);
                 places.put("Owner", NodeParameters.id);
