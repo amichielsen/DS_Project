@@ -23,9 +23,9 @@ import java.net.http.HttpResponse;
 
 
 public class FailureAgent extends Agent {
-    private final int startingNode;
+    private int startingNode;
     private int hasBeenRunTimes;
-    private final int failedNode;
+    private int failedNode;
     public FailureAgent(int failedNode) {
         this.failedNode = failedNode;
         this.startingNode = NodeParameters.id;
@@ -116,6 +116,14 @@ public class FailureAgent extends Agent {
 
     public int getStartingNode() {
         return startingNode;
+    }
+
+    public void setStartingNode(int startingNode) {
+        this.startingNode = startingNode;
+    }
+
+    public void setFailedNode(int failedNode) {
+        this.failedNode = failedNode;
     }
 
     public int getHasBeenRunTimes() {
