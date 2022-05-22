@@ -17,10 +17,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyPair;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 /***
  * SyncAgent: Agent responsible for synchronizing the whole system
@@ -99,7 +96,7 @@ public class SyncAgent extends Agent {
                 String lockedFile = NodeParameters.removeLocks.poll();
                 agentList.get(lockedFile).unLock();
             }
-            if(this.origList != this.agentList) {
+            if(this.origList != this.agentList && !Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
                 try { //Pass agentList to next one
                     HttpRequest request = HttpRequest.newBuilder(
                                     URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
