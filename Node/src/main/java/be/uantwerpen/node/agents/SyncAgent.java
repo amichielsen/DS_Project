@@ -102,7 +102,7 @@ public class SyncAgent extends Agent {
                                     URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
                             .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.agentList)))
                             .build();
-
+                    if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                     //if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
                     if (response.statusCode() != 200) if (NodeParameters.DEBUG)
