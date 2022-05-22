@@ -138,13 +138,13 @@ public class RunningRestController {
     @PostMapping(path ="/syncagent")
     public static void postSyncAgent(@RequestBody String agentStr) {
         if(NodeParameters.DEBUG) System.out.println("[REST] SyncAgent should start running...");
-        SyncAgent agent = null;
+        HashMap<String, FileParameters> list = null;
         try {
-            agent = new ObjectMapper().readValue(agentStr, SyncAgent.class);
+            list = new ObjectMapper().readValue(agentStr, HashMap.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        agent.run();
+        SyncAgent.getInstance().setAgentList(list);
     }
 
 

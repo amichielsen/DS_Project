@@ -4,6 +4,7 @@ package be.uantwerpen.node.lifeCycle.running;
 
 import be.uantwerpen.node.LifeCycleController;
 import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.agents.SyncAgent;
 import be.uantwerpen.node.cron.CronJobSchedular;
 import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
 import be.uantwerpen.node.lifeCycle.State;
@@ -42,11 +43,10 @@ public class Running extends State {
         FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        //ReplicaFolderWatchdog folderWatchdogReplica = new ReplicaFolderWatchdog(replicaFolder.getPath());
-        //folderWatchdogReplica.start();
+        SyncAgent syncAgent = SyncAgent.getInstance();
+        syncAgent.run();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
-        //cron.addCronJob(new SendCurrentStatus(), 60);
         cron.run();
     }
 
