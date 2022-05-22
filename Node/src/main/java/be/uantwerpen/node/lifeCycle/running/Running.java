@@ -44,11 +44,10 @@ public class Running extends State {
         new FileAnalyzer().run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        NodeParameters.syncAgent = new SyncAgent();
-        NodeParameters.syncAgent.run();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         cron.run();
+        SyncAgent.getInstance().run();
     }
 
 

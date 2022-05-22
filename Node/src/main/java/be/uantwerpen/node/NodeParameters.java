@@ -49,8 +49,6 @@ public class NodeParameters {
 
     public static String replicaFolder;
 
-    public static SyncAgent syncAgent;
-
     private NodeParameters() throws UnknownHostException {
     }
 

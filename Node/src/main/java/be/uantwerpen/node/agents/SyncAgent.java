@@ -31,8 +31,16 @@ public class SyncAgent extends Agent {
     private HashMap<String, FileParameters> agentList = new HashMap<>();
     private HashMap<String, FileParameters> origList = new HashMap<>();
 
+    private static SyncAgent instance;
 
-    public SyncAgent() {
+    static {
+            instance = new SyncAgent();
+    }
+
+    public static SyncAgent getInstance(){
+        return instance;
+    }
+    private SyncAgent() {
     }
 
     @Override
