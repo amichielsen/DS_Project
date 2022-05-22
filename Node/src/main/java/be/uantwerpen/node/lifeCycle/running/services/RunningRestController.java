@@ -122,7 +122,7 @@ public class RunningRestController {
      * }
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/agent", consumes = "application/json")
+    @PostMapping(path ="/agent")
     public static void postAgent(@RequestBody String agentStr) {
         if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
         FailureAgent agent = null;
