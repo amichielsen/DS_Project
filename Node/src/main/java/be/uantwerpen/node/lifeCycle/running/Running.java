@@ -41,13 +41,13 @@ public class Running extends State {
         File replicaFolder = new File("/root/data/replica");
         replicaFolder.mkdirs();
         NodeParameters.replicaFolder = replicaFolder.getPath();
-        new FileAnalyzer().run();
+        FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
+        SyncAgent.getInstance().start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         cron.run();
-        SyncAgent.getInstance().run();
     }
 
 

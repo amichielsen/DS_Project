@@ -9,12 +9,12 @@ import java.io.File;
  * Responsible for checking files present on system at startup
  * Hands them over to replication service for further processing
  */
-public class FileAnalyzer extends Thread {
+public class FileAnalyzer {
 
     public FileAnalyzer() {
     }
 
-    public void run() {
+    public static void run() {
         File dir = new File(NodeParameters.localFolder);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
