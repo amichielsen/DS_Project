@@ -19,6 +19,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyPair;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /***
  * SyncAgent: Agent responsible for synchronizing the whole system
@@ -31,6 +34,10 @@ public class SyncAgent extends Agent {
 
     private HashMap<String, FileParameters> agentList = new HashMap<>();
     private HashMap<String, FileParameters> origList = new HashMap<>();
+
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Lock writeLock = lock.writeLock();
+    private Lock readLock = lock.readLock();
 
     private static SyncAgent instance;
 
@@ -49,6 +56,7 @@ public class SyncAgent extends Agent {
         if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
         while (true) {
+            writeLock.lock();
             FileSystem.fs.putAll(agentList); //Update local list according to agent
 
             File[] directoryListing = dir.listFiles();
@@ -125,6 +133,7 @@ public class SyncAgent extends Agent {
                     }
                 }
             }
+            writeLock.unlock();
         }
     }
 
@@ -133,9 +142,11 @@ public class SyncAgent extends Agent {
     }
 
     public void setAgentList(HashMap<String, FileParameters> agentList) {
+        writeLock.lock();
         this.origList = this.agentList;
         if(NodeParameters.DEBUG) System.out.println("Old Agent's list: " + this.agentList);
         this.agentList = agentList;
         if(NodeParameters.DEBUG) System.out.println("New Agent's list: " + this.agentList);
+        writeLock.unlock();
     }
 }
