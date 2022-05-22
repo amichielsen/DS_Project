@@ -10,6 +10,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +30,12 @@ public class FailureAgent extends Agent {
         this.failedNode = failedNode;
         this.startingNode = NodeParameters.id;
         this.hasBeenRunTimes = 0;
+    }
+
+    public FailureAgent(int startingNode, int hasBeenRunTimes, int failedNode) {
+        this.startingNode = startingNode;
+        this.hasBeenRunTimes = hasBeenRunTimes;
+        this.failedNode = failedNode;
     }
 
     @Override
@@ -61,6 +71,7 @@ public class FailureAgent extends Agent {
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
                     .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                     .build();
+
             if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this));;
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -101,5 +112,21 @@ public class FailureAgent extends Agent {
         } catch (IOException | InterruptedException | ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getStartingNode() {
+        return startingNode;
+    }
+
+    public int getHasBeenRunTimes() {
+        return hasBeenRunTimes;
+    }
+
+    public void setHasBeenRunTimes(int hasBeenRunTimes) {
+        this.hasBeenRunTimes = hasBeenRunTimes;
+    }
+
+    public int getFailedNode() {
+        return failedNode;
     }
 }
