@@ -32,6 +32,9 @@ public class FailureAgent extends Agent {
         this.hasBeenRunTimes = 0;
     }
 
+    public FailureAgent() {
+    }
+
     public FailureAgent(int startingNode, int hasBeenRunTimes, int failedNode) {
         this.startingNode = startingNode;
         this.hasBeenRunTimes = hasBeenRunTimes;
@@ -66,6 +69,7 @@ public class FailureAgent extends Agent {
 
         // Sending
         if(NodeParameters.DEBUG) System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
+        this.hasBeenRunTimes++;
         try {
             HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/agent"))
@@ -75,7 +79,7 @@ public class FailureAgent extends Agent {
             if(NodeParameters.DEBUG) System.out.println(new ObjectMapper().writeValueAsString(this));;
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-            hasBeenRunTimes++;
+
             if(NodeParameters.DEBUG) System.out.println("[F-A] Done. Agent has been ran "+hasBeenRunTimes+" times. The dude is getting old.");
             if (hasBeenRunTimes > 50) if(NodeParameters.DEBUG) System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
             if (response.statusCode() != 200) if(NodeParameters.DEBUG) System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
