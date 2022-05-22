@@ -35,28 +35,13 @@ public class SyncAgent extends Agent {
     private HashMap<String, FileParameters> agentList = new HashMap<>();
     private HashMap<String, FileParameters> origList = new HashMap<>();
 
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
-    private Lock writeLock = lock.writeLock();
-    private Lock readLock = lock.readLock();
-
-    private static SyncAgent instance;
-
-    static {
-            instance = new SyncAgent();
-    }
-
-    public static SyncAgent getInstance(){
-        return instance;
-    }
-    private SyncAgent() {
+    public SyncAgent() {
     }
 
     @Override
     public void run() {
         if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
-        while (true) {
-            writeLock.lock();
             FileSystem.fs.putAll(agentList); //Update local list according to agent
 
             File[] directoryListing = dir.listFiles();
@@ -105,12 +90,12 @@ public class SyncAgent extends Agent {
                 String lockedFile = NodeParameters.removeLocks.poll();
                 agentList.get(lockedFile).unLock();
             }
-            if(this.origList != this.agentList && !Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
+            if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
                 for (int i = 0; i < 6; i++) {
                     try { //Pass agentList to next one
                         HttpRequest request = HttpRequest.newBuilder(
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
-                                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this.agentList)))
+                                .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                                 .build();
                         if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
                         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
@@ -133,13 +118,6 @@ public class SyncAgent extends Agent {
                     }
                 }
             }
-            writeLock.unlock();
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public HashMap<String, FileParameters> getAgentList() {
@@ -147,11 +125,17 @@ public class SyncAgent extends Agent {
     }
 
     public void setAgentList(HashMap<String, FileParameters> agentList) {
-        writeLock.lock();
         this.origList = this.agentList;
         if(NodeParameters.DEBUG) System.out.println("Old Agent's list: " + this.agentList);
         this.agentList = agentList;
         if(NodeParameters.DEBUG) System.out.println("New Agent's list: " + this.agentList);
-        writeLock.unlock();
+    }
+
+    public HashMap<String, FileParameters> getOrigList() {
+        return origList;
+    }
+
+    public void setOrigList(HashMap<String, FileParameters> origList) {
+        this.origList = origList;
     }
 }

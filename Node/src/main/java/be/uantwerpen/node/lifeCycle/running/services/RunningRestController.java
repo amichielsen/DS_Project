@@ -132,20 +132,20 @@ public class RunningRestController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        agent.run();
+        agent.start();
     }
 
     @PostMapping(path ="/syncagent")
     public static void postSyncAgent(@RequestBody String agentStr) {
         //if(NodeParameters.DEBUG) System.out.println("[REST] SyncAgent should start running...");
-        HashMap<String, FileParameters> list = null;
+        SyncAgent agent = null;
         try {
-            list = new ObjectMapper().readValue(agentStr, HashMap.class);
+            agent = new ObjectMapper().readValue(agentStr, SyncAgent.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        if(NodeParameters.DEBUG) System.out.println("Received list: " + list);
-        SyncAgent.getInstance().setAgentList(list);
+        //if(NodeParameters.DEBUG) System.out.println("Received list: " + list);
+        agent.start();
     }
 
 

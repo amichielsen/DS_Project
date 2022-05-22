@@ -14,6 +14,7 @@ import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
 import org.w3c.dom.Node;
 
 import java.io.File;
+import java.util.Objects;
 
 /**
  * This is the "main" running state.
@@ -44,7 +45,7 @@ public class Running extends State {
         FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        SyncAgent.getInstance().start();
+        if(Objects.equals(NodeParameters.previousID, NodeParameters.nextID)) new SyncAgent().start();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         cron.run();
