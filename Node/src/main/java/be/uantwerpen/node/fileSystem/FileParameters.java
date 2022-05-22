@@ -13,6 +13,7 @@ public class FileParameters {
 
     private EntryType entryType;
 
+    public FileParameters(){}
     public FileParameters(EntryType type) throws InstantiationException {
         if (type == EntryType.EMPTY) {
             this.entryType = type;
@@ -131,5 +132,13 @@ public class FileParameters {
 
     public int getLockedOnNode() {
         return lockedOnNode;
+    }
+
+    public void setLockedOnNode(int lockedOnNode) {
+        this.lockedOnNode = lockedOnNode;
+    }
+
+    public void setEntryType(EntryType entryType) {
+        this.entryType = entryType;
     }
 }

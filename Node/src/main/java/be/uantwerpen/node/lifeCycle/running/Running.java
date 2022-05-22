@@ -42,6 +42,10 @@ public class Running extends State {
         File replicaFolder = new File("/root/data/replica");
         replicaFolder.mkdirs();
         NodeParameters.replicaFolder = replicaFolder.getPath();
+        File filesList[] = replicaFolder.listFiles();
+        assert filesList != null;
+        for(File file : filesList)
+                file.delete();
         FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
