@@ -11,6 +11,7 @@ import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.FileReceiver;
 import be.uantwerpen.node.lifeCycle.running.services.LocalFolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
+import org.w3c.dom.Node;
 
 import java.io.File;
 
@@ -43,8 +44,8 @@ public class Running extends State {
         new FileAnalyzer().run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        //SyncAgent syncAgent = SyncAgent.getInstance();
-        //syncAgent.run();
+        NodeParameters.syncAgent = new SyncAgent();
+        NodeParameters.syncAgent.run();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         cron.run();

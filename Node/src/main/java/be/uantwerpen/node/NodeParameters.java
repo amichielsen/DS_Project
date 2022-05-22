@@ -2,6 +2,7 @@ package be.uantwerpen.node;
 
 
 
+import be.uantwerpen.node.agents.SyncAgent;
 import be.uantwerpen.node.cache.IpTableCache;
 import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
@@ -47,6 +48,8 @@ public class NodeParameters {
     public static String localFolder;
 
     public static String replicaFolder;
+
+    public static SyncAgent syncAgent;
 
     private NodeParameters() throws UnknownHostException {
     }

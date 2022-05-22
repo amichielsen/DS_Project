@@ -144,7 +144,7 @@ public class RunningRestController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        SyncAgent.getInstance().setAgentList(list);
+        NodeParameters.syncAgent.setAgentList(list);
     }
 
 
