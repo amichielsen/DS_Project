@@ -52,6 +52,9 @@ public class Shutdown extends State {
 
     }
 
+    /**
+     * Remove this node from the NameServer
+     */
     public void removeFromNS(){
         HttpClient client = HttpClient.newHttpClient();
 
@@ -70,7 +73,15 @@ public class Shutdown extends State {
         }
 
     }
-    //contact previous node to update its next
+
+    /**
+     * Contact the previous node to update its next node
+     * @param hostIp IP of previous node
+     * @param nextHostId ID of next node
+     * @return Status message
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public String updateNextIdOfPreviousNode(String hostIp, Integer nextHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(nextHostId)) {
             // create a client
@@ -92,7 +103,14 @@ public class Shutdown extends State {
         } else return "error: hostID is null";
     }
 
-    //contact previous node to update its next
+    /**
+     * Contact the Next node to update its previous node
+     * @param hostIp IP of next node
+     * @param previousHostId ID of previous node
+     * @return Status message
+     * @throws IOException
+     * @throws InterruptedException
+     */
     public String updatePreviousIdOfNextNode(String hostIp, Integer previousHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(previousHostId)) {
             // create a client
@@ -115,7 +133,10 @@ public class Shutdown extends State {
     }
 
 
-    //File handling
+    /**
+     * Send all replicated files on this node to the previous one
+     * OR to the the previous of the previous in case the previous node is the owner
+     */
     public void sendFilesToPrevious() {
         File dir = new File(NodeParameters.replicaFolder);
         File[] directoryListing = dir.listFiles();
@@ -166,6 +187,9 @@ public class Shutdown extends State {
         }
     }
 
+    /**
+     * Delet all local files and let the owner know
+     */
     public void deleteLocalFiles() {
         File dir = new File(NodeParameters.localFolder);
         File[] directoryListing = dir.listFiles();

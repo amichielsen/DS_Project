@@ -82,12 +82,13 @@ public class SyncAgent extends Agent {
             String lockedFile = NodeParameters.lockRequest.poll();
             agentList.get(lockedFile).lock(NodeParameters.id);
         }
+
         while(NodeParameters.removeLocks.size() > 0){
             String lockedFile = NodeParameters.removeLocks.poll();
             agentList.get(lockedFile).unLock();
         }
 
-        try {
+        try { //Pass agent to next one
             HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
                     .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
