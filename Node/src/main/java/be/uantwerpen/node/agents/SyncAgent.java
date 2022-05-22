@@ -47,7 +47,6 @@ public class SyncAgent extends Agent {
     public void run() {
         if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
-        while (true) {
             FileSystem.fs.putAll(agentList); //Update local list according to agent
 
             File[] directoryListing = dir.listFiles();
@@ -113,7 +112,6 @@ public class SyncAgent extends Agent {
                 }
             }
         }
-    }
 
     public HashMap<String, FileParameters> getAgentList() {
         return agentList;
