@@ -132,7 +132,7 @@ public class RunningRestController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        agent.start();
+        agent.run();
     }
 
     @PostMapping(path ="/syncagent")
@@ -145,7 +145,7 @@ public class RunningRestController {
             throw new RuntimeException(e);
         }
         //if(NodeParameters.DEBUG) System.out.println("Received list: " + list);
-        agent.start();
+        agent.run();
     }
 
 

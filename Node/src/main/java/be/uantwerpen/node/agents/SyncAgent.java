@@ -111,9 +111,7 @@ public class SyncAgent extends Agent {
                                 throw new RuntimeException(ex);
                             }
                         } else {
-                            System.out.println("[" + getName() + "] [Error] connection error with next node (likely offline)");
                             throw new RuntimeException(e);
-                            //throw new RuntimeException(e);
                         }
                     }
                 }
