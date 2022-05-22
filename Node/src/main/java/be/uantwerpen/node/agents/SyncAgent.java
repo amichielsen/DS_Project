@@ -2,10 +2,12 @@ package be.uantwerpen.node.agents;
 
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import be.uantwerpen.node.utils.Hash;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.net.http.HttpResponse;
 import java.security.KeyPair;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Queue;
 
 /***
@@ -27,32 +30,30 @@ import java.util.Queue;
  */
 public class SyncAgent extends Agent {
 
-    private HashMap<String, Boolean> agentList = new HashMap<>();
-    private HashMap<String, Integer> systemFiles = new HashMap<>();
-    private static Queue<String> lockRequest = new LinkedList<>();
-    private static Queue<String> removeLocks = new LinkedList<>();
-    private final File dir;
+    private HashMap<String, FileParameters> agentList = new HashMap<>();
+
     public SyncAgent() {
-        dir = new File(NodeParameters.replicaFolder);
     }
 
     @Override
     public void run() {
-        //File dir = new File(NodeParameters.replicaFolder);
+        if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
+        File dir = new File(NodeParameters.replicaFolder);
+        FileSystem.fs.putAll(agentList); //Update local list according to agent
+
         File[] directoryListing = dir.listFiles();
         if (directoryListing == null) return;
         
         for (File child : directoryListing) {
-            FileSystem.addLocal(child.getName(), 0);
+            //FileSystem.addLocal(child.getName(), 0);
+            if(!agentList.containsKey(child.getName())) //Update agentList
+                agentList.put(child.getName(), FileSystem.getFileParameters(child.getName()));
 
-            while(NodeParameters.lockRequest.size() > 0){
-                String lockedFile = NodeParameters.lockRequest.poll();
-                FileSystem.getFileParameters(lockedFile).lock();
+            if(agentList.get(child.getName()).isLocked() && agentList.get(child.getName()).getLockedOnNode() == NodeParameters.id){
+                FileSystem.getFileParameters(child.getName()).unLock();
             }
-            while(NodeParameters.removeLocks.size() > 0){
-                String lockedFile = NodeParameters.removeLocks.poll();
-                FileSystem.getFileParameters(lockedFile).unLock();
-            }
+
+            //Checks whether another Node should own the file
             if(NodeParameters.nextID < Hash.generateHash(child.getName())){
                 try {
 
@@ -63,6 +64,7 @@ public class SyncAgent extends Agent {
                                     URI.create("http://" + ipNext+ ":8080/api/changeOwner?filename=" + child.getName()))
                             .build();
                     HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                    FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
                     child.delete();
 
 
@@ -74,14 +76,37 @@ public class SyncAgent extends Agent {
             }
 
         }
-        
+
+        //Lock files on agent
+        while(NodeParameters.lockRequest.size() > 0){
+            String lockedFile = NodeParameters.lockRequest.poll();
+            agentList.get(lockedFile).lock(NodeParameters.id);
+        }
+        while(NodeParameters.removeLocks.size() > 0){
+            String lockedFile = NodeParameters.removeLocks.poll();
+            agentList.get(lockedFile).unLock();
+        }
+
+        try {
+            HttpRequest request = HttpRequest.newBuilder(
+                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
+                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
+                    .build();
+
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            if(NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
+            if (response.statusCode() != 200) if(NodeParameters.DEBUG) System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
+
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public static void addLockRequest(String filename){
-        lockRequest.add(filename);
+    public HashMap<String, FileParameters> getAgentList() {
+        return agentList;
     }
 
-    public static void removeLock(String filename){
-        removeLocks.add(filename);
+    public void setAgentList(HashMap<String, FileParameters> agentList) {
+        this.agentList = agentList;
     }
 }

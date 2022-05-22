@@ -44,14 +44,11 @@ public class Failure{
     public void nodeFailure(int ID)  {
         // Getting the Agent ready to fix all nodes -> will go round
         if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
-            Agent failureAgent = new FailureAgent(ID);
-            failureAgent.run();
-            try {
-                System.out.println("Serialized: " + new ObjectMapper().writeValueAsString(failureAgent));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            new FailureAgent(ID).run();
         }
+
+        if (ID != NodeParameters.previousID) //Only next node can start failure sequence
+            return;
 
         // create a request
         HttpRequest request = HttpRequest.newBuilder()

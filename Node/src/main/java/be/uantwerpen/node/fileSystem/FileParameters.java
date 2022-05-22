@@ -9,6 +9,8 @@ public class FileParameters {
     private int replicatedOnNode;
     private int localOnNode;
 
+    private int lockedOnNode = -1;
+
     private EntryType entryType;
 
     public FileParameters(EntryType type) throws InstantiationException {
@@ -75,7 +77,8 @@ public class FileParameters {
         isLocked = false;
     }
 
-    public void lock() {
+    public void lock(int ID) {
+        lockedOnNode = ID;
         isLocked = true;
     }
 
@@ -124,5 +127,9 @@ public class FileParameters {
 
     public void setDownloaded(boolean downloaded) {
         isDownloaded = downloaded;
+    }
+
+    public int getLockedOnNode() {
+        return lockedOnNode;
     }
 }

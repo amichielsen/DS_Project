@@ -3,6 +3,7 @@ package be.uantwerpen.node.lifeCycle.running.services;
 import be.uantwerpen.node.NodeParameters;
 import be.uantwerpen.node.agents.Agent;
 import be.uantwerpen.node.agents.FailureAgent;
+import be.uantwerpen.node.agents.SyncAgent;
 import be.uantwerpen.node.fileSystem.EntryType;
 import be.uantwerpen.node.fileSystem.FileParameters;
 import be.uantwerpen.node.fileSystem.FileSystem;
@@ -122,9 +123,9 @@ public class RunningRestController {
      * }
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/agent")
+    @PostMapping(path ="/failureagent")
     public static void postAgent(@RequestBody String agentStr) {
-        if(NodeParameters.DEBUG) System.out.println("[REST] Agent should start running...");
+        if(NodeParameters.DEBUG) System.out.println("[REST] FailureAgent should start running...");
         FailureAgent agent = null;
         try {
             agent = new ObjectMapper().readValue(agentStr, FailureAgent.class);
@@ -132,21 +133,18 @@ public class RunningRestController {
             throw new RuntimeException(e);
         }
         agent.run();
-        ObjectMapper mapper = new ObjectMapper();
-        System.out.println(agent);
+    }
 
-
-        //JSON string to Java Object
-        /*
+    @PostMapping(path ="/syncagent")
+    public static void postSyncAgent(@RequestBody String agentStr) {
+        if(NodeParameters.DEBUG) System.out.println("[REST] SyncAgent should start running...");
+        SyncAgent agent = null;
         try {
-            Agent agent = mapper.readValue(agentString, Agent.class);
-            agent.run();
+            agent = new ObjectMapper().readValue(agentStr, SyncAgent.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-        throw new ResponseStatusException(HttpStatus.OK);
-         */
+        agent.run();
     }
 
 

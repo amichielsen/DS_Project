@@ -26,6 +26,7 @@ import java.util.Objects;
  * The last and final state...
  * Here we send a REST to our current neighbors, updating them with their new neighbor.
  * At the same time we also let this know to our NameServer.
+ * Files are also sent to other nodes
  * Now we can peacefully go to sleep...
  */
 public class Shutdown extends State {
@@ -37,8 +38,9 @@ public class Shutdown extends State {
     public void run() {
 
         try {
-            var previousIp = IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress();
-            var nextIp = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
+            this.removeFromNS();
+            String previousIp = IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress();
+            String nextIp = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
             updateNextIdOfPreviousNode(previousIp, NodeParameters.nextID);
             updatePreviousIdOfNextNode(nextIp, NodeParameters.previousID);
             this.sendFilesToPrevious();
@@ -50,14 +52,32 @@ public class Shutdown extends State {
 
     }
 
+    public void removeFromNS(){
+        HttpClient client = HttpClient.newHttpClient();
+
+        // create a request
+        HttpRequest request = HttpRequest.newBuilder(
+                        URI.create("http://" + NodeParameters.nameServerIp + ":8080/naming/Id?Id="+NodeParameters.id))
+                .DELETE()
+                .build();
+
+        // use the client to send the request
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if(NodeParameters.DEBUG) System.out.println("Deletion on nameserver was a " + response.body() );
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     //contact previous node to update its next
     public String updateNextIdOfPreviousNode(String hostIp, Integer nextHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(nextHostId)) {
             // create a client
-            var client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newHttpClient();
 
             // create a request
-            var request = HttpRequest.newBuilder(
+            HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextHostId))
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
                     .build();
@@ -76,10 +96,10 @@ public class Shutdown extends State {
     public String updatePreviousIdOfNextNode(String hostIp, Integer previousHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(previousHostId)) {
             // create a client
-            var client = HttpClient.newHttpClient();
+            HttpClient client = HttpClient.newHttpClient();
 
             // create a request
-            var request = HttpRequest.newBuilder(
+            HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + previousHostId))
                     .PUT(HttpRequest.BodyPublishers.ofString(""))
                     .build();
@@ -107,7 +127,7 @@ public class Shutdown extends State {
                 try {
                     var client = HttpClient.newHttpClient();
                     if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
-                        var request = HttpRequest.newBuilder(
+                        HttpRequest request = HttpRequest.newBuilder(
                                         URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/neighbours"))
                                 .build();
                         System.out.println(request);
@@ -121,7 +141,7 @@ public class Shutdown extends State {
                             System.out.println("FIlepath: "+filepath);
                             FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
 
-                            var request2 = HttpRequest.newBuilder(
+                            HttpRequest request2 = HttpRequest.newBuilder(
                                             URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner"))
                                     .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                                     .build();
@@ -132,7 +152,7 @@ public class Shutdown extends State {
                     } else {
                         System.out.println("FIlepath: "+filepath);
                         FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
-                        var request2 = HttpRequest.newBuilder(
+                        HttpRequest request2 = HttpRequest.newBuilder(
                                         URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
                                 .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                                 .build();
@@ -153,8 +173,8 @@ public class Shutdown extends State {
             HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> localFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getLocalFiles();
             for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
                 try {
-                    var client = HttpClient.newHttpClient();
-                    var request = HttpRequest.newBuilder(
+                    HttpClient client = HttpClient.newHttpClient();
+                    HttpRequest request = HttpRequest.newBuilder(
                                     URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();

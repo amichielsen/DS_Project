@@ -3,6 +3,7 @@ package be.uantwerpen.node;
 
 
 import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
 
 import java.net.InetAddress;
@@ -143,10 +144,12 @@ public class NodeParameters {
     }
 
     public static void addLockRequest(String filename){
+        if(!FileSystem.fs.containsKey(filename)) return;
         lockRequest.add(filename);
     }
 
     public static void removeLock(String filename){
+        if(!FileSystem.fs.containsKey(filename)) return;
         removeLocks.add(filename);
     }
 }
