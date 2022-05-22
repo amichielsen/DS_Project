@@ -104,7 +104,7 @@ public class SyncAgent extends Agent {
                             .build();
 
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                    if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
+                    //if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
                     if (response.statusCode() != 200) if (NodeParameters.DEBUG)
                         System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
 
