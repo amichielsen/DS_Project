@@ -68,43 +68,42 @@ public class DiscoveryBootstrap extends State {
     public void handleResponse(DatagramPacket answerPacket){
         String received = new String(answerPacket.getData(),0, answerPacket.getLength());
         String[] contents = received.split(" ");
-        if(contents.length > 1){
-            String identifier = contents[0];
-            System.out.println(identifier);
-            switch (identifier) {
-                case "NS" -> {
-                    int number = Integer.parseInt(contents[1]);
-                    NodeParameters.setNameServerIp(answerPacket.getAddress());
-                    if (number < 1) {
-                        NodeParameters.getInstance().setIDsAsOwn();
-                        this.allAnswersReceived = true;
-                    } else {
-                        this.answerCounter += 1;
-                    }
-                }
-                case "NEXT+PREVIOUS" -> {
-                    this.nextTemp = Integer.parseInt(contents[1]);
-                    this.previousTemp = Integer.parseInt(contents[1]);
-                    this.answerCounter += 2;
-                }
-                case "NEXT" -> {
-                    this.nextTemp = Integer.parseInt(contents[1]);
-                    this.answerCounter += 1;
-                }
-                case "PREVIOUS" -> {
-                    this.previousTemp = Integer.parseInt(contents[1]);
+        if (!(contents.length > 1)) return;
+
+        String identifier = contents[0];
+        System.out.println(identifier);
+        switch (identifier) {
+            case "NS" -> {
+                int number = Integer.parseInt(contents[1]);
+                NodeParameters.setNameServerIp(answerPacket.getAddress());
+                if (number < 1) {
+                    NodeParameters.getInstance().setIDsAsOwn();
+                    this.allAnswersReceived = true;
+                } else {
                     this.answerCounter += 1;
                 }
             }
-            if(this.answerCounter == 3){
-                System.out.println("nextemp: "+this.nextTemp);
-                System.out.println("prevtemp: "+this.previousTemp);
-                NodeParameters.getInstance().setNextID(this.nextTemp);
-                NodeParameters.getInstance().setPreviousID(this.previousTemp);
-                this.allAnswersReceived = true;
-                this.answerCounter = 0;
+            case "NEXT+PREVIOUS" -> {
+                this.nextTemp = Integer.parseInt(contents[1]);
+                this.previousTemp = Integer.parseInt(contents[1]);
+                this.answerCounter += 2;
+            }
+            case "NEXT" -> {
+                this.nextTemp = Integer.parseInt(contents[1]);
+                this.answerCounter += 1;
+            }
+            case "PREVIOUS" -> {
+                this.previousTemp = Integer.parseInt(contents[1]);
+                this.answerCounter += 1;
+            }
         }
+        if(this.answerCounter == 3){
+            System.out.println("nextemp: "+this.nextTemp);
+            System.out.println("prevtemp: "+this.previousTemp);
+            NodeParameters.getInstance().setNextID(this.nextTemp);
+            NodeParameters.getInstance().setPreviousID(this.previousTemp);
+            this.allAnswersReceived = true;
+            this.answerCounter = 0;
         }
     }
-
 }
