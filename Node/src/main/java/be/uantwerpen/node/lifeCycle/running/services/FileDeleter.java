@@ -24,38 +24,31 @@ public class FileDeleter {
 
     public void deleteFile(String filename){
         try {
-            var client = HttpClient.newHttpClient();
-
             var request = HttpRequest.newBuilder(
                             URI.create("http://"+NodeParameters.getNameServerIp().getHostAddress()+":8080/naming/file2host?filename="+filename))
                     .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-            if (response.statusCode() == 200) {
-                System.out.println(response.body());
-                JSONParser parser = new JSONParser();
-                JSONObject json = (JSONObject) parser.parse(response.body());
-                // Adding to ip cache
-                int id = ((Long) json.get("id")).intValue();
-                String ip = String.valueOf(json.get("ip"));
-
-                var client2 = HttpClient.newHttpClient();
-
-                var deleteRequest = HttpRequest.newBuilder(
-                                URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
-                        .build();
-                HttpResponse<String> deleteResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-                System.out.println(deleteResponse.body());
-
-            } else {
-                System.out.println("[RS] [Error] connection error with name server (likely offline)");
+            if (response.statusCode() != 200) {
+                if (NodeParameters.DEBUG) System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
                 return;
             }
 
+            System.out.println(response.body());
+            JSONParser parser = new JSONParser();
+            JSONObject json = (JSONObject) parser.parse(response.body());
+            // Adding to ip cache
+            int id = ((Long) json.get("id")).intValue();
+            String ip = String.valueOf(json.get("ip"));
+
+            var deleteRequest = HttpRequest.newBuilder(
+                            URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
+                    .build();
+            HttpResponse<String> deleteResponse = HttpClient.newHttpClient().send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+            if (NodeParameters.DEBUG) System.out.println(deleteResponse.body());
+
         } catch (IOException | InterruptedException e) {
-            System.out.println("[RS] [Error] name server send non 200 code (likely shutting down/busy)");
-            return;
+            if (NodeParameters.DEBUG) System.out.println("[RS] [Error] connection error with name server (likely offline)");
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }

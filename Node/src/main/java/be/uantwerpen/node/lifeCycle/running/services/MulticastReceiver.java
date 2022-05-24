@@ -11,7 +11,7 @@ import java.net.*;
  */
 public class MulticastReceiver extends Thread{
     protected MulticastSocket socket = null;
-    protected byte[] buf = new byte[256];
+    protected final byte[] buf = new byte[256];
 
     private NodeParameters nodeParameters;
 

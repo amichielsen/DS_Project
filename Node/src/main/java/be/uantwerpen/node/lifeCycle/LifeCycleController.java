@@ -7,9 +7,7 @@ import be.uantwerpen.node.lifeCycle.DiscoveryBootstrap;
 public class LifeCycleController implements Runnable {
     private State currentState;
 
-    public LifeCycleController() {
-
-    }
+    public LifeCycleController() {}
 
     public void ChangeState(State newState) {
         this.currentState = newState;

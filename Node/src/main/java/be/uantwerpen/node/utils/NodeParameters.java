@@ -13,18 +13,14 @@ import java.util.Queue;
 
 public class NodeParameters {
     public static LifeCycleController lifeCycleController;
-    public static Queue<String> lockRequest = new LinkedList<>();
-    public static Queue<String> removeLocks = new LinkedList<>();
+    public static final Queue<String> lockRequest = new LinkedList<>();
+    public static final Queue<String> removeLocks = new LinkedList<>();
     public static final Integer FAILURE_TRESHOLD = 5;
-    public static boolean DEBUG = true;
+    public static final boolean DEBUG = true;
     private static final NodeParameters instance;
 
     static {
-        try {
-            instance = new NodeParameters();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
+        instance = new NodeParameters();
     }
 
     public static InetAddress nameServerIp;
@@ -42,7 +38,7 @@ public class NodeParameters {
 
     public static String replicaFolder;
 
-    private NodeParameters() throws UnknownHostException {
+    private NodeParameters() {
     }
 
     public static InetAddress getNameServerIp() {

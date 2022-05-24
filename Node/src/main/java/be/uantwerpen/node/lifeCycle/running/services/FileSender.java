@@ -26,8 +26,7 @@ public class FileSender {
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
             int bytes;
             File file = new File(path);
-            if(NodeParameters.DEBUG)
-                System.out.println(file.getName());
+            if(NodeParameters.DEBUG) System.out.println(file.getName());
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
             JSONObject jsonObject = new JSONObject();

@@ -11,7 +11,7 @@ import java.util.Map;
 public class CronJobSchedular {
     private final State stateStarted;
     private final LifeCycleController lifeCycleController;
-    private final HashMap<CronJob,TimeDetails> allJobs = new HashMap<CronJob,TimeDetails>();
+    private final HashMap<CronJob,TimeDetails> allJobs = new HashMap<>();
     public CronJobSchedular(LifeCycleController lifeCycleController) {
         this.lifeCycleController = lifeCycleController;
         this.stateStarted = lifeCycleController.getCurrentState();
@@ -29,9 +29,7 @@ public class CronJobSchedular {
                     set.getKey().run();
                     set.getValue().setLastRan(LocalDateTime.now());
                     // DEBUG
-                    if (NodeParameters.DEBUG) {
-                        System.out.println("["+set.getKey().getName()+"] is run on "+ set.getValue().getLastRan());
-                    }
+                    if (NodeParameters.DEBUG) System.out.println("["+set.getKey().getName()+"] is run on "+ set.getValue().getLastRan());
                 }
             }
         }

@@ -104,8 +104,6 @@ public class Shutdown extends State {
      * @param hostIp IP of next node
      * @param previousHostId ID of previous node
      * @return Status message
-     * @throws IOException
-     * @throws InterruptedException
      */
     public String updatePreviousIdOfNextNode(String hostIp, Integer previousHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(previousHostId)) {
@@ -137,74 +135,78 @@ public class Shutdown extends State {
         File dir = new File(NodeParameters.replicaFolder);
         File[] directoryListing = dir.listFiles();
 
-        if (directoryListing != null) {
-            HashMap<String, FileParameters> replicatedFiles = (HashMap<String, FileParameters>) FileSystem.getReplicatedFiles(true);
-            for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
-                Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
-                try {
-                    var client = HttpClient.newHttpClient();
-                    if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
-                        HttpRequest request = HttpRequest.newBuilder(
-                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/neighbours"))
-                                .build();
-                        System.out.println(request);
-                        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        System.out.println(response.body());
-                        if (response.statusCode() == 200) {
-                            JSONParser parser = new JSONParser();
-                            JSONObject json = (JSONObject) parser.parse(response.body());
-                            // Adding to ip cache
-                            int previousID = ((Long) json.get("previousNeighbor")).intValue();
-                            System.out.println("FIlepath: "+filepath);
-                            FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
+        if (directoryListing == null) return;// Directory is empty -> return
 
-                            HttpRequest request2 = HttpRequest.newBuilder(
-                                            URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner"))
-                                    .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
-                                    .build();
-                            if(NodeParameters.DEBUG)
-                                System.out.println("Request change owner: " +request2);
-                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                        }
-                    } else {
-                        System.out.println("FIlepath: "+filepath);
-                        FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
-                        HttpRequest request2 = HttpRequest.newBuilder(
-                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
-                                .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
-                                .build();
+        HashMap<String, FileParameters> replicatedFiles = (HashMap<String, FileParameters>) FileSystem.getReplicatedFiles(true);
+
+        for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
+            Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
+            try {
+                // Local is on previous ID
+                if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
+                    HttpRequest request = HttpRequest.newBuilder(
+                                    URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/neighbours"))
+                            .build();
+                    System.out.println(request);
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                    System.out.println(response.body());
+
+                    if (response.statusCode() != 200) return;
+
+                    JSONParser parser = new JSONParser();
+                    JSONObject json = (JSONObject) parser.parse(response.body());
+                    // Adding to ip cache
+                    int previousID = ((Long) json.get("previousNeighbor")).intValue();
+                    System.out.println("FIlepath: "+filepath);
+                    FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
+
+                    HttpRequest request2 = HttpRequest.newBuilder(
+                                    URI.create("http:/" + IpTableCache.getInstance().getIp(previousID) + ":8080/api/changeOwner"))
+                            .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
+                            .build();
+                    if(NodeParameters.DEBUG)
                         System.out.println("Request change owner: " +request2);
-                        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                    }
-                } catch (IOException | ParseException | InterruptedException e) {
-                    throw new RuntimeException(e);
+                    HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                    return;
+
                 }
+
+                // All other cases
+                System.out.println("FIlepath: "+filepath);
+                FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
+                HttpRequest request2 = HttpRequest.newBuilder(
+                                URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
+                        .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
+                        .build();
+                System.out.println("Request change owner: " +request2);
+                HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+
+            } catch (IOException | ParseException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
     }
 
     /**
-     * Delet all local files and let the owner know
+     * Delete all local files and let the owner know
      */
     public void deleteLocalFiles() {
         File dir = new File(NodeParameters.localFolder);
         File[] directoryListing = dir.listFiles();
-        if (directoryListing != null) {
-            HashMap<String, FileParameters> localFiles = (HashMap<String, FileParameters>) FileSystem.getLocalFiles();
-            for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
-                try {
-                    HttpClient client = HttpClient.newHttpClient();
-                    HttpRequest request = HttpRequest.newBuilder(
-                                    URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
-                            .POST(HttpRequest.BodyPublishers.ofString(""))
-                            .build();
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                } catch (IOException | InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
 
+        if (directoryListing == null) return; // Directory is empty -> return
+
+        HashMap<String, FileParameters> localFiles = (HashMap<String, FileParameters>) FileSystem.getLocalFiles();
+        for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder(
+                                URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
+                        .POST(HttpRequest.BodyPublishers.ofString(""))
+                        .build();
+                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (IOException | InterruptedException e) {
+                throw new RuntimeException(e);
             }
         }
-
     }
 }

@@ -16,8 +16,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ReplicationService extends Thread {
     private final Path filename;

@@ -12,7 +12,7 @@ import java.net.UnknownHostException;
 @SpringBootApplication
 public class NodeApplication {
 
-    public static void main(String[] args) throws InterruptedException, UnknownHostException {
+    public static void main(String[] args) throws UnknownHostException {
         NodeParameters.getInstance().setup(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost(), Hash.generateHash(InetAddress.getLocalHost().getHostName()) );
         LifeCycleController lifeCycleController = new LifeCycleController();
         Thread t1 = new Thread(lifeCycleController);

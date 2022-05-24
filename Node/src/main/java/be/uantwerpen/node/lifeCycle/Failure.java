@@ -10,7 +10,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -52,128 +51,113 @@ public class Failure{
             System.out.println(request);
         }
         // use the client to send the request
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
         try {
             response = HttpClient.newBuilder().build().send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        TreeMap<String, Integer> responseMap = null;
+        TreeMap<String, Integer> responseMap;
         try {
             responseMap = new ObjectMapper().readValue( response.body(), TreeMap.class);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
-        if(responseMap.size() > 0) {
-            int previousNode = responseMap.get("previous");
-            int nextNode = responseMap.get("next");
-            if (NodeParameters.DEBUG) {
-                System.out.println(previousNode + " =prev, next= " + nextNode);
-            }
-            //update nodes
-            try{
+        if(responseMap.size() == 0) return; // Response is empty, no need to compute
+
+        int previousNode = responseMap.get("previous");
+        int nextNode = responseMap.get("next");
+        if (NodeParameters.DEBUG) System.out.println(previousNode + " =prev, next= " + nextNode);
+        //update nodes
+        try{
             if(previousNode == NodeParameters.id){
-                if(NodeParameters.DEBUG){
-                    System.out.println("I'm next ");
-                }
+                if(NodeParameters.DEBUG) System.out.println("I'm next ");
                 NodeParameters.nextID = nextNode;
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             } else if (nextNode == NodeParameters.id) {
-                if(NodeParameters.DEBUG){
-                    System.out.println("I'm prev ");
-                }
+                if(NodeParameters.DEBUG) System.out.println("I'm prev ");
                 NodeParameters.previousID = previousNode;
                 updateNextIdOfPreviousNode(nextNode, previousNode);
             }
             else {
-                if(NodeParameters.DEBUG){
-                    System.out.println("Shouldn't come here");
-                }
+                if(NodeParameters.DEBUG) System.out.println("Shouldn't come here");
+
                 updateNextIdOfPreviousNode(nextNode, previousNode);
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             }
-            }catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-                return;
-            }
-            if (NodeParameters.DEBUG) {
-                System.out.println(response.body());
-            }
+        }catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return;
+        }
+        if (NodeParameters.DEBUG) {
+            System.out.println(response.body());
         }
     }
-    public String updateNextIdOfPreviousNode(Integer nextNode, Integer prevNode) throws IOException, InterruptedException {
-        if (Objects.nonNull(nextNode)) {
 
-            // create a client
-            var client = HttpClient.newHttpClient();
+    public void updateNextIdOfPreviousNode(Integer nextNode, Integer prevNode) throws IOException, InterruptedException {
+        if (nextNode == null) return;
 
-            // create a request to get Ip from Id
-            var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
-                    .build();
+        // create a client
+        var client = HttpClient.newHttpClient();
 
-            if(NodeParameters.DEBUG){
-                System.out.println(request);
-            }
+        // create a request to get Ip from Id
+        var request = HttpRequest.newBuilder(
+                        URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ prevNode))
+                .build();
 
-            // use the client to send the request
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String hostIp = response.body();
+        if(NodeParameters.DEBUG){
+            System.out.println(request);
+        }
 
-            if(NodeParameters.DEBUG){
-                System.out.println("Next: " + hostIp);
-            }
+        // use the client to send the request
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String hostIp = response.body();
 
-            // create a request
-            request = HttpRequest.newBuilder()
-                    .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextNode))
-                    .build();
+        if(NodeParameters.DEBUG) System.out.println("Next: " + hostIp);
 
-            // use the client to send the request
-            HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
+        // create a request
+        request = HttpRequest.newBuilder()
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://" + hostIp + ":8080/api/updateNext?hostId=" + nextNode))
+                .build();
 
-            // the response:
-            System.out.println(responses.body());
-            return responses.body();
+        // use the client to send the request
+        HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        } else return "error: hostID is null";
+        // the response:
+        if(NodeParameters.DEBUG) System.out.println(responses.body());
+        responses.body();
     }
 
-    public String updatePreviousIdOfNextNode(Integer prevNode, Integer nextNode) throws IOException, InterruptedException {
-        if (Objects.nonNull(prevNode)) {
+    public void updatePreviousIdOfNextNode(Integer prevNode, Integer nextNode) throws IOException, InterruptedException {
+        if (prevNode == null) return;
+        // create a client
+        var client = HttpClient.newHttpClient();
 
-            // create a client
-            var client = HttpClient.newHttpClient();
+        // create a request to get Ip from Id
+        var request = HttpRequest.newBuilder(
+                        URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ nextNode))
+                .build();
 
-            // create a request to get Ip from Id
-            var request = HttpRequest.newBuilder(
-                            URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() +":8080/naming/host2IP?host="+ nextNode))
-                    .build();
+        // use the client to send the request
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        String hostIp = response.body();
 
-            // use the client to send the request
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            String hostIp = response.body();
+        // create a request
+        request = HttpRequest.newBuilder()
+                .PUT(HttpRequest.BodyPublishers.ofString(""))
+                .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + prevNode))
+                .build();
 
-            // create a request
-            request = HttpRequest.newBuilder()
-                    .PUT(HttpRequest.BodyPublishers.ofString(""))
-                    .uri(URI.create("http://" + hostIp + ":8080/api/updatePrevious?hostId=" + prevNode))
-                    .build();
+        // use the client to send the request
+        HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            // use the client to send the request
-            HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-            if(NodeParameters.DEBUG){
-                System.out.println("Previous: " + hostIp);
-            }
-            // the response:
-            System.out.println(responses.body());
-            return responses.body();
-
-        } else return "error: hostID is null";
+        // the response:
+        if(NodeParameters.DEBUG) System.out.println("Previous: " + hostIp);
+        if(NodeParameters.DEBUG) System.out.println(responses.body());
     }
 
     public void setFailedID(int failedID) {

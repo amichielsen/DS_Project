@@ -3,7 +3,7 @@ package be.uantwerpen.node.lifeCycle;
 import be.uantwerpen.node.utils.NodeParameters;
 
 public abstract class State {
-    protected LifeCycleController lifeCycleController;
+    protected final LifeCycleController lifeCycleController;
     protected NodeParameters nodeParameters = NodeParameters.getInstance();
     protected int param;
 
