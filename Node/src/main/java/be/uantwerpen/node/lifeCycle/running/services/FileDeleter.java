@@ -1,14 +1,12 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.cache.IpTableCache;
+import be.uantwerpen.node.utils.NodeParameters;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

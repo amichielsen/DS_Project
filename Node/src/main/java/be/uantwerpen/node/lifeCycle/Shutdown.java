@@ -1,12 +1,10 @@
 package be.uantwerpen.node.lifeCycle;
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.cache.IpTableCache;
-import be.uantwerpen.node.fileSystem.FileParameters;
-import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.cache.IpTableCache;
+import be.uantwerpen.node.utils.fileSystem.FileParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
-import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -79,8 +77,6 @@ public class Shutdown extends State {
      * @param hostIp IP of previous node
      * @param nextHostId ID of next node
      * @return Status message
-     * @throws IOException
-     * @throws InterruptedException
      */
     public String updateNextIdOfPreviousNode(String hostIp, Integer nextHostId) throws IOException, InterruptedException {
         if (Objects.nonNull(nextHostId)) {
@@ -142,7 +138,7 @@ public class Shutdown extends State {
         File[] directoryListing = dir.listFiles();
 
         if (directoryListing != null) {
-            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> replicatedFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getReplicatedFiles(true);
+            HashMap<String, FileParameters> replicatedFiles = (HashMap<String, FileParameters>) FileSystem.getReplicatedFiles(true);
             for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
                 Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
                 try {
@@ -194,7 +190,7 @@ public class Shutdown extends State {
         File dir = new File(NodeParameters.localFolder);
         File[] directoryListing = dir.listFiles();
         if (directoryListing != null) {
-            HashMap<String, be.uantwerpen.node.fileSystem.FileParameters> localFiles = (HashMap<String, be.uantwerpen.node.fileSystem.FileParameters>) FileSystem.getLocalFiles();
+            HashMap<String, FileParameters> localFiles = (HashMap<String, FileParameters>) FileSystem.getLocalFiles();
             for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
                 try {
                     HttpClient client = HttpClient.newHttpClient();

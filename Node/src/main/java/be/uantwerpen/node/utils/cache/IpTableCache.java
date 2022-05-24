@@ -1,6 +1,6 @@
-package be.uantwerpen.node.cache;
+package be.uantwerpen.node.utils.cache;
 
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 
 public class IpTableCache {
     static IpTableCache instance = new IpTableCache();
-    private HashMap<Integer, InetAddress> cache = new HashMap<Integer, InetAddress>();
+    private final HashMap<Integer, InetAddress> cache = new HashMap<Integer, InetAddress>();
 
     private IpTableCache() {}
     public static IpTableCache getInstance(){
@@ -45,7 +45,7 @@ public class IpTableCache {
 
                     // print result
                     System.out.println("[IPCACHE] [Done] added following IP to cache: "+ response);
-                    System.out.println(response.toString());
+                    System.out.println(response);
                     return InetAddress.getByName(response.toString());
                 } else {
                     System.out.println("[IPCACHE] [Error] name server send non 200 code (likely shutting down/busy)");

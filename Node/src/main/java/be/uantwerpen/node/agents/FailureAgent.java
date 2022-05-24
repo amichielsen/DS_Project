@@ -1,19 +1,14 @@
 package be.uantwerpen.node.agents;
 
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.cache.IpTableCache;
-import be.uantwerpen.node.fileSystem.FileParameters;
-import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.cache.IpTableCache;
+import be.uantwerpen.node.utils.fileSystem.FileParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.net.URI;

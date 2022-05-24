@@ -1,7 +1,7 @@
-package be.uantwerpen.node.cron;
+package be.uantwerpen.node.utils.cron;
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
+import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.lifeCycle.State;
 
 import java.time.LocalDateTime;
@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CronJobSchedular {
-    private State stateStarted;
-    private LifeCycleController lifeCycleController;
-    private HashMap<CronJob,TimeDetails> allJobs = new HashMap<CronJob,TimeDetails>();
+    private final State stateStarted;
+    private final LifeCycleController lifeCycleController;
+    private final HashMap<CronJob,TimeDetails> allJobs = new HashMap<CronJob,TimeDetails>();
     public CronJobSchedular(LifeCycleController lifeCycleController) {
         this.lifeCycleController = lifeCycleController;
         this.stateStarted = lifeCycleController.getCurrentState();

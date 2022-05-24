@@ -1,10 +1,9 @@
-package be.uantwerpen.node.cron.jobs;
+package be.uantwerpen.node.utils.cron.jobs;
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.cron.CronJob;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
+import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.cron.CronJob;
 import be.uantwerpen.node.lifeCycle.Failure;
-import org.junit.internal.runners.statements.Fail;
 
 import java.io.IOException;
 import java.net.URI;

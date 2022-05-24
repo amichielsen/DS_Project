@@ -1,8 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.fileSystem.FileSystem;
-import com.fasterxml.jackson.core.util.InternCache;
+import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
@@ -44,7 +43,7 @@ public class FileReceiver extends Thread{
                 System.out.println("Delivered");
                 FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" + filename);
 
-                int bytes = 0;
+                int bytes;
                 byte[] buffer = new byte[4 * 1024];
                 while (size > 0 && (bytes = dataInputStream.read(buffer, 0, Math.min(buffer.length, size))) != -1) {
                     fileOutputStream.write(buffer, 0, bytes);

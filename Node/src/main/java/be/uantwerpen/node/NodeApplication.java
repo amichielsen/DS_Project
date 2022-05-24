@@ -1,7 +1,8 @@
 package be.uantwerpen.node;
 
-import be.uantwerpen.node.lifeCycle.Shutdown;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
 import be.uantwerpen.node.utils.Hash;
+import be.uantwerpen.node.utils.NodeParameters;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

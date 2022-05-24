@@ -2,16 +2,15 @@ package be.uantwerpen.node.lifeCycle.running;
 
 
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
+import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.agents.SyncAgent;
-import be.uantwerpen.node.cron.CronJobSchedular;
-import be.uantwerpen.node.cron.jobs.PingNeighboringNode;
+import be.uantwerpen.node.utils.cron.CronJobSchedular;
+import be.uantwerpen.node.utils.cron.jobs.PingNeighboringNode;
 import be.uantwerpen.node.lifeCycle.State;
 import be.uantwerpen.node.lifeCycle.running.services.FileReceiver;
 import be.uantwerpen.node.lifeCycle.running.services.LocalFolderWatchdog;
 import be.uantwerpen.node.lifeCycle.running.services.MulticastReceiver;
-import org.w3c.dom.Node;
 
 import java.io.File;
 import java.util.Objects;
@@ -42,7 +41,7 @@ public class Running extends State {
         File replicaFolder = new File("/root/data/replica");
         replicaFolder.mkdirs();
         NodeParameters.replicaFolder = replicaFolder.getPath();
-        File filesList[] = replicaFolder.listFiles();
+        File[] filesList = replicaFolder.listFiles();
         assert filesList != null;
         for(File file : filesList)
                 file.delete();

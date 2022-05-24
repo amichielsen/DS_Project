@@ -1,30 +1,23 @@
-package be.uantwerpen.node;
+package be.uantwerpen.node.utils;
 
 
 
-import be.uantwerpen.node.agents.SyncAgent;
-import be.uantwerpen.node.cache.IpTableCache;
-import be.uantwerpen.node.fileSystem.FileSystem;
-import be.uantwerpen.node.utils.Hash;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
+import be.uantwerpen.node.utils.cache.IpTableCache;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
 public class NodeParameters {
-                // Bestandsnaam - Local/replica - ID van houder
-    //public static Map<String, Map<String, Integer>> bookkeeper = new HashMap<>();
-
     public static LifeCycleController lifeCycleController;
-    //public static HashMap<String, Boolean> systemFiles = new HashMap<>();
     public static Queue<String> lockRequest = new LinkedList<>();
     public static Queue<String> removeLocks = new LinkedList<>();
     public static final Integer FAILURE_TRESHOLD = 5;
     public static boolean DEBUG = true;
-    private static NodeParameters instance;
+    private static final NodeParameters instance;
 
     static {
         try {
@@ -88,7 +81,7 @@ public class NodeParameters {
     }
 
     public void setPreviousID(Integer previousID) {
-        this.previousID = previousID;
+        NodeParameters.previousID = previousID;
     }
 
     public Integer getNextID() {
@@ -96,7 +89,7 @@ public class NodeParameters {
     }
 
     public void setNextID(Integer nextID) {
-        this.nextID = nextID;
+        NodeParameters.nextID = nextID;
     }
 
     public Integer getId() {

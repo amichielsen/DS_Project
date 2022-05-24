@@ -1,4 +1,4 @@
-package be.uantwerpen.node.cron;
+package be.uantwerpen.node.utils.cron;
 
 import java.time.LocalDateTime;
 

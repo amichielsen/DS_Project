@@ -1,6 +1,6 @@
-package be.uantwerpen.node.fileSystem;
+package be.uantwerpen.node.utils.fileSystem;
 
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 
 public class FileParameters {
     private boolean isLocalOnThisNode;

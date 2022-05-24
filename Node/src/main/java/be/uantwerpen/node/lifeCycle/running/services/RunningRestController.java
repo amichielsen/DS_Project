@@ -1,24 +1,20 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.agents.Agent;
+import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.agents.FailureAgent;
 import be.uantwerpen.node.agents.SyncAgent;
-import be.uantwerpen.node.fileSystem.EntryType;
-import be.uantwerpen.node.fileSystem.FileParameters;
-import be.uantwerpen.node.fileSystem.FileSystem;
+import be.uantwerpen.node.utils.fileSystem.EntryType;
+import be.uantwerpen.node.utils.fileSystem.FileParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.Shutdown;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
-import org.w3c.dom.Node;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -37,7 +33,7 @@ public class RunningRestController {
      *     "id": _id of sending node,
      *     "ip": _ip of sending node
      * }
-     * @return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
+     * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/hello")
     public static void hello(@RequestBody String payload) {
@@ -50,7 +46,7 @@ public class RunningRestController {
      *     "id": _id of sending node,
      *     "ip": _ip of sending node
      * }
-     * @return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
+     * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/bye")
     public static void bye(@RequestBody String payload) {
@@ -109,7 +105,7 @@ public class RunningRestController {
      *     "newPreviousNeighbor: _new previousNeighbor for this node,
      *     "newNextNeighbor: _new nextNeighbor for this node,
      * }
-     * @return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
+     * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
     @PostMapping(path ="/status")
     public static void postStatus(@RequestBody String payload) {
@@ -126,7 +122,7 @@ public class RunningRestController {
     @PostMapping(path ="/failureagent")
     public static void postAgent(@RequestBody String agentStr) {
         if(NodeParameters.DEBUG) System.out.println("[REST] FailureAgent should start running...");
-        FailureAgent agent = null;
+        FailureAgent agent;
         try {
             agent = new ObjectMapper().readValue(agentStr, FailureAgent.class);
         } catch (JsonProcessingException e) {
@@ -138,7 +134,7 @@ public class RunningRestController {
     @PostMapping(path ="/syncagent")
     public static void postSyncAgent(@RequestBody String agentStr) {
         //if(NodeParameters.DEBUG) System.out.println("[REST] SyncAgent should start running...");
-        SyncAgent agent = null;
+        SyncAgent agent;
         try {
             agent = new ObjectMapper().readValue(agentStr, SyncAgent.class);
         } catch (JsonProcessingException e) {

@@ -1,6 +1,6 @@
-package be.uantwerpen.node.cron;
+package be.uantwerpen.node.utils.cron;
 
-import be.uantwerpen.node.LifeCycleController;
+import be.uantwerpen.node.lifeCycle.LifeCycleController;
 
 public abstract class CronJob implements Runnable {
     protected LifeCycleController lifeCycleController;

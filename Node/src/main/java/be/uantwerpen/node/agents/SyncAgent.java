@@ -1,27 +1,20 @@
 package be.uantwerpen.node.agents;
 
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.cache.IpTableCache;
-import be.uantwerpen.node.fileSystem.FileParameters;
-import be.uantwerpen.node.fileSystem.FileSystem;
-import be.uantwerpen.node.lifeCycle.Failure;
+import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.cache.IpTableCache;
+import be.uantwerpen.node.utils.fileSystem.FileParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
-import be.uantwerpen.node.lifeCycle.running.services.ReplicationService;
 import be.uantwerpen.node.utils.Hash;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.security.KeyPair;
 import java.util.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /***
  * SyncAgent: Agent responsible for synchronizing the whole system

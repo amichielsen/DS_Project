@@ -1,13 +1,10 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 import org.json.simple.JSONObject;
 
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -27,7 +24,7 @@ public class FileSender {
             Socket socket = new Socket(host, 5044);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-            int bytes = 0;
+            int bytes;
             File file = new File(path);
             if(NodeParameters.DEBUG)
                 System.out.println(file.getName());
@@ -38,11 +35,12 @@ public class FileSender {
             jsonObject.put("length", file.length());
             jsonObject.put("id", id);
             jsonObject.put("type", type);
-            printWriter.println(jsonObject.toString());
+            printWriter.println(jsonObject);
             System.out.println(jsonObject);
             printWriter.flush();
 
             while (!Objects.equals(bufferedReader.readLine(), "OK")) {
+
             }
             System.out.println("oke");
             FileInputStream fileInputStream = new FileInputStream(file);

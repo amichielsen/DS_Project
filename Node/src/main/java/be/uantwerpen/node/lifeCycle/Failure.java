@@ -1,16 +1,9 @@
 package be.uantwerpen.node.lifeCycle;
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
-import be.uantwerpen.node.agents.Agent;
+import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.agents.FailureAgent;
-import be.uantwerpen.node.lifeCycle.running.Running;
-import ch.qos.logback.core.pattern.parser.Node;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.internal.runners.statements.Fail;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;

@@ -1,8 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.utils.Hash;
-import org.w3c.dom.Node;
 
 import java.io.IOException;
 import java.net.*;

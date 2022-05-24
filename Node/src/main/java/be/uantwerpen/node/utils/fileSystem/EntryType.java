@@ -1,4 +1,4 @@
-package be.uantwerpen.node.fileSystem;
+package be.uantwerpen.node.utils.fileSystem;
 
 public enum EntryType {
     LOCAL,

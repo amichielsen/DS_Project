@@ -4,18 +4,17 @@ import java.io.IOException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.*;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 public class LocalFolderWatchdog extends Thread {
 
-    private String path;
+    private final String path;
 
     public LocalFolderWatchdog(String path) {
         this.path = path;
     }
 
     public void run() {
-        WatchService watcher = null;
+        WatchService watcher;
         try {
             watcher = FileSystems.getDefault().newWatchService();
         } catch (IOException e) {
@@ -23,7 +22,7 @@ public class LocalFolderWatchdog extends Thread {
         }
 
         // wait for key to be signaled
-        Path dir = null;
+        Path dir;
         dir = Path.of(this.path);
         System.out.println(dir);
         try {
@@ -32,7 +31,7 @@ public class LocalFolderWatchdog extends Thread {
                     ENTRY_DELETE,
                     ENTRY_MODIFY);
         } catch (IOException x) {
-            System.err.println(x);
+            System.out.println(x);
         }
         while (true) {
             WatchKey key;

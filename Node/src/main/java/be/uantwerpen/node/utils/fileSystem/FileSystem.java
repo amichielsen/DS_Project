@@ -1,13 +1,12 @@
-package be.uantwerpen.node.fileSystem;
+package be.uantwerpen.node.utils.fileSystem;
 
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static be.uantwerpen.node.fileSystem.EntryType.*;
+import static be.uantwerpen.node.utils.fileSystem.EntryType.*;
 
 public class FileSystem {
     private static final FileSystem instance;

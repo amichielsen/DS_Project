@@ -1,7 +1,6 @@
 package be.uantwerpen.node.lifeCycle;
 
-import be.uantwerpen.node.LifeCycleController;
-import be.uantwerpen.node.NodeParameters;
+import be.uantwerpen.node.utils.NodeParameters;
 
 public abstract class State {
     protected LifeCycleController lifeCycleController;
