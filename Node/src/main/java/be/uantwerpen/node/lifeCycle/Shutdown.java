@@ -147,9 +147,11 @@ public class Shutdown extends State {
         if(NodeParameters.DEBUG) System.out.println("[SD] replicated on this node: " + replicatedFiles);
         for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
             Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
+            if(NodeParameters.DEBUG) System.out.println("[SD] Filepath before choice: " + filepath);
             try {
                 // Local is on previous ID
                 if (Objects.equals(entry.getValue().getLocalOnNode(), NodeParameters.previousID)) {
+                    if(NodeParameters.DEBUG) System.out.println("[SD] Local on previous");
                     HttpRequest request = HttpRequest.newBuilder(
                                     URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/neighbours"))
                             .build();
@@ -176,7 +178,7 @@ public class Shutdown extends State {
                     return;
 
                 }
-
+                if(NodeParameters.DEBUG) System.out.println("[SD] Not local on previous");
                 // All other cases
                 if(NodeParameters.DEBUG) System.out.println("[SD] Filepath (other): "+filepath);
                 FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
