@@ -38,7 +38,7 @@ public class FileSystem {
         if (fs.containsKey(file)) return -1;
         try {
             if(NodeParameters.DEBUG)
-                System.out.println("File to be added: " + file);
+                System.out.println("[FileSystem] File to be added: " + file);
             fs.put(file, new FileParameters(REPLICA, LocalID));
             return 0;
         } catch (InstantiationException e) {

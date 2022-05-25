@@ -158,8 +158,11 @@ public class RunningRestController {
     @PutMapping(path="/changeOwner")
     public static void changeOwner(@RequestBody String filename){
         if(NodeParameters.DEBUG) System.out.println("[REST] Change owner requested for file: " + filename);
-        if(FileSystem.addReplica(filename, NodeParameters.id) != -1)
+        if(FileSystem.addReplica(filename, NodeParameters.id) != -1) {
+            if (NodeParameters.DEBUG) System.out.println("[REST] File not present with name: " + filename);
             FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+        }
+        if(NodeParameters.DEBUG) System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename));
     }
 
     @PostMapping(path ="/localDeletion")
