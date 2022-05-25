@@ -68,6 +68,7 @@ public class SyncAgent extends Agent {
 
 
                         } catch (IOException | InterruptedException e) {
+                            if (!child.exists()) continue;
                             if (i < 4) {
                                 try {
                                     Thread.sleep(1000);
