@@ -33,15 +33,21 @@ public class Failure{
      * Get prev and next node of failed node.
      * @param ID Id of failed node
      */
-    public void nodeFailure(int ID)  {
-        // Getting the Agent ready to fix all nodes -> will go round
+    public void nodeFailure(int ID) {
+        if (ID != NodeParameters.previousID) //Only next node can start failure sequence
+        {
+            this.failureHandler(ID);
+        }
         if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
-            new FailureAgent(ID).run();
+            new FailureAgent(ID).start();
         }
 
-        if (ID != NodeParameters.previousID) //Only next node can start failure sequence
-            return;
 
+
+    }
+
+
+    private void failureHandler(int ID){
         // create a request
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(""))
