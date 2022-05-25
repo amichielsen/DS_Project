@@ -157,7 +157,8 @@ public class RunningRestController {
 
     @PutMapping(path="/changeOwner")
     public static void changeOwner(@RequestBody String filename){
-        FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+        if(FileSystem.addReplica(filename, NodeParameters.id) != -1)
+            FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
     }
 
     @PostMapping(path ="/localDeletion")
