@@ -172,7 +172,7 @@ public class Shutdown extends State {
                 }
 
                 // All other cases
-                if(NodeParameters.DEBUG) System.out.println("[SD] Filepath: "+filepath);
+                if(NodeParameters.DEBUG) System.out.println("[SD] Filepath (other): "+filepath);
                 FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                 HttpRequest request2 = HttpRequest.newBuilder(
                                 URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
@@ -180,7 +180,7 @@ public class Shutdown extends State {
                         .build();
                 if(NodeParameters.DEBUG) System.out.println("[SD] Request change owner: " +request2);
                 HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-
+                if(NodeParameters.DEBUG) System.out.println("[SD] Response: " + response2);
             } catch (IOException | ParseException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -200,7 +200,7 @@ public class Shutdown extends State {
         for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
             try {
                 HttpRequest request = HttpRequest.newBuilder(
-                                URI.create("http://" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
+                                URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
                         .POST(HttpRequest.BodyPublishers.ofString(""))
                         .build();
                 HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
