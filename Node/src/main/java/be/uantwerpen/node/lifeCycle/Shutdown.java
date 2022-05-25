@@ -210,8 +210,8 @@ public class Shutdown extends State {
                     // Adding to ip cache
                     String ip = ((String) json.get("ip"));
                     request = HttpRequest.newBuilder(
-                                    URI.create("http://" + ip + ":8080/api/localDeletion?filename=" + entry.getKey()))
-                            .POST(HttpRequest.BodyPublishers.ofString(""))
+                                    URI.create("http://" + ip + ":8080/api/localDeletion"))
+                            .POST(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                             .build();
                     if(NodeParameters.DEBUG) System.out.println("[SD] " + request);
                     response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
