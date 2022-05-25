@@ -199,8 +199,7 @@ public class Shutdown extends State {
         HashMap<String, FileParameters> localFiles = (HashMap<String, FileParameters>) FileSystem.getLocalFiles();
         for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
             try {
-                String ip = IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()).getHostAddress();
-                if(!Objects.equals(ip, "localhost/127.0.0.1")) {
+                if(entry.getValue().getReplicatedOnNode() != NodeParameters.id) {
                     HttpRequest request = HttpRequest.newBuilder(
                                     URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
