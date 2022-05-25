@@ -145,6 +145,7 @@ public class Shutdown extends State {
         HashMap<String, FileParameters> replicatedFiles = (HashMap<String, FileParameters>) FileSystem.getReplicatedFiles(true);
 
         if(NodeParameters.DEBUG) System.out.println("[SD] replicated on this node: " + replicatedFiles);
+        if(NodeParameters.DEBUG) System.out.println("[SD] Entryset: " + replicatedFiles.entrySet());
         for(Map.Entry<String, FileParameters> entry: replicatedFiles.entrySet()){
             Path filepath = Path.of(NodeParameters.replicaFolder + "/" + entry.getKey());
             if(NodeParameters.DEBUG) System.out.println("[SD] Filepath before choice: " + filepath);
