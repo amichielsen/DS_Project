@@ -157,6 +157,7 @@ public class RunningRestController {
 
     @PutMapping(path="/changeOwner")
     public static void changeOwner(@RequestBody String filename){
+        if(NodeParameters.DEBUG) System.out.println("[REST] Change owner requested for file: " + filename);
         if(FileSystem.addReplica(filename, NodeParameters.id) != -1)
             FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
     }
