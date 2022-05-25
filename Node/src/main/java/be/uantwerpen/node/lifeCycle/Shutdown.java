@@ -134,7 +134,12 @@ public class Shutdown extends State {
     public void sendFilesToPrevious() {
         File dir = new File(NodeParameters.replicaFolder);
         File[] directoryListing = dir.listFiles();
-
+        if(NodeParameters.DEBUG){
+            assert directoryListing != null;
+            for(File f: directoryListing){
+                System.out.println("[SD] filename: " + f.getName() + " replicated on: " + FileSystem.fs.get(f.getName()).getReplicatedOnNode());
+            }
+        }
         if (directoryListing == null) return;// Directory is empty -> return
 
         HashMap<String, FileParameters> replicatedFiles = (HashMap<String, FileParameters>) FileSystem.getReplicatedFiles(true);
