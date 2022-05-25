@@ -35,7 +35,8 @@ public class MulticastReceiver extends Thread{
             e.printStackTrace();
         }
         System.out.println("[MULTICAST] [Info] receiver listening");
-        while(true){
+
+        while (true){
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
             try {
                 socket.receive(packet);
