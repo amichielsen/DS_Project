@@ -2,7 +2,7 @@ package be.uantwerpen.node.agents;
 
 import java.io.Serializable;
 
-public class Agent implements Serializable, Runnable {
+public class Agent extends Thread implements Serializable {
     @Override
     public void run() {
 

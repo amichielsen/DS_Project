@@ -78,6 +78,7 @@ public class ReplicationService extends Thread {
             }
             // 3. Add to Filesystem
             FileSystem.addLocal(f1.getName(), id);
+            return;
         }
 
         // D. Send to other - LOCAL
