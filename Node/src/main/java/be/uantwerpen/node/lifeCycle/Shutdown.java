@@ -199,12 +199,15 @@ public class Shutdown extends State {
         HashMap<String, FileParameters> localFiles = (HashMap<String, FileParameters>) FileSystem.getLocalFiles();
         for (Map.Entry<String, FileParameters> entry: localFiles.entrySet()) {
             try {
-                HttpRequest request = HttpRequest.newBuilder(
-                                URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
-                        .POST(HttpRequest.BodyPublishers.ofString(""))
-                        .build();
-                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (IOException | InterruptedException e) {
+                String ip = IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()).getHostAddress();
+                if(ip != NodeParameters.getIp()) {
+                    HttpRequest request = HttpRequest.newBuilder(
+                                    URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
+                            .POST(HttpRequest.BodyPublishers.ofString(""))
+                            .build();
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                }
+                } catch (IOException | InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
