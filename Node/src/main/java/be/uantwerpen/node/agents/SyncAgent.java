@@ -51,24 +51,34 @@ public class SyncAgent extends Agent {
 
                 //Checks whether another Node should own the file
                 if (NodeParameters.nextID < Hash.generateHash(child.getName())) {
-                    try {
+                    for (int i = 0; i < 6; i++) {
+                        try {
+                            String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
+                            FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
+                            var client = HttpClient.newHttpClient();
+                            var request2 = HttpRequest.newBuilder(
+                                            URI.create("http://" + ipNext + ":8080/api/changeOwner?filename=" + child.getName()))
+                                    .build();
+                            if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
+                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                            FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
+                            if (child.delete())
+                                if (NodeParameters.DEBUG) System.out.println("[S-A] File successfully deleted");
+                            ;
 
-                        String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
-                        FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
-                        var client = HttpClient.newHttpClient();
-                        var request2 = HttpRequest.newBuilder(
-                                        URI.create("http://" + ipNext + ":8080/api/changeOwner?filename=" + child.getName()))
-                                .build();
-                        if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
-                        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                        FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                        if(child.delete()) if(NodeParameters.DEBUG) System.out.println("[S-A] File successfully deleted");;
 
-
-                    } catch (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                        } catch (IOException | InterruptedException e) {
+                            if (i < 4) {
+                                try {
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }else{
+                                    throw new RuntimeException(e);
+                                }
+                        }
                     }
-
 
                 }
 
