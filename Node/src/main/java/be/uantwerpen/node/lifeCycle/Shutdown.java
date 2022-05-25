@@ -201,13 +201,22 @@ public class Shutdown extends State {
             try {
                 if(entry.getValue().getReplicatedOnNode() != NodeParameters.id) {
                     HttpRequest request = HttpRequest.newBuilder(
-                                    URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
+                                    URI.create("http:/" + NodeParameters.nameServerIp + ":8080/naming/file2host?filename="+entry.getKey()))
+                            .GET()
+                            .build();
+                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                    JSONParser parser = new JSONParser();
+                    JSONObject json = (JSONObject) parser.parse(response.body());
+                    // Adding to ip cache
+                    String ip = ((String) json.get("ip"));
+                    request = HttpRequest.newBuilder(
+                                    URI.create("http://" + ip + ":8080/api/localDeletion?filename=" + entry.getKey()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();
                     if(NodeParameters.DEBUG) System.out.println("[SD] " + request);
-                    HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                    response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 }
-                } catch (IOException | InterruptedException e) {
+                } catch (IOException | InterruptedException | ParseException e) {
                 throw new RuntimeException(e);
             }
         }
