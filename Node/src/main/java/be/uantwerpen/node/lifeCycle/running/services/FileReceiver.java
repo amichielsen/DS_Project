@@ -20,27 +20,27 @@ public class FileReceiver extends Thread{
 
         try{
             ServerSocket serverSocket = new ServerSocket(5044);
-            System.out.println("listening to port:5044");
+            if(NodeParameters.DEBUG) System.out.println("File receiver listening to port:5044");
             while (true) {
 
                 Socket clientSocket = serverSocket.accept();
-                System.out.println(clientSocket + " connected.");
+                if(NodeParameters.DEBUG) System.out.println("[FR] " + clientSocket + " connected.");
                 DataInputStream dataInputStream = new DataInputStream(clientSocket.getInputStream());
                 DataOutputStream dataOutputStream = new DataOutputStream(clientSocket.getOutputStream());
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
                 Map responseMap = new ObjectMapper().readValue(bufferedReader.readLine(), Map.class);
-                System.out.println(responseMap);
+                if(NodeParameters.DEBUG) System.out.println("[FR] responseMap: " + responseMap);
                 String filename = (String) responseMap.get("name");
                 if(NodeParameters.DEBUG)
-                    System.out.println("Filename: " + filename);
+                    System.out.println("[FR] Filename: " + filename);
                 int size = (int) responseMap.get("length");
                 int id = (int) responseMap.get("id");
                 String type = (String) responseMap.get("type");
                 PrintWriter printWriter = new PrintWriter(clientSocket.getOutputStream());
                 printWriter.println("OK");
                 printWriter.flush();
-                System.out.println("Delivered");
+                if(NodeParameters.DEBUG) System.out.println("[FR] Delivered");
                 FileOutputStream fileOutputStream = new FileOutputStream("/root/data/replica/" + filename);
 
                 int bytes;
@@ -54,7 +54,7 @@ public class FileReceiver extends Thread{
                         FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
                     }
                 }
-                System.out.println(FileSystem.fs);
+                if(NodeParameters.DEBUG) System.out.println("[FR] Filesystem: " +FileSystem.fs);
             }
             //fileOutputStream.close();
             //dataInputStream.close();

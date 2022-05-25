@@ -16,10 +16,10 @@ public class FileSender {
 
     public static void sendFile(String path, String host, int id, String type) throws IOException {
             if(NodeParameters.DEBUG){
-                System.out.println("Path: " +path);
-                System.out.println("Host: " +host);
-                System.out.println("ID: "+ id);
-                System.out.println("Type: "+type);
+                System.out.println("[FS] Path: " +path);
+                System.out.println("[FS] Host: " +host);
+                System.out.println("[FS] ID: "+ id);
+                System.out.println("[FS] Type: "+type);
             }
             Socket socket = new Socket(host, 5044);
             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
@@ -35,14 +35,14 @@ public class FileSender {
             jsonObject.put("id", id);
             jsonObject.put("type", type);
             printWriter.println(jsonObject);
-            System.out.println(jsonObject);
+            if(NodeParameters.DEBUG) System.out.println("[FS] fileinfo: " +jsonObject);
             printWriter.flush();
 
             while (!Objects.equals(bufferedReader.readLine(), "OK")) {
 
             }
-            System.out.println("oke");
-            FileInputStream fileInputStream = new FileInputStream(file);
+        if(NodeParameters.DEBUG) System.out.println("[FS] oke");
+        FileInputStream fileInputStream = new FileInputStream(file);
             // break file into chunks
             byte[] buffer = new byte[4 * 1024];
             while ((bytes = fileInputStream.read(buffer)) != -1) {
