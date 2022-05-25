@@ -48,7 +48,7 @@ public class Running extends State {
         FileAnalyzer.run();
         LocalFolderWatchdog folderWatchdogLocal = new LocalFolderWatchdog(localFolder.getPath());
         folderWatchdogLocal.start();
-        if(Objects.equals(NodeParameters.previousID, NodeParameters.nextID)) new SyncAgent().run();
+        //if(Objects.equals(NodeParameters.previousID, NodeParameters.nextID)) new SyncAgent().run();
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
         cron.run();
