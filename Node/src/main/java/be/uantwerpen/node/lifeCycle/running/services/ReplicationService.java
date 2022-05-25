@@ -56,15 +56,17 @@ public class ReplicationService extends Thread {
             FileSystem.addLocal(f1.getName(), id);
             return;
         }
-        // B. For myself - LOCAL and REPLICA
-        if (hash <= NodeParameters.nextID && hash > NodeParameters.id) {
+        /*// B. For myself - LOCAL and REPLICA
+        if () {
             if (NodeParameters.DEBUG) System.out.println("[RS] File is for me");
             // 3. Add to Filesystem
             FileSystem.addLocal(f1.getName(), id);
             return;
         }
+
+         */
         // C. Send to previous - LOCAL
-        if ((hash <= NodeParameters.id && hash > NodeParameters.previousID) | (NodeParameters.previousID > NodeParameters.id && (hash > NodeParameters.previousID | hash <= NodeParameters.id))) {
+        if (checkIfGoingToPrevious(hash)) {
             System.out.println("[RS] File is for previous");
             id = NodeParameters.previousID;
             ip = IpTableCache.getInstance().getIp(id).getHostAddress();
@@ -95,7 +97,7 @@ public class ReplicationService extends Thread {
                 return;
             }
 
-            System.out.println(response.body());
+            if(NodeParameters.DEBUG) System.out.println("[RS] response: " +response.body());
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(response.body());
             // Adding to ip cache
@@ -121,5 +123,9 @@ public class ReplicationService extends Thread {
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private boolean checkIfGoingToPrevious(int hash){
+        return (((hash <= NodeParameters.id && hash > NodeParameters.previousID) | (NodeParameters.previousID > NodeParameters.id && (hash > NodeParameters.previousID | hash <= NodeParameters.id))) | ((hash <= NodeParameters.nextID && hash > NodeParameters.id) | (hash > NodeParameters.nextID && hash > NodeParameters.id))) ;
     }
 }
