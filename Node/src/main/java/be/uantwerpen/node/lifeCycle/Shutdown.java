@@ -58,7 +58,7 @@ public class Shutdown extends State {
 
         // create a request
         HttpRequest request = HttpRequest.newBuilder(
-                        URI.create("http://" + NodeParameters.nameServerIp + ":8080/naming/Id?Id="+NodeParameters.id))
+                        URI.create("http:/" + NodeParameters.nameServerIp + ":8080/naming/Id?Id="+NodeParameters.id))
                 .DELETE()
                 .build();
 
