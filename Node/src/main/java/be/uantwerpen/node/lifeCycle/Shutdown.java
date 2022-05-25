@@ -204,6 +204,7 @@ public class Shutdown extends State {
                                     URI.create("http:/" + IpTableCache.getInstance().getIp(entry.getValue().getReplicatedOnNode()) + ":8080/api/localDeletion?filename=" + entry.getKey()))
                             .POST(HttpRequest.BodyPublishers.ofString(""))
                             .build();
+                    if(NodeParameters.DEBUG) System.out.println("[SD] " + request);
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                 }
                 } catch (IOException | InterruptedException e) {
