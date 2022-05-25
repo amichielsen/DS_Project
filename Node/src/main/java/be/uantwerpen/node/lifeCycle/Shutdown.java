@@ -176,7 +176,7 @@ public class Shutdown extends State {
                     if(NodeParameters.DEBUG)
                         if(NodeParameters.DEBUG) System.out.println("[SD] Request change owner: " +request2);
                     HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-                    return;
+                    continue;
 
                 }
                 if(NodeParameters.DEBUG) System.out.println("[SD] Not local on previous");
