@@ -162,7 +162,7 @@ public class RunningRestController {
             if (NodeParameters.DEBUG) System.out.println("[REST] File not present with name: " + filename);
             FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
         }
-        if(NodeParameters.DEBUG) System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename));
+        if(NodeParameters.DEBUG) System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename).getReplicatedOnNode());
     }
 
     @PostMapping(path ="/localDeletion")
