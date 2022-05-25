@@ -93,7 +93,7 @@ public class Shutdown extends State {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             // the response:
-            System.out.println(response.body());
+            if(NodeParameters.DEBUG) System.out.println("[SD] " + response.body());
             return response.body();
 
         } else return "error: hostID is null";
@@ -120,7 +120,7 @@ public class Shutdown extends State {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
             // the response:
-            System.out.println(response.body());
+            if(NodeParameters.DEBUG) System.out.println("[SD] " + response.body());
             return response.body();
 
         } else return "error: hostID is null";
@@ -157,7 +157,7 @@ public class Shutdown extends State {
                     JSONObject json = (JSONObject) parser.parse(response.body());
                     // Adding to ip cache
                     int previousID = ((Long) json.get("previousNeighbor")).intValue();
-                    System.out.println("FIlepath: "+filepath);
+                    if(NodeParameters.DEBUG) System.out.println("[SD] Filepath: "+filepath);
                     FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
 
                     HttpRequest request2 = HttpRequest.newBuilder(
@@ -165,20 +165,20 @@ public class Shutdown extends State {
                             .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                             .build();
                     if(NodeParameters.DEBUG)
-                        System.out.println("Request change owner: " +request2);
+                        if(NodeParameters.DEBUG) System.out.println("[SD] Request change owner: " +request2);
                     HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                     return;
 
                 }
 
                 // All other cases
-                System.out.println("FIlepath: "+filepath);
+                if(NodeParameters.DEBUG) System.out.println("[SD] Filepath: "+filepath);
                 FileSender.sendFile(String.valueOf(filepath), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), entry.getValue().getLocalOnNode(), "Owner");
                 HttpRequest request2 = HttpRequest.newBuilder(
                                 URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
                         .PUT(HttpRequest.BodyPublishers.ofString(entry.getKey()))
                         .build();
-                System.out.println("Request change owner: " +request2);
+                if(NodeParameters.DEBUG) System.out.println("[SD] Request change owner: " +request2);
                 HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
 
             } catch (IOException | ParseException | InterruptedException e) {
