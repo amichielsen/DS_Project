@@ -39,7 +39,8 @@ public class Failure{
             this.failureHandler(ID);
         }
         if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
-            new FailureAgent(ID).start();
+            Thread failureThread = new Thread(new FailureAgent(ID));
+            failureThread.start();
         }
 
 
