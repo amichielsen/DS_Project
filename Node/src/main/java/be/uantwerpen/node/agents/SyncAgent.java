@@ -48,7 +48,8 @@ public class SyncAgent extends Agent {
                 }
 
                 //Checks whether another Node should own the file
-                if (NodeParameters.nextID < Hash.generateHash(child.getName())) {
+                int hash = Hash.generateHash(child.getName());
+                if ((NodeParameters.nextID < hash)|(NodeParameters.nextID > hash && hash < NodeParameters.id)) {
                     for (int i = 0; i < 6; i++) {
                         try {
                             String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();

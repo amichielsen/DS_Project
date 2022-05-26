@@ -65,22 +65,35 @@ public class FailureAgent extends Agent {
         // Sending
         if(NodeParameters.DEBUG) System.out.println("[F-A] Sending agent to next neighbor with id: "+ NodeParameters.nextID);
         this.hasBeenRunTimes++;
-        try {
-            HttpRequest request = HttpRequest.newBuilder(
-                            URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/failureagent"))
-                    .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
-                    .build();
+        for (int i = 0; i < 6; i++) {
+            try {
+                HttpRequest request = HttpRequest.newBuilder(
+                                URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/failureagent"))
+                        .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
+                        .build();
 
-            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-            if(NodeParameters.DEBUG) System.out.println("[F-A] Done. Agent has been ran "+hasBeenRunTimes+" times. The dude is getting old.");
-            if (hasBeenRunTimes > 50) if(NodeParameters.DEBUG) System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
-            if (response.statusCode() != 200) if(NodeParameters.DEBUG) System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
+                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+                if (NodeParameters.DEBUG)
+                    System.out.println("[F-A] Done. Agent has run " + hasBeenRunTimes + " times. The dude is getting old.");
+                if (hasBeenRunTimes > 50) if (NodeParameters.DEBUG)
+                    System.out.println("[F-A] There might be an agent in the loop, or a loop in the agent...");
+                if (response.statusCode() != 200) if (NodeParameters.DEBUG)
+                    System.out.println("[F-A] Next node was not able to process Agent. Agent died here. RIP");
+                break;
 
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            } catch (IOException | InterruptedException e) {
+                if (i < 4) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                else
+                    throw new RuntimeException(e);
+            }
+
         }
-
-
     }
 
     private void newReplication(String file, FileParameters parameters) {

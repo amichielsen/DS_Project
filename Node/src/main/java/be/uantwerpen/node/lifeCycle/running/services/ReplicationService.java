@@ -54,6 +54,7 @@ public class ReplicationService extends Thread {
             if(NodeParameters.DEBUG) System.out.println("[RS] I'm the only one");
             // 3. Add to Filesystem
             FileSystem.addLocal(f1.getName(), id);
+            FileSystem.addReplica(f1.getName(), id);
             return;
         }
         /*// B. For myself - LOCAL and REPLICA
@@ -67,7 +68,7 @@ public class ReplicationService extends Thread {
          */
         // C. Send to previous - LOCAL
         if (checkIfGoingToPrevious(hash)) {
-            System.out.println("[RS] File is for previous");
+            System.out.println("[RS] File is for previous (or me)");
             id = NodeParameters.previousID;
             ip = IpTableCache.getInstance().getIp(id).getHostAddress();
             try {
