@@ -46,9 +46,7 @@ public class FailureAgent extends Agent {
         // 2. Send the file to that instance
         // 3. Update list
         if(NodeParameters.DEBUG) System.out.println("[F-A] Sending new replicated files.");
-        if(NodeParameters.DEBUG) System.out.println("[F-A] Local files to replicate again: " + FileSystem.getLocalFiles().entrySet()
-                .stream()
-                .filter( e -> e.getValue().getReplicatedOnNode() == failedNode));
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Local files to replicate again: " + FileSystem.getLocalFiles());
         FileSystem.getLocalFiles().entrySet()
                                 .stream()
                                 .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
