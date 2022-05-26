@@ -174,6 +174,7 @@ public class RunningRestController {
             FileSystem.removeFile(filename);
         } else {
             FileSystem.removeFile(filename);
+            NodeParameters.upForDeletion.add(filename);
             new File(NodeParameters.replicaFolder + "/"+filename).delete();
         }
     }
