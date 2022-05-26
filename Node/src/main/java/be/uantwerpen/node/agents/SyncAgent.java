@@ -26,7 +26,6 @@ import java.util.*;
 public class SyncAgent extends Agent {
 
     private HashMap<String, FileParameters> agentList = new HashMap<>();
-    private HashMap<String, FileParameters> origList = new HashMap<>();
 
     public SyncAgent() {
     }
@@ -35,7 +34,6 @@ public class SyncAgent extends Agent {
     public void run() {
         if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
-            FileSystem.fs.putAll(agentList); //Update local list according to agent
 
             File[] directoryListing = dir.listFiles();
             if (directoryListing == null) return;
@@ -64,9 +62,7 @@ public class SyncAgent extends Agent {
                             FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
                             if (child.delete())
                                 if (NodeParameters.DEBUG) System.out.println("[S-A] File successfully deleted");
-                            ;
-
-
+                            break;
                         } catch (IOException | InterruptedException e) {
                             if (!child.exists()) continue;
                             if (i < 4) {
@@ -85,16 +81,22 @@ public class SyncAgent extends Agent {
 
             }
 
+            FileSystem.fs.putAll(agentList); //Update local list according to agent
+
+            //Unlock files on agent
+            while (NodeParameters.removeLocks.size() > 0) {
+                String lockedFile = NodeParameters.removeLocks.poll();
+                agentList.get(lockedFile).unLock();
+            }
+
             //Lock files on agent
             while (NodeParameters.lockRequest.size() > 0) {
                 String lockedFile = NodeParameters.lockRequest.poll();
                 agentList.get(lockedFile).lock(NodeParameters.id);
             }
 
-            while (NodeParameters.removeLocks.size() > 0) {
-                String lockedFile = NodeParameters.removeLocks.poll();
-                agentList.get(lockedFile).unLock();
-            }
+
+
             if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
                 for (int i = 0; i < 6; i++) {
                     try { //Pass agentList to next one
@@ -104,7 +106,6 @@ public class SyncAgent extends Agent {
                                 .build();
                         if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
                         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-                        //if (NodeParameters.DEBUG) System.out.println("[S-A] Done. Moving on");
                         if (response.statusCode() != 200) if (NodeParameters.DEBUG)
                             System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
                         break;
@@ -128,17 +129,8 @@ public class SyncAgent extends Agent {
     }
 
     public void setAgentList(HashMap<String, FileParameters> agentList) {
-        this.origList = this.agentList;
-        if(NodeParameters.DEBUG) System.out.println("Old Agent's list: " + this.agentList);
         this.agentList = agentList;
         if(NodeParameters.DEBUG) System.out.println("New Agent's list: " + this.agentList);
     }
 
-    public HashMap<String, FileParameters> getOrigList() {
-        return origList;
-    }
-
-    public void setOrigList(HashMap<String, FileParameters> origList) {
-        this.origList = origList;
-    }
 }
