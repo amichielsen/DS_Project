@@ -44,6 +44,14 @@ public class SyncAgent extends Agent {
             File[] directoryListing = dir.listFiles();
             if (directoryListing == null) return;
 
+            //Only update this list with info of other nodes, this nodes knows the latest of its own files
+            for(Map.Entry<String, FileParameters> entry: agentList.entrySet()){
+                if(!FileSystem.getReplicatedFiles(true).containsKey(entry.getKey())){
+                    FileSystem.fs.put(entry.getKey(), entry.getValue());
+                }
+
+            }
+
             for (File child : directoryListing) {
                 //FileSystem.addLocal(child.getName(), 0);
                 agentList.put(child.getName(), FileSystem.getFileParameters(child.getName()));
