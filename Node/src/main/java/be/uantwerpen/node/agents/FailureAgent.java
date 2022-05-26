@@ -62,11 +62,12 @@ public class FailureAgent extends Agent {
         for(Map.Entry<String, FileParameters> entry : FileSystem.getReplicatedFiles(true).entrySet()){
             if(entry.getValue().getLocalOnNode() == failedNode){
                 File toDelete = new File(NodeParameters.replicaFolder + "/" +entry.getKey());
+                NodeParameters.upForDeletion.add(entry.getKey());
                 toDelete.delete();
             }
         }
 
-        FileSystem.getReplicatedFiles(true).entrySet()
+        FileSystem.getReplicatedFiles(false).entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
 
 

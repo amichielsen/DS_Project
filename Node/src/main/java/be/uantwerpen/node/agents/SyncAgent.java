@@ -116,6 +116,12 @@ public class SyncAgent extends Agent {
                 agentList.get(lockedFile).lock(NodeParameters.id);
             }
 
+        while (NodeParameters.upForDeletion.size() > 0) {
+            String deletedFile = NodeParameters.upForDeletion.poll();
+            agentList.remove(deletedFile);
+            FileSystem.removeFile(deletedFile);
+        }
+
 
             //Only send it if there are other nodes in the system
             if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
