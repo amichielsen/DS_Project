@@ -66,7 +66,8 @@ public class SyncAgent extends Agent {
                             FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
                             HttpClient client = HttpClient.newHttpClient();
                             HttpRequest request2 = HttpRequest.newBuilder(
-                                            URI.create("http://" + ipNext + ":8080/api/changeOwner?filename=" + child.getName()))
+                                            URI.create("http://" + ipNext + ":8080/api/changeOwner"))
+                                    .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
                                     .build();
                             if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
