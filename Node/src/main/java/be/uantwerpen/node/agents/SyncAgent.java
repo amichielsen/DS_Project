@@ -32,11 +32,11 @@ public class SyncAgent extends Agent {
 
     @Override
     public void run() {
-        if(NodeParameters.DEBUG) {
-            System.out.println("[S-A] Agent's list: ");
-            for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
-                System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
-        }
+        //if(NodeParameters.DEBUG) {
+        //    System.out.println("[S-A] Agent's list: ");
+        //    for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
+        //        System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
+        //}
 
         //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
@@ -116,12 +116,12 @@ public class SyncAgent extends Agent {
                 agentList.get(lockedFile).lock(NodeParameters.id);
             }
 
-        while (NodeParameters.upForDeletion.size() > 0) {
-            String deletedFile = NodeParameters.upForDeletion.poll();
-            if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
-            agentList.remove(deletedFile);
-            FileSystem.removeFile(deletedFile);
-        }
+            while (NodeParameters.upForDeletion.size() > 0) {
+                String deletedFile = NodeParameters.upForDeletion.poll();
+                if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
+                agentList.remove(deletedFile);
+                FileSystem.removeFile(deletedFile);
+            }
 
 
             //Only send it if there are other nodes in the system
