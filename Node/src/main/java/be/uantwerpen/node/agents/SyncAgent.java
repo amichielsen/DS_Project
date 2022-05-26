@@ -32,11 +32,11 @@ public class SyncAgent extends Agent {
 
     @Override
     public void run() {
-        //if(NodeParameters.DEBUG) {
-        //    System.out.println("[S-A] Agent's list: ");
-        //    for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
-        //        System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
-        //}
+        if(NodeParameters.DEBUG) {
+            System.out.println("[S-A] Agent's list: ");
+            for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
+                System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
+        }
 
         //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
