@@ -51,6 +51,9 @@ public class FailureAgent extends Agent {
                                 .filter( e -> e.getValue().getReplicatedOnNode() == failedNode)
                                 .forEach(e -> newReplication(e.getKey(),e.getValue()));
 
+        if(NodeParameters.DEBUG) System.out.println("[F-A] Local files to replicate again: " + FileSystem.getLocalFiles().entrySet()
+                .stream()
+                .filter( e -> e.getValue().getReplicatedOnNode() == failedNode));
         // File has been replicated to this node, is a matching hash, local instance has failed -> delete
         if(NodeParameters.DEBUG) System.out.println("[F-A] Deleting replicated files...");
         FileSystem.getReplicatedFiles(false).entrySet()
