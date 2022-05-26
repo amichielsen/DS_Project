@@ -46,8 +46,7 @@ public class SyncAgent extends Agent {
 
             for (File child : directoryListing) {
                 //FileSystem.addLocal(child.getName(), 0);
-                if (!agentList.containsKey(child.getName())) //Update agentList
-                    agentList.put(child.getName(), FileSystem.getFileParameters(child.getName()));
+                agentList.put(child.getName(), FileSystem.getFileParameters(child.getName()));
 
 
                 if (agentList.get(child.getName()).isLocked() && agentList.get(child.getName()).getLockedOnNode() == NodeParameters.id) {
