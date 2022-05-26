@@ -34,17 +34,12 @@ public class Failure{
      * @param ID Id of failed node
      */
     public void nodeFailure(int ID) {
-        if (ID != NodeParameters.previousID) //Only next node can start failure sequence
+        if (ID == NodeParameters.previousID) //Only next node can start failure sequence
         {
             this.failureHandler(ID);
-        }
-        if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
             Thread failureThread = new Thread(new FailureAgent(ID));
             failureThread.start();
         }
-
-
-
     }
 
 
