@@ -49,9 +49,13 @@ public class SyncAgent extends Agent {
                 if (!agentList.containsKey(child.getName())) //Update agentList
                     agentList.put(child.getName(), FileSystem.getFileParameters(child.getName()));
 
+
                 if (agentList.get(child.getName()).isLocked() && agentList.get(child.getName()).getLockedOnNode() == NodeParameters.id) {
                     FileSystem.getFileParameters(child.getName()).unLock();
                 }
+
+                FileSystem.fs.putAll(agentList); //Update local list according to agent
+
 
                 //Checks whether another Node should own the file
                 int hash = Hash.generateHash(child.getName());
@@ -89,7 +93,7 @@ public class SyncAgent extends Agent {
 
             }
 
-            FileSystem.fs.putAll(agentList); //Update local list according to agent
+
 
             //Unlock files on agent
             while (NodeParameters.removeLocks.size() > 0) {
