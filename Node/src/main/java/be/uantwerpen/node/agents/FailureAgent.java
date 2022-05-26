@@ -118,6 +118,12 @@ public class FailureAgent extends Agent {
 
             // Send file
             FileSender.sendFile(NodeParameters.localFolder+"/"+file, ip, id, "Owner");
+            HttpRequest request2 = HttpRequest.newBuilder(
+                            URI.create("http://" + ip + ":8080/api/changeOwner"))
+                    .PUT(HttpRequest.BodyPublishers.ofString(file))
+                    .build();
+            if (NodeParameters.DEBUG) System.out.println("[F-A] Change Owner request: " + request2);
+            HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             if(NodeParameters.DEBUG) System.out.print(" [DONE]");
 
 
