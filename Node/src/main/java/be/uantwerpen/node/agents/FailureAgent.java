@@ -10,11 +10,13 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
 
 public class FailureAgent extends Agent {
@@ -55,7 +57,16 @@ public class FailureAgent extends Agent {
 
         // File has been replicated to this node, is a matching hash, local instance has failed -> delete
         if(NodeParameters.DEBUG) System.out.println("[F-A] Deleting replicated files...");
-        FileSystem.getReplicatedFiles(false).entrySet()
+
+
+        for(Map.Entry<String, FileParameters> entry : FileSystem.getReplicatedFiles(true).entrySet()){
+            if(entry.getValue().getLocalOnNode() == failedNode){
+                File toDelete = new File(NodeParameters.replicaFolder + "/" +entry.getKey());
+                toDelete.delete();
+            }
+        }
+
+        FileSystem.getReplicatedFiles(true).entrySet()
                 .removeIf(e -> e.getValue().getLocalOnNode() == failedNode);
 
 
