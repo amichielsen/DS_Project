@@ -66,7 +66,7 @@ public class SyncAgent extends Agent {
 
                 //Checks whether another Node should own the file
                 int hash = Hash.generateHash(child.getName());
-                if ((NodeParameters.nextID < hash)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)) {
+                if ((NodeParameters.nextID < hash && NodeParameters.nextID > NodeParameters.id)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)) {
                     if(NodeParameters.DEBUG) System.out.println("[S-A] File: " + child.getName() +" should be for: " + NodeParameters.nextID);
                     for (int i = 0; i < 10; i++) {
                         try {
