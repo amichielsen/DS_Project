@@ -109,7 +109,7 @@ public class SyncAgent extends Agent {
             }
 
 
-
+            //Only send it if there are other nodes in the system
             if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
                 for (int i = 0; i < 10; i++) {
                     try { //Pass agentList to next one
