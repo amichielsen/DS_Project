@@ -27,6 +27,9 @@ public class SyncAgent extends Agent {
 
     private HashMap<String, FileParameters> agentList = new HashMap<>();
 
+    private HashMap<Integer, String> deletionList = new HashMap<>();
+
+
     public SyncAgent() {
     }
 
@@ -39,6 +42,14 @@ public class SyncAgent extends Agent {
         //}
 
         //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
+
+        for (Map.Entry<Integer, String> entry : deletionList.entrySet()) {
+            if (Objects.equals(entry.getKey(), NodeParameters.id)) {
+                deletionList.remove(entry.getKey());
+            }
+            agentList.remove(entry.getValue());
+            FileSystem.removeFile(entry.getValue());
+        }
         File dir = new File(NodeParameters.replicaFolder);
 
             File[] directoryListing = dir.listFiles();
@@ -121,6 +132,7 @@ public class SyncAgent extends Agent {
                 if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
                 agentList.remove(deletedFile);
                 FileSystem.removeFile(deletedFile);
+                deletionList.put(NodeParameters.id, deletedFile);
             }
 
 
@@ -160,4 +172,11 @@ public class SyncAgent extends Agent {
         this.agentList = agentList;
     }
 
+    public HashMap<Integer, String> getDeletionList() {
+        return deletionList;
+    }
+
+    public void setDeletionList(HashMap<Integer, String> deletionList) {
+        this.deletionList = deletionList;
+    }
 }
