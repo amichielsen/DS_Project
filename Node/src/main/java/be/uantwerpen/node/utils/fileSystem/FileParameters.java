@@ -3,7 +3,6 @@ package be.uantwerpen.node.utils.fileSystem;
 import be.uantwerpen.node.utils.NodeParameters;
 
 public class FileParameters {
-    private boolean isLocalOnThisNode;
     private boolean isDownloaded;
     private boolean isLocked;
     private int replicatedOnNode;
@@ -51,7 +50,6 @@ public class FileParameters {
     }
 
     public void instantiateLocal(int replicatedOnNode) {
-        this.isLocalOnThisNode = true;
         this.isDownloaded = false;
         this.isLocked = false;
         this.replicatedOnNode = replicatedOnNode;
@@ -59,7 +57,6 @@ public class FileParameters {
     }
 
     public void instantiateReplica(int localOnNode) {
-        this.isLocalOnThisNode = false;
         this.isDownloaded = false;
         this.isLocked = false;
         this.replicatedOnNode = NodeParameters.id;
@@ -67,7 +64,6 @@ public class FileParameters {
     }
 
     public void instantiateDownloaded(int localOnNode, int replicatedOnNode) {
-        this.isLocalOnThisNode = false;
         this.isDownloaded = true;
         this.isLocked = false;
         this.replicatedOnNode = replicatedOnNode;
@@ -92,14 +88,6 @@ public class FileParameters {
 
     public EntryType getEntryType() {
         return entryType;
-    }
-
-    public boolean isLocalOnThisNode() {
-        return isLocalOnThisNode;
-    }
-
-    public void setLocalOnThisNode(boolean localOnThisNode) {
-        isLocalOnThisNode = localOnThisNode;
     }
 
     public void setLocked(boolean locked) {

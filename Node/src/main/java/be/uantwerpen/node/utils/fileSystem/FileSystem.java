@@ -75,20 +75,20 @@ public class FileSystem {
     public static Map<String, FileParameters> getReplicatedFiles(boolean onlyThisNode) {
         if (onlyThisNode) return fs.entrySet()
                                     .stream()
-                                    .filter( e -> !e.getValue().isLocalOnThisNode())
+                                    .filter( e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
                                     .filter( e -> e.getValue().getReplicatedOnNode() == NodeParameters.id)
                                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return fs.entrySet()
                 .stream()
-                .filter( e -> !e.getValue().isLocalOnThisNode())
+                .filter( e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static Map<String, FileParameters> getLocalFiles() {
         return fs.entrySet()
                 .stream()
-                .filter( e -> e.getValue().isLocalOnThisNode())
+                .filter( e -> (e.getValue().getLocalOnNode() == NodeParameters.id))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
