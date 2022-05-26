@@ -60,15 +60,16 @@ public class SyncAgent extends Agent {
                         try {
                             String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
                             FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
-                            var client = HttpClient.newHttpClient();
-                            var request2 = HttpRequest.newBuilder(
+                            HttpClient client = HttpClient.newHttpClient();
+                            HttpRequest request2 = HttpRequest.newBuilder(
                                             URI.create("http://" + ipNext + ":8080/api/changeOwner?filename=" + child.getName()))
                                     .build();
                             if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                             FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                            if (child.delete())
+                            if (child.delete()) {
                                 if (NodeParameters.DEBUG) System.out.println("[S-A] File successfully deleted");
+                            }
                             break;
                         } catch (IOException | InterruptedException e) {
                             if (!child.exists()) continue;
