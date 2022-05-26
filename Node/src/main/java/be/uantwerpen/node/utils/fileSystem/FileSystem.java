@@ -25,30 +25,22 @@ public class FileSystem {
         fs = new ConcurrentHashMap<>();
     }
 
-    private static ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    private static Lock readLock = lock.readLock();
-    private static Lock writeLock = lock.writeLock();
 
     public static FileSystem getInstance() {
         return instance;
     }
 
     public static int addLocal(String file, int ReplicaID) {
-        writeLock.lock();
         if (fs.containsKey(file)) return -1;
         try {
             fs.put(file, new FileParameters(LOCAL, ReplicaID));
             return 0;
         } catch (InstantiationException e) {
             return -1;
-        }finally {
-            writeLock.unlock();
         }
     }
 
     public static int addReplica(String file, int LocalID) {
-        writeLock.lock();
         if (fs.containsKey(file)) return -1;
         try {
             if(NodeParameters.DEBUG)
@@ -57,50 +49,35 @@ public class FileSystem {
             return 0;
         } catch (InstantiationException e) {
             return -1;
-        }finally {
-            writeLock.unlock();
         }
     }
 
     public static int addDownloaded(String file, int LocalID, int ReplicaID) {
-        writeLock.lock();
         if (fs.containsKey(file)) return -1;
         try {
             fs.put(file, new FileParameters(DOWNLOADED, LocalID, ReplicaID));
             return 0;
         } catch (InstantiationException e) {
             return -1;
-        }finally {
-            writeLock.unlock();
         }
     }
 
     public static int addEmpty(String file) {
-        writeLock.lock();
         if (fs.containsKey(file)) return -1;
         try {
             fs.put(file, new FileParameters(EMPTY));
             return 0;
         } catch (InstantiationException e) {
             return -1;
-        }finally {
-            writeLock.unlock();
         }
     }
     public static int removeFile(String file) {
-        writeLock.lock();
         if (! fs.containsKey(file)) return -1;
-        try {
-            fs.remove(file);
-        }finally {
-            writeLock.unlock();
-        }
+        fs.remove(file);
         return 0;
     }
 
     public static Map<String, FileParameters> getReplicatedFiles(boolean onlyThisNode) {
-        readLock.lock();
-        try {
             if (onlyThisNode) return fs.entrySet()
                     .stream()
                     .filter(e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
@@ -111,21 +88,13 @@ public class FileSystem {
                     .stream()
                     .filter(e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }finally {
-            readLock.unlock();
-        }
     }
 
     public static Map<String, FileParameters> getLocalFiles() {
-        readLock.lock();
-        try {
             return fs.entrySet()
                     .stream()
                     .filter(e -> (e.getValue().getLocalOnNode() == NodeParameters.id))
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        }finally {
-            readLock.unlock();
-        }
     }
 
     public static Map<String, FileParameters> getDownloadedFiles() {
@@ -136,11 +105,6 @@ public class FileSystem {
     }
 
     public static FileParameters getFileParameters(String file) {
-        readLock.lock();
-        try {
             return fs.get(file);
-        }finally {
-            readLock.unlock();
-        }
     }
 }
