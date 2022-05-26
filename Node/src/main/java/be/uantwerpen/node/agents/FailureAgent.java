@@ -123,6 +123,7 @@ public class FailureAgent extends Agent {
                     .PUT(HttpRequest.BodyPublishers.ofString(file))
                     .build();
             if (NodeParameters.DEBUG) System.out.println("[F-A] Change Owner request: " + request2);
+            FileSystem.getFileParameters(file).setReplicatedOnNode(id);
             HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
             if(NodeParameters.DEBUG) System.out.print(" [DONE]");
 

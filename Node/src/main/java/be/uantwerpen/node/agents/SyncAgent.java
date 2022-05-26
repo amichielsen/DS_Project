@@ -32,13 +32,13 @@ public class SyncAgent extends Agent {
 
     @Override
     public void run() {
-        if(NodeParameters.DEBUG) {
-            System.out.println("[S-A] Agent's list: ");
-            for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
-                System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
-        }
+        //if(NodeParameters.DEBUG) {
+        //    System.out.println("[S-A] Agent's list: ");
+        //    for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
+        //        System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
+        //}
 
-        if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
+        //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
         File dir = new File(NodeParameters.replicaFolder);
 
             File[] directoryListing = dir.listFiles();
@@ -69,7 +69,7 @@ public class SyncAgent extends Agent {
                                             URI.create("http://" + ipNext + ":8080/api/changeOwner"))
                                     .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
                                     .build();
-                            if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
+                            //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                             FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
                             if (child.delete()) {
@@ -117,7 +117,7 @@ public class SyncAgent extends Agent {
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
                                 .POST(HttpRequest.BodyPublishers.ofString(new ObjectMapper().writeValueAsString(this)))
                                 .build();
-                        if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
+                        //if(NodeParameters.DEBUG) System.out.println("[S-A] request: " + request);
                         HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                         if (response.statusCode() != 200) if (NodeParameters.DEBUG)
                             System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
