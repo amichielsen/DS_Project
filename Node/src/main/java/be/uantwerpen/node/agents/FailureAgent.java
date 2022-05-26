@@ -63,6 +63,7 @@ public class FailureAgent extends Agent {
             if(entry.getValue().getLocalOnNode() == failedNode){
                 File toDelete = new File(NodeParameters.replicaFolder + "/" +entry.getKey());
                 NodeParameters.upForDeletion.add(entry.getKey());
+                if(NodeParameters.DEBUG) System.out.println("[F-A] Deleting " + entry.getKey());
                 toDelete.delete();
             }
         }

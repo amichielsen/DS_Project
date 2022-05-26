@@ -118,6 +118,7 @@ public class SyncAgent extends Agent {
 
         while (NodeParameters.upForDeletion.size() > 0) {
             String deletedFile = NodeParameters.upForDeletion.poll();
+            if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
             agentList.remove(deletedFile);
             FileSystem.removeFile(deletedFile);
         }
