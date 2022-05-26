@@ -60,7 +60,7 @@ public class SyncAgent extends Agent {
                 int hash = Hash.generateHash(child.getName());
                 if ((NodeParameters.nextID < hash)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)) {
                     if(NodeParameters.DEBUG) System.out.println("[S-A] File: " + child.getName() +" should be for: " + NodeParameters.nextID);
-                    for (int i = 0; i < 6; i++) {
+                    for (int i = 0; i < 10; i++) {
                         try {
                             String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
                             FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
@@ -78,7 +78,7 @@ public class SyncAgent extends Agent {
                             break;
                         } catch (IOException | InterruptedException e) {
                             if (!child.exists()) continue;
-                            if (i < 4) {
+                            if (i < 8) {
                                 try {
                                     Thread.sleep(1000);
                                 } catch (InterruptedException ex) {
@@ -111,7 +111,7 @@ public class SyncAgent extends Agent {
 
 
             if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 10; i++) {
                     try { //Pass agentList to next one
                         HttpRequest request = HttpRequest.newBuilder(
                                         URI.create("http://" + IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress() + ":8080/api/syncagent"))
@@ -123,7 +123,7 @@ public class SyncAgent extends Agent {
                             System.out.println("[S-A] Next node was not able to process Agent. Agent died here. RIP");
                         break;
                     } catch (IOException | InterruptedException e) {
-                        if (i < 4) {
+                        if (i < 8) {
                             try {
                                 Thread.sleep(1000);
                             } catch (InterruptedException ex) {
