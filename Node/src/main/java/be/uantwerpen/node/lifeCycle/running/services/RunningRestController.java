@@ -186,14 +186,14 @@ public class RunningRestController {
         NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
 
-    @GetMapping(path="localfiles")
+    @GetMapping(path="/localfiles")
     public static String getLocalFiles(){
         JSONObject jsonObject = new JSONObject();
         for(Map.Entry<String, FileParameters> entry : FileSystem.getLocalFiles().entrySet())
         jsonObject.put(entry.getKey(), entry.getKey());
         return jsonObject.toString();    }
 
-    @GetMapping(path="replicafiles")
+    @GetMapping(path="/replicafiles")
     public static String getReplicaFiles(){
         JSONObject jsonObject = new JSONObject();
         for(Map.Entry<String, FileParameters> entry : FileSystem.getReplicatedFiles(true).entrySet())
