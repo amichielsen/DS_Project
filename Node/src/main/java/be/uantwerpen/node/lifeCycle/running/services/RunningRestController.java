@@ -189,14 +189,12 @@ public class RunningRestController {
     @GetMapping(path="localfiles")
     public static String getLocalFiles(){
         JSONObject jsonObject = new JSONObject();
-        for(Map.Entry<String, FileParameters> entry : FileSystem.getLocalFiles().entrySet())
-        jsonObject.put(entry.getKey(), entry.getKey());
+        jsonObject.put("localfiles", FileSystem.getLocalFiles().keySet());
         return jsonObject.toString();    }
 
     @GetMapping(path="replicafiles")
     public static String getReplicaFiles(){
         JSONObject jsonObject = new JSONObject();
-        for(Map.Entry<String, FileParameters> entry : FileSystem.getReplicatedFiles(true).entrySet())
-            jsonObject.put(entry.getKey(), entry.getKey());
+        jsonObject.put("replicafiles", FileSystem.getReplicatedFiles(true).keySet());
         return jsonObject.toString();    }
 }
