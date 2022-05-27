@@ -24,6 +24,7 @@ import java.util.Objects;
  * 3. We will report failing nodes to the NameServer.
  * ! Send periodic pings to the neighbors to test their state
  */
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api")
 public class RunningRestController {
