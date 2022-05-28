@@ -39,6 +39,9 @@ public class SyncAgent extends Agent {
             System.out.println("[S-A] Agent's list: ");
             for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
                 System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
+            System.out.println("[S-A] Local on this node list: ");
+            for (Map.Entry<String, FileParameters> entry : FileSystem.fs.entrySet())
+                System.out.println("[S-A] " + entry.getKey() + " local on: " + entry.getValue().getLocalOnNode());
         }
 
         //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
