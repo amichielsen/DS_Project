@@ -81,8 +81,6 @@ public class SyncAgent extends Agent {
                     }
                 }
 
-                FileSystem.fs.putAll(agentList); //Update local list according to agent
-
                 //If file is replicated here and local as well, should go to previous
                 if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
                     for (int i = 0; i < 10; i++) {
