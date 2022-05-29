@@ -81,7 +81,7 @@ public class SyncAgent extends Agent {
                 FileSystem.fs.putAll(agentList); //Update local list according to agent
 
                 //If file is replicated here and local as well, should go to previous
-                if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id) {
+                if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
                     try {
                         FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
 
