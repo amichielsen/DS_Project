@@ -82,6 +82,7 @@ public class SyncAgent extends Agent {
 
                 //If file is replicated here and local as well, should go to previous
                 if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
+                    for (int i = 0; i < 10; i++) {
                     try {
                         FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
 
@@ -93,7 +94,16 @@ public class SyncAgent extends Agent {
                             if (NodeParameters.DEBUG) System.out.println("[S-A] Request change owner: " + request2);
                         HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                     }catch  (IOException | InterruptedException e) {
-                        throw new RuntimeException(e);
+                        if (i < 8) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                        }else{
+                            throw new RuntimeException(e);
+                        }
+                    }
                     }
                     {
 
