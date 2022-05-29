@@ -81,69 +81,75 @@ public class SyncAgent extends Agent {
                     }
                 }
 
+                if(NodeParameters.DEBUG) System.out.println("[S-A]: file " + child.getName());
                 //If file is replicated here and local as well, should go to previous
-                if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
-                    for (int i = 0; i < 10; i++) {
-                    try {
-                        FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
-
-                        HttpRequest request2 = HttpRequest.newBuilder(
-                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
-                                .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
-                                .build();
-                        if (NodeParameters.DEBUG)
-                            if (NodeParameters.DEBUG) System.out.println("[S-A] Request change owner: " + request2);
-                        HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-                        FileSystem.fs.get(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
-                        deletions.add(child);
-                        break;
-                    }catch  (IOException | InterruptedException e) {
-                        if (i < 8) {
+                if(!(FileSystem.fs.get(child.getName()) == null)) {
+                    if (FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
+                        for (int i = 0; i < 10; i++) {
                             try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException ex) {
-                                throw new RuntimeException(ex);
+                                FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
+
+                                HttpRequest request2 = HttpRequest.newBuilder(
+                                                URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
+                                        .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                        .build();
+                                if (NodeParameters.DEBUG)
+                                    if (NodeParameters.DEBUG)
+                                        System.out.println("[S-A] Request change owner: " + request2);
+                                HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                                FileSystem.fs.get(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
+                                deletions.add(child);
+                                break;
+                            } catch (IOException | InterruptedException e) {
+                                if (i < 8) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                } else {
+                                    throw new RuntimeException(e);
+                                }
                             }
-                        }else{
-                            throw new RuntimeException(e);
                         }
+                        continue;
                     }
-                    }
-                    continue;
                 }
 
                 //Checks whether another Node should own the file
-
-                if (isForNext(child.getName())) {
-                    if(NodeParameters.DEBUG) System.out.println("[S-A] File: " + child.getName() +" should be for: " + NodeParameters.nextID);
-                    for (int i = 0; i < 10; i++) {
-                        try {
-                            String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
-                            FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
-                            HttpClient client = HttpClient.newHttpClient();
-                            HttpRequest request2 = HttpRequest.newBuilder(
-                                            URI.create("http://" + ipNext + ":8080/api/changeOwner"))
-                                    .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
-                                    .build();
-                            //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
-                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                            FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                            deletions.add(child);
-                            break;
-                        } catch (IOException | InterruptedException e) {
-                            if (!child.exists()) continue;
-                            if (i < 8) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException ex) {
-                                    throw new RuntimeException(ex);
-                                }
-                            }else{
+                if(!(FileSystem.fs.get(child.getName()) == null)) {
+                    if (isForNext(child.getName())) {
+                        if (NodeParameters.DEBUG)
+                            System.out.println("[S-A] File: " + child.getName() + " should be for: " + NodeParameters.nextID);
+                        for (int i = 0; i < 10; i++) {
+                            try {
+                                String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
+                                FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
+                                HttpClient client = HttpClient.newHttpClient();
+                                HttpRequest request2 = HttpRequest.newBuilder(
+                                                URI.create("http://" + ipNext + ":8080/api/changeOwner"))
+                                        .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                        .build();
+                                //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
+                                HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                                FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
+                                deletions.add(child);
+                                break;
+                            } catch (IOException | InterruptedException e) {
+                                if (!child.exists()) continue;
+                                if (i < 8) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ex) {
+                                        throw new RuntimeException(ex);
+                                    }
+                                } else {
                                     throw new RuntimeException(e);
                                 }
+                            }
                         }
-                    }
 
+                    }
                 }
 
             }
