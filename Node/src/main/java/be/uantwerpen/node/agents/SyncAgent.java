@@ -93,6 +93,8 @@ public class SyncAgent extends Agent {
                         if (NodeParameters.DEBUG)
                             if (NodeParameters.DEBUG) System.out.println("[S-A] Request change owner: " + request2);
                         HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                        child.delete();
+                        break;
                     }catch  (IOException | InterruptedException e) {
                         if (i < 8) {
                             try {
@@ -105,9 +107,7 @@ public class SyncAgent extends Agent {
                         }
                     }
                     }
-                    {
-
-                    }
+                    continue;
                 }
 
                 //Checks whether another Node should own the file
