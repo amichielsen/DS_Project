@@ -41,9 +41,12 @@ public class FileDeleter {
             int id = ((Long) json.get("id")).intValue();
             String ip = String.valueOf(json.get("ip"));
 
-            var deleteRequest = HttpRequest.newBuilder(
+
+            HttpRequest deleteRequest = HttpRequest.newBuilder(
                             URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
+                    .DELETE()
                     .build();
+
             HttpResponse<String> deleteResponse = HttpClient.newHttpClient().send(deleteRequest, HttpResponse.BodyHandlers.ofString());
             if (NodeParameters.DEBUG) System.out.println("[Deleter] " +deleteResponse.body());
 
