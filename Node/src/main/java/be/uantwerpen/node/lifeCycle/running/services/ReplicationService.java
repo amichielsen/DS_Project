@@ -57,17 +57,9 @@ public class ReplicationService extends Thread {
             FileSystem.addReplica(f1.getName(), id);
             return;
         }
-        /*// B. For myself - LOCAL and REPLICA
-        if () {
-            if (NodeParameters.DEBUG) System.out.println("[RS] File is for me");
-            // 3. Add to Filesystem
-            FileSystem.addLocal(f1.getName(), id);
-            return;
-        }
 
-         */
-        // C. Send to previous - LOCAL
-        if (checkIfGoingToPrevious(hash)) {
+        // B. Send to previous - LOCAL (or in some cases myself, but a copy will be sent)
+        if (isGoingToPrevious(hash)) {
             System.out.println("[RS] File is for previous (or me)");
             id = NodeParameters.previousID;
             ip = IpTableCache.getInstance().getIp(id).getHostAddress();
@@ -84,7 +76,7 @@ public class ReplicationService extends Thread {
             return;
         }
 
-        // D. Send to other - LOCAL
+        // C. Send to other - LOCAL
         System.out.println("[RS] File is for someone else");
         // Contact NS for correct id
         try {
@@ -126,7 +118,7 @@ public class ReplicationService extends Thread {
         }
     }
 
-    private boolean checkIfGoingToPrevious(int hash){
+    private boolean isGoingToPrevious(int hash){
         return (((hash <= NodeParameters.id && hash > NodeParameters.previousID) | (NodeParameters.previousID > NodeParameters.id && (hash > NodeParameters.previousID | hash <= NodeParameters.id))) | ((hash <= NodeParameters.nextID && hash > NodeParameters.id) | (hash > NodeParameters.nextID && hash > NodeParameters.id))) ;
     }
 }
