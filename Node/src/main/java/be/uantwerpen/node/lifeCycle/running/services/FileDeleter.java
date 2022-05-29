@@ -62,4 +62,9 @@ public class FileDeleter {
         File toDelete = new File(NodeParameters.replicaFolder + "/"+filename);
         return toDelete.delete();
     }
+
+    public boolean deleteFromLocalFolder(String filename){
+        File toDelete = new File(NodeParameters.localFolder + "/"+filename);
+        return toDelete.delete();
+    }
 }
