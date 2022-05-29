@@ -178,7 +178,10 @@ public class RunningRestController {
         } else {
             FileSystem.removeFile(filename);
             NodeParameters.upForDeletion.add(filename);
-            new File(NodeParameters.replicaFolder + "/"+filename).delete();
+            if(new File(NodeParameters.replicaFolder + "/"+filename).delete())
+                if(NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deleted successfully"));
+            else
+                if(NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deletion failed"));
         }
     }
 
