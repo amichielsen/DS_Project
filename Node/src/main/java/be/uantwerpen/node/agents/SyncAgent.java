@@ -97,17 +97,16 @@ public class SyncAgent extends Agent {
                         for (int i = 0; i < 10; i++) {
                             try {
                                 FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
-
                                 HttpRequest request2 = HttpRequest.newBuilder(
                                                 URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
                                         .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
                                         .build();
                                 if (NodeParameters.DEBUG)
-                                    if (NodeParameters.DEBUG)
                                         System.out.println("[S-A] Request change owner: " + request2);
                                 HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
-                                FileSystem.fs.get(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
-                                deletions.add(child);
+                                FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
+                                if(child.delete())
+                                    if(NodeParameters.DEBUG) System.out.println("[S-A] Successful deletion of " + child.getName());
                                 break;
                             } catch (IOException | InterruptedException e) {
                                 if (i < 8) {
@@ -142,7 +141,8 @@ public class SyncAgent extends Agent {
                                 //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
                                 HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                                 FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                                deletions.add(child);
+                                if(child.delete())
+                                    if(NodeParameters.DEBUG) System.out.println("[S-A] Successful deletion of " + child.getName());
                                 break;
                             } catch (IOException | InterruptedException e) {
                                 if (!child.exists()) continue;
@@ -205,9 +205,6 @@ public class SyncAgent extends Agent {
                         }
                     }
                 }
-            }
-            for(File name: deletions){
-                name.delete();
             }
     }
 
