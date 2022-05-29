@@ -45,7 +45,7 @@ public class FileDeleter {
                             URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
                     .build();
             HttpResponse<String> deleteResponse = HttpClient.newHttpClient().send(deleteRequest, HttpResponse.BodyHandlers.ofString());
-            if (NodeParameters.DEBUG) System.out.println(deleteResponse.body());
+            if (NodeParameters.DEBUG) System.out.println("[Deleter] " +deleteResponse.body());
 
         } catch (IOException | InterruptedException e) {
             if (NodeParameters.DEBUG) System.out.println("[RS] [Error] connection error with name server (likely offline)");

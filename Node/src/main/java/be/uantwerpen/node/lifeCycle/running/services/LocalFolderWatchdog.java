@@ -1,5 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
+import be.uantwerpen.node.utils.NodeParameters;
+
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -24,7 +26,7 @@ public class LocalFolderWatchdog extends Thread {
         // wait for key to be signaled
         Path dir;
         dir = Path.of(this.path);
-        System.out.println(dir);
+        if(NodeParameters.DEBUG) System.out.println("[Watchdog]: "+dir);
         try {
             WatchKey key = dir.register(watcher,
                     ENTRY_CREATE,
@@ -54,10 +56,10 @@ public class LocalFolderWatchdog extends Thread {
                 Path filename = ev.context();
 
                 if (ev.kind() == ENTRY_DELETE) {
-                    System.out.format("File Deteleted %s%n", filename);
+                    if(NodeParameters.DEBUG) System.out.format("[Watchdog] File Deteleted %s%n", filename);
                 }
                 else{
-                    System.out.format("New file %s%n", filename);
+                    if(NodeParameters.DEBUG) System.out.format("[Watchdog] New file %s%n", filename);
 
                     // Run replication service
                     ReplicationService replicationService = new ReplicationService(Path.of(this.path + "/" + filename));

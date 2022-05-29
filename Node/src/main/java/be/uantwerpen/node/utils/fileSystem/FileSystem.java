@@ -4,6 +4,11 @@ import be.uantwerpen.node.utils.NodeParameters;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 import static be.uantwerpen.node.utils.fileSystem.EntryType.*;
@@ -17,8 +22,9 @@ public class FileSystem {
     }
 
     private FileSystem() {
-        fs = new HashMap<>();
+        fs = new ConcurrentHashMap<>();
     }
+
 
     public static FileSystem getInstance() {
         return instance;
@@ -38,7 +44,7 @@ public class FileSystem {
         if (fs.containsKey(file)) return -1;
         try {
             if(NodeParameters.DEBUG)
-                System.out.println("File to be added: " + file);
+                System.out.println("[FileSystem] File to be added: " + file);
             fs.put(file, new FileParameters(REPLICA, LocalID));
             return 0;
         } catch (InstantiationException e) {
@@ -67,29 +73,28 @@ public class FileSystem {
     }
     public static int removeFile(String file) {
         if (! fs.containsKey(file)) return -1;
-
         fs.remove(file);
         return 0;
     }
 
     public static Map<String, FileParameters> getReplicatedFiles(boolean onlyThisNode) {
-        if (onlyThisNode) return fs.entrySet()
-                                    .stream()
-                                    .filter( e -> !e.getValue().isLocalOnThisNode())
-                                    .filter( e -> e.getValue().getReplicatedOnNode() == NodeParameters.id)
-                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            if (onlyThisNode) return fs.entrySet()
+                    .stream()
+                    .filter(e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
+                    .filter(e -> e.getValue().getReplicatedOnNode() == NodeParameters.id)
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        return fs.entrySet()
-                .stream()
-                .filter( e -> !e.getValue().isLocalOnThisNode())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            return fs.entrySet()
+                    .stream()
+                    .filter(e -> !(e.getValue().getLocalOnNode() == NodeParameters.id))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static Map<String, FileParameters> getLocalFiles() {
-        return fs.entrySet()
-                .stream()
-                .filter( e -> e.getValue().isLocalOnThisNode())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            return fs.entrySet()
+                    .stream()
+                    .filter(e -> (e.getValue().getLocalOnNode() == NodeParameters.id))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     public static Map<String, FileParameters> getDownloadedFiles() {
@@ -100,6 +105,6 @@ public class FileSystem {
     }
 
     public static FileParameters getFileParameters(String file) {
-        return fs.get(file);
+            return fs.get(file);
     }
 }

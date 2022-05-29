@@ -13,6 +13,8 @@ import java.util.Queue;
 
 public class NodeParameters {
     public static LifeCycleController lifeCycleController;
+
+    public static final Queue<String> upForDeletion = new LinkedList<>();
     public static final Queue<String> lockRequest = new LinkedList<>();
     public static final Queue<String> removeLocks = new LinkedList<>();
     public static final Integer FAILURE_TRESHOLD = 5;
@@ -141,5 +143,10 @@ public class NodeParameters {
     public static void removeLock(String filename){
         if(!FileSystem.fs.containsKey(filename)) return;
         removeLocks.add(filename);
+    }
+
+    public static void addUpForDeletion(String filename){
+        if(!FileSystem.fs.containsKey(filename)) return;
+        upForDeletion.add(filename);
     }
 }

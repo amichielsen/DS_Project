@@ -10,6 +10,7 @@ import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/naming")
 public class NamingServer {

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,6 +25,7 @@ import java.util.Objects;
  * 3. We will report failing nodes to the NameServer.
  * ! Send periodic pings to the neighbors to test their state
  */
+@CrossOrigin(maxAge = 3600)
 @RestController
 @RequestMapping("/api")
 public class RunningRestController {
@@ -128,7 +130,8 @@ public class RunningRestController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        agent.run();
+        Thread failAgent = new Thread(agent);
+        failAgent.start();
     }
 
     @PostMapping(path ="/syncagent")
@@ -140,8 +143,9 @@ public class RunningRestController {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+        Thread syncThread = new Thread(agent);
         //if(NodeParameters.DEBUG) System.out.println("Received list: " + list);
-        agent.run();
+        syncThread.start();
     }
 
 
@@ -156,9 +160,14 @@ public class RunningRestController {
     }
 
     @PutMapping(path="/changeOwner")
-    public static void changeOwner(@RequestBody String filename){
-        if(FileSystem.addReplica(filename, NodeParameters.id) != -1)
+    public static int changeOwner(@RequestBody String filename){
+        if(NodeParameters.DEBUG) System.out.println("[REST] Change owner requested for file: " + filename);
+        if(FileSystem.addReplica(filename, NodeParameters.id) != -1) {
+            if (NodeParameters.DEBUG) System.out.println("[REST] File not present with name: " + filename);
             FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
+        }
+        if(NodeParameters.DEBUG) System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename).getReplicatedOnNode());
+        return 1;
     }
 
     @PostMapping(path ="/localDeletion")
@@ -167,6 +176,7 @@ public class RunningRestController {
             FileSystem.removeFile(filename);
         } else {
             FileSystem.removeFile(filename);
+            NodeParameters.upForDeletion.add(filename);
             new File(NodeParameters.replicaFolder + "/"+filename).delete();
         }
     }
@@ -175,4 +185,16 @@ public class RunningRestController {
     public static void shutdown(){
         NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
+
+    @GetMapping(path="localfiles")
+    public static String getLocalFiles(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("localfiles", FileSystem.getLocalFiles().keySet());
+        return jsonObject.toString();    }
+
+    @GetMapping(path="replicafiles")
+    public static String getReplicaFiles(){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("replicafiles", FileSystem.getReplicatedFiles(true).keySet());
+        return jsonObject.toString();    }
 }

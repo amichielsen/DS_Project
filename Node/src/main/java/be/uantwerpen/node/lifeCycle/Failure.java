@@ -34,16 +34,12 @@ public class Failure{
      * @param ID Id of failed node
      */
     public void nodeFailure(int ID) {
-        if (ID != NodeParameters.previousID) //Only next node can start failure sequence
+        if (ID == NodeParameters.previousID) //Only next node can start failure sequence
         {
             this.failureHandler(ID);
+            Thread failureThread = new Thread(new FailureAgent(ID));
+            failureThread.start();
         }
-        if (ID == NodeParameters.previousID && ID != NodeParameters.nextID){
-            new FailureAgent(ID).start();
-        }
-
-
-
     }
 
 
@@ -54,7 +50,7 @@ public class Failure{
                 .uri(URI.create("http://"+NodeParameters.nameServerIp.getHostAddress() + ":8080/naming/failure?id=" + ID))
                 .build();
         if(NodeParameters.DEBUG) {
-            System.out.println(request);
+            System.out.println("[Failure] "+request);
         }
         // use the client to send the request
         HttpResponse<String> response;
@@ -75,15 +71,15 @@ public class Failure{
 
         int previousNode = responseMap.get("previous");
         int nextNode = responseMap.get("next");
-        if (NodeParameters.DEBUG) System.out.println(previousNode + " =prev, next= " + nextNode);
+        if (NodeParameters.DEBUG) System.out.println("[Failure] "+ previousNode + " =prev, next= " + nextNode);
         //update nodes
         try{
             if(previousNode == NodeParameters.id){
-                if(NodeParameters.DEBUG) System.out.println("I'm next ");
+                if(NodeParameters.DEBUG) System.out.println("[Failure] I'm next ");
                 NodeParameters.nextID = nextNode;
                 updatePreviousIdOfNextNode(previousNode, nextNode);
             } else if (nextNode == NodeParameters.id) {
-                if(NodeParameters.DEBUG) System.out.println("I'm prev ");
+                if(NodeParameters.DEBUG) System.out.println("[Failure] I'm prev ");
                 NodeParameters.previousID = previousNode;
                 updateNextIdOfPreviousNode(nextNode, previousNode);
             }
@@ -133,7 +129,7 @@ public class Failure{
         HttpResponse<String> responses = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         // the response:
-        if(NodeParameters.DEBUG) System.out.println(responses.body());
+        if(NodeParameters.DEBUG) System.out.println("[Failure] " + responses.body());
         responses.body();
     }
 
@@ -162,8 +158,8 @@ public class Failure{
 
 
         // the response:
-        if(NodeParameters.DEBUG) System.out.println("Previous: " + hostIp);
-        if(NodeParameters.DEBUG) System.out.println(responses.body());
+        if(NodeParameters.DEBUG) System.out.println("[Failure] Previous: " + hostIp);
+        if(NodeParameters.DEBUG) System.out.println("[Failure] " +responses.body());
     }
 
     public void setFailedID(int failedID) {

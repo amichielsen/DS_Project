@@ -16,7 +16,7 @@ public class MulticastReceiver extends Thread{
     private NodeParameters nodeParameters;
 
     public void run() {
-        System.out.println("[MULTICAST] [Info] receiver started");
+        if(NodeParameters.DEBUG) System.out.println("[MULTICAST] [Info] receiver started");
         nodeParameters = NodeParameters.getInstance();
         try {
             socket = new MulticastSocket(5000);
@@ -34,7 +34,7 @@ public class MulticastReceiver extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("[MULTICAST] [Info] receiver listening");
+        if(NodeParameters.DEBUG) System.out.println("[MULTICAST] [Info] receiver listening");
 
         while (true){
             DatagramPacket packet = new DatagramPacket(buf, buf.length);
@@ -66,21 +66,21 @@ public class MulticastReceiver extends Thread{
             String name = data[1];
             String ip = data[2];
             int nameHash = Hash.generateHash(name);
-            System.out.println("namehash: " + nameHash + " name: " + name);
+            if(NodeParameters.DEBUG) System.out.println("[MCR] namehash: " + nameHash + " name: " + name);
             if (NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)) {
                 nodeParameters.setNextID(nameHash);
                 nodeParameters.setPreviousID(nameHash);
                 this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT+PREVIOUS " + NodeParameters.id);
-                System.out.println("Sent Next+Previous");
+                if(NodeParameters.DEBUG) System.out.println("[MCR] Sent Next+Previous");
             }
             else if (this.shouldBeNext(nameHash)) {
                 nodeParameters.setNextID(nameHash);
                 this.respondToMC(packet.getAddress(), packet.getPort(), "PREVIOUS " + NodeParameters.id);
-                System.out.println("Sent Previous");
+                if(NodeParameters.DEBUG) System.out.println("[MCR] Sent Previous");
             } else if (this.shouldBePrevious(nameHash)) {
                 nodeParameters.setPreviousID(nameHash);
                 this.respondToMC(packet.getAddress(), packet.getPort(), "NEXT " + NodeParameters.id);
-                System.out.println("Sent Next");
+                if(NodeParameters.DEBUG) System.out.println("[MCR] Sent Next");
             }
         }
     }
@@ -96,7 +96,7 @@ public class MulticastReceiver extends Thread{
         byte[] response = msg.getBytes();
         DatagramPacket responsePacket =new DatagramPacket(response, response.length, ip, port);
         socket.send(responsePacket);
-        System.out.println("Packet sent");
+        if(NodeParameters.DEBUG) System.out.println("[MCR] Packet sent");
         socket.close();
     }
 
