@@ -181,7 +181,7 @@ public class RunningRestController {
         }
     }
 
-    @PostMapping(path="/shutdown")
+    @DeleteMapping(path="/shutdown")
     public static void shutdown(){
         NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
