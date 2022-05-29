@@ -4,18 +4,23 @@ import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.utils.cache.IpTableCache;
 import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ReplicationService extends Thread {
     private final Path filename;
@@ -37,7 +42,7 @@ public class ReplicationService extends Thread {
 
       - TCP sockets - lexiflexie superRTOS 2000
       - Structuur van data (L of R met dan id van plek + naam bestand) - Vital
-      - Watchdog (nieuwe bestanden toegevoegd?) - Asif
+      - Watchdog (nieuwe bestanden toegevoegd?) - Louis
       - Aangeroepen code die bekijkt naar waar alles moet - Louis
 
      */
@@ -55,19 +60,17 @@ public class ReplicationService extends Thread {
             // 3. Add to Filesystem
             FileSystem.addLocal(f1.getName(), id);
             FileSystem.addReplica(f1.getName(), id);
-            return;
-        }
-        /*// B. For myself - LOCAL and REPLICA
-        if () {
-            if (NodeParameters.DEBUG) System.out.println("[RS] File is for me");
-            // 3. Add to Filesystem
-            FileSystem.addLocal(f1.getName(), id);
+            Path destination = Paths.get(NodeParameters.replicaFolder+File.separator+f1.getName());
+            try {
+                Files.copy(f1.toPath(), destination);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 
-         */
-        // C. Send to previous - LOCAL
-        if (checkIfGoingToPrevious(hash)) {
+        // B. Send to previous - LOCAL (or in some cases myself, but a copy will be sent)
+        if (isGoingToPrevious(hash)) {
             System.out.println("[RS] File is for previous (or me)");
             id = NodeParameters.previousID;
             ip = IpTableCache.getInstance().getIp(id).getHostAddress();
@@ -84,7 +87,7 @@ public class ReplicationService extends Thread {
             return;
         }
 
-        // D. Send to other - LOCAL
+        // C. Send to other - LOCAL
         System.out.println("[RS] File is for someone else");
         // Contact NS for correct id
         try {
@@ -126,7 +129,7 @@ public class ReplicationService extends Thread {
         }
     }
 
-    private boolean checkIfGoingToPrevious(int hash){
+    private boolean isGoingToPrevious(int hash){
         return (((hash <= NodeParameters.id && hash > NodeParameters.previousID) | (NodeParameters.previousID > NodeParameters.id && (hash > NodeParameters.previousID | hash <= NodeParameters.id))) | ((hash <= NodeParameters.nextID && hash > NodeParameters.id) | (hash > NodeParameters.nextID && hash > NodeParameters.id))) ;
     }
 }

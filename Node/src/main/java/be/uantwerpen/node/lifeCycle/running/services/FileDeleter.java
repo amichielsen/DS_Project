@@ -41,9 +41,12 @@ public class FileDeleter {
             int id = ((Long) json.get("id")).intValue();
             String ip = String.valueOf(json.get("ip"));
 
-            var deleteRequest = HttpRequest.newBuilder(
+
+            HttpRequest deleteRequest = HttpRequest.newBuilder(
                             URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
+                    .POST(HttpRequest.BodyPublishers.ofString(filename))
                     .build();
+
             HttpResponse<String> deleteResponse = HttpClient.newHttpClient().send(deleteRequest, HttpResponse.BodyHandlers.ofString());
             if (NodeParameters.DEBUG) System.out.println("[Deleter] " +deleteResponse.body());
 
@@ -57,6 +60,11 @@ public class FileDeleter {
 
     public boolean deleteFromReplicaFolder(String filename){
         File toDelete = new File(NodeParameters.replicaFolder + "/"+filename);
+        return toDelete.delete();
+    }
+
+    public boolean deleteFromLocalFolder(String filename){
+        File toDelete = new File(NodeParameters.localFolder + "/"+filename);
         return toDelete.delete();
     }
 }

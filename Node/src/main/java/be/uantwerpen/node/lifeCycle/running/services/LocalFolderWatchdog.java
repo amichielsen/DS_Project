@@ -57,6 +57,8 @@ public class LocalFolderWatchdog extends Thread {
 
                 if (ev.kind() == ENTRY_DELETE) {
                     if(NodeParameters.DEBUG) System.out.format("[Watchdog] File Deteleted %s%n", filename);
+                    FileDeleter.getInstance().deleteFile(String.valueOf(filename));
+                    FileDeleter.getInstance().deleteFromLocalFolder(String.valueOf(filename));
                 }
                 else{
                     if(NodeParameters.DEBUG) System.out.format("[Watchdog] New file %s%n", filename);
