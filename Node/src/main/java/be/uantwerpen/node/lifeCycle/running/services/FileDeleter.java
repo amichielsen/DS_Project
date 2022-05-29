@@ -44,7 +44,7 @@ public class FileDeleter {
 
             HttpRequest deleteRequest = HttpRequest.newBuilder(
                             URI.create("http://"+ip+":8080/api/deleteFile?filename="+filename))
-                    .DELETE()
+                    .POST(HttpRequest.BodyPublishers.ofString(filename))
                     .build();
 
             HttpResponse<String> deleteResponse = HttpClient.newHttpClient().send(deleteRequest, HttpResponse.BodyHandlers.ofString());

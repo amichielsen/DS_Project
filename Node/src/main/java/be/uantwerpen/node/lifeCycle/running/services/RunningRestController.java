@@ -149,7 +149,7 @@ public class RunningRestController {
     }
 
 
-    @DeleteMapping(path ="/deleteFile")
+    @PostMapping(path ="/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
     }
