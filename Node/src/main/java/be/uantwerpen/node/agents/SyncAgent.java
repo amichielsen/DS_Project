@@ -128,9 +128,7 @@ public class SyncAgent extends Agent {
                             //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
                             HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
                             FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                            if (child.delete()) {
-                                if (NodeParameters.DEBUG) System.out.println("[S-A] File successfully deleted");
-                            }
+                            deletions.add(child);
                             break;
                         } catch (IOException | InterruptedException e) {
                             if (!child.exists()) continue;
