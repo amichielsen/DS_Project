@@ -39,6 +39,15 @@ public class SyncAgent extends Agent {
 
     @Override
     public void run() {
+
+        while (NodeParameters.upForDeletion.size() > 0) {
+            String deletedFile = NodeParameters.upForDeletion.poll();
+            if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
+            agentList.remove(deletedFile);
+            FileSystem.removeFile(deletedFile);
+            deletionList.put(NodeParameters.id, deletedFile);
+        }
+
         ArrayList<File> deletions = new ArrayList<>();
         if(NodeParameters.DEBUG) {
             System.out.println("[S-A] Agent's list: ");
@@ -168,13 +177,7 @@ public class SyncAgent extends Agent {
                 agentList.get(lockedFile).lock(NodeParameters.id);
             }
 
-            while (NodeParameters.upForDeletion.size() > 0) {
-                String deletedFile = NodeParameters.upForDeletion.poll();
-                if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
-                agentList.remove(deletedFile);
-                FileSystem.removeFile(deletedFile);
-                deletionList.put(NodeParameters.id, deletedFile);
-            }
+
 
 
             //Only send it if there are other nodes in the system
