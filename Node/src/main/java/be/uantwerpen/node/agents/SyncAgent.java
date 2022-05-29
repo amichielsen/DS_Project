@@ -7,6 +7,9 @@ import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.lifeCycle.running.services.FileSender;
 import be.uantwerpen.node.utils.Hash;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,6 +80,25 @@ public class SyncAgent extends Agent {
 
                 FileSystem.fs.putAll(agentList); //Update local list according to agent
 
+                //If file is replicated here and local as well, should go to previous
+                if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id) {
+                    try {
+                        FileSender.sendFile((child.getPath()), IpTableCache.getInstance().getIp(NodeParameters.previousID).getHostAddress(), FileSystem.getFileParameters(child.getName()).getLocalOnNode(), "Owner");
+
+                        HttpRequest request2 = HttpRequest.newBuilder(
+                                        URI.create("http:/" + IpTableCache.getInstance().getIp(NodeParameters.previousID) + ":8080/api/changeOwner"))
+                                .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                .build();
+                        if (NodeParameters.DEBUG)
+                            if (NodeParameters.DEBUG) System.out.println("[S-A] Request change owner: " + request2);
+                        HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
+                    }catch  (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    {
+
+                    }
+                }
 
                 //Checks whether another Node should own the file
 
