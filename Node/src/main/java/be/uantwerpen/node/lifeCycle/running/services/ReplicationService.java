@@ -37,7 +37,7 @@ public class ReplicationService extends Thread {
 
       - TCP sockets - lexiflexie superRTOS 2000
       - Structuur van data (L of R met dan id van plek + naam bestand) - Vital
-      - Watchdog (nieuwe bestanden toegevoegd?) - Asif
+      - Watchdog (nieuwe bestanden toegevoegd?) - Louis
       - Aangeroepen code die bekijkt naar waar alles moet - Louis
 
      */
