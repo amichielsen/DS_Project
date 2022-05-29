@@ -13,6 +13,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -38,6 +39,7 @@ public class SyncAgent extends Agent {
 
     @Override
     public void run() {
+        ArrayList<File> deletions = new ArrayList<>();
         if(NodeParameters.DEBUG) {
             System.out.println("[S-A] Agent's list: ");
             for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
@@ -79,6 +81,8 @@ public class SyncAgent extends Agent {
                     }
                 }
 
+                FileSystem.fs.putAll(agentList); //Update local list according to agent
+
                 //If file is replicated here and local as well, should go to previous
                 if(FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
                     for (int i = 0; i < 10; i++) {
@@ -93,7 +97,7 @@ public class SyncAgent extends Agent {
                             if (NodeParameters.DEBUG) System.out.println("[S-A] Request change owner: " + request2);
                         HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                         FileSystem.fs.get(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
-                        child.delete();
+                        deletions.add(child);
                         break;
                     }catch  (IOException | InterruptedException e) {
                         if (i < 8) {
@@ -196,6 +200,9 @@ public class SyncAgent extends Agent {
                         }
                     }
                 }
+            }
+            for(File name: deletions){
+                name.delete();
             }
     }
 
