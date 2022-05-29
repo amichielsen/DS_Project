@@ -4,18 +4,23 @@ import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.utils.cache.IpTableCache;
 import be.uantwerpen.node.utils.fileSystem.FileSystem;
 import be.uantwerpen.node.utils.Hash;
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class ReplicationService extends Thread {
     private final Path filename;
@@ -55,6 +60,12 @@ public class ReplicationService extends Thread {
             // 3. Add to Filesystem
             FileSystem.addLocal(f1.getName(), id);
             FileSystem.addReplica(f1.getName(), id);
+            Path destination = Paths.get(NodeParameters.replicaFolder+File.separator+f1.getName());
+            try {
+                Files.copy(f1.toPath(), destination);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return;
         }
 

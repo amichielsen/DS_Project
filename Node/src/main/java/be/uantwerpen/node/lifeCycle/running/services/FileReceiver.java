@@ -20,7 +20,7 @@ public class FileReceiver extends Thread{
 
         try{
             ServerSocket serverSocket = new ServerSocket(5044);
-            if(NodeParameters.DEBUG) System.out.println("File receiver listening to port:5044");
+            if(NodeParameters.DEBUG) System.out.println("[FR] File receiver listening to port:5044");
             while (true) {
 
                 Socket clientSocket = serverSocket.accept();

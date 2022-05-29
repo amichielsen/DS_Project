@@ -40,7 +40,7 @@ public class FileSender {
 
         while (!Objects.equals(bufferedReader.readLine(), "OK")) {}
 
-        if (NodeParameters.DEBUG) System.out.println("[FS] Ready to sent file!");
+        if (NodeParameters.DEBUG) System.out.println("[FS] Ready to send file!");
         FileInputStream fileInputStream = new FileInputStream(file);
         // break file into chunks
         byte[] buffer = new byte[4 * 1024];
