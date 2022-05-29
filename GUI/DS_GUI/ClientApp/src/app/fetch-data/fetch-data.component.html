@@ -1,0 +1,38 @@
+<h1 id="tableLabel">Nodes list</h1>
+
+<p>This component demonstrates fetching the nodes from the server.</p>
+
+<!--<p *ngIf="!allNodes"><em>Loading...</em></p>-->
+
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>Id:</th>
+      <th>Ip adress:</th>
+      <th>Delete:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="2077">
+      <td><button type="button" class="btn btn-info btn-block" (click)="getFilesFromNode(2077, 96.3  )">2077</button></td>
+      <td>192.168.96.3</td>
+      <td><button type="button" class="btn btn-danger btn-block" (click)="deleteNode(2077)">delete node </button></td>
+    </tr>
+    <tr id="30988">
+      <td><button type="button" class="btn btn-info btn-block" (click)="getFilesFromNode(30988, 96.5)">30988</button></td>
+      <td>192.168.96.5</td>
+      <td><button type="button" class="btn btn-danger btn-block" (click)="deleteNode(30988)">delete node </button></td>
+    </tr>
+    <tr id="27131">
+      <td><button type="button" class="btn btn-info btn-block" (click)="getFilesFromNode(27131, 96.4  )">27131</button></td>
+      <td>192.168.96.4</td>
+      <td><button type="button" class="btn btn-danger btn-block" (click)="deleteNode(27131)">delete node </button></td>
+    </tr>
+    <tr id="23274">
+      <td><button type="button" class="btn btn-info btn-block" (click)="getFilesFromNode(23274, 96.2)">23274</button></td>
+      <td>192.168.96.2</td>
+      <td><button type="button" class="btn btn-danger btn-block" (click)="deleteNode(23274)">delete node </button></td>
+    </tr>
+  </tbody>
+</table>
+

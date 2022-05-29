@@ -1,0 +1,113 @@
+<h1 id="tableLabel">Nodes list</h1>
+
+<p>This component demonstrates fetching the files from the nodes.</p>
+
+<!--<p *ngIf="!allNodes"><em>Loading...</em></p>-->
+<!--node 1-->
+<p>Files of node 2077</p>
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>local:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of localFiles">{{item}}</td>
+    </tr>
+
+  </tbody>
+  <thead>
+    <tr>
+      <th>Replica:</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of replicaFiles">{{item}}</td>
+    </tr>
+
+  </tbody>
+</table>
+<!--node 2-->
+<p>Files of node 30988</p>
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>local:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of localFiles2">{{item}}</td>
+    </tr>
+
+  </tbody>
+  <thead>
+    <tr>
+      <th>Replica:</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of replicaFiles2">{{item}}</td>
+    </tr>
+
+  </tbody>
+</table>
+<!--node 3-->
+<p>Files of node 27131</p>
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>local:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of localFiles3">{{item}}</td>
+    </tr>
+
+  </tbody>
+  <thead>
+    <tr>
+      <th>Replica:</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of replicaFiles3">{{item}}</td>
+    </tr>
+
+  </tbody>
+</table>
+<!--node 4-->
+<p>Files of node 23274</p>
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>local:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of localFiles4">{{item}}</td>
+    </tr>
+
+  </tbody>
+  <thead>
+    <tr>
+      <th>Replica:</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td *ngFor="let item of replicaFiles4">{{item}}</td>
+    </tr>
+
+  </tbody>
+</table>
