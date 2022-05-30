@@ -90,9 +90,9 @@ public class SyncAgent extends Agent {
                     }
                 }
 
-                if(NodeParameters.DEBUG) System.out.println("[S-A]: file " + child.getName());
+                if (NodeParameters.DEBUG) System.out.println("[S-A]: file " + child.getName());
                 //If file is replicated here and local as well, should go to previous
-                if(!(FileSystem.fs.get(child.getName()) == null)) {
+                if (!(FileSystem.fs.get(child.getName()) == null)) {
                     if (FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
                         for (int i = 0; i < 10; i++) {
                             try {
@@ -102,11 +102,12 @@ public class SyncAgent extends Agent {
                                         .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
                                         .build();
                                 if (NodeParameters.DEBUG)
-                                        System.out.println("[S-A] Request change owner: " + request2);
+                                    System.out.println("[S-A] Request change owner: " + request2);
                                 HttpResponse<String> response2 = HttpClient.newHttpClient().send(request2, HttpResponse.BodyHandlers.ofString());
                                 FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.previousID);
-                                if(child.delete())
-                                    if(NodeParameters.DEBUG) System.out.println("[S-A] Successful deletion of " + child.getName());
+                                if (child.delete())
+                                    if (NodeParameters.DEBUG)
+                                        System.out.println("[S-A] Successful deletion of " + child.getName());
                                 break;
                             } catch (IOException | InterruptedException e) {
                                 if (i < 8) {
@@ -125,42 +126,92 @@ public class SyncAgent extends Agent {
                 }
 
                 //Checks whether another Node should own the file
-                if(!(FileSystem.fs.get(child.getName()) == null)) {
+                if (!(FileSystem.fs.get(child.getName()) == null)) {
                     if (isForNext(child.getName())) {
-                        if (NodeParameters.DEBUG)
-                            System.out.println("[S-A] File: " + child.getName() + " should be for: " + NodeParameters.nextID);
-                        for (int i = 0; i < 10; i++) {
-                            try {
-                                String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
-                                FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
-                                HttpClient client = HttpClient.newHttpClient();
-                                HttpRequest request2 = HttpRequest.newBuilder(
-                                                URI.create("http://" + ipNext + ":8080/api/changeOwner"))
-                                        .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
-                                        .build();
-                                //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
-                                HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                                FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                                if(child.delete())
-                                    if(NodeParameters.DEBUG) System.out.println("[S-A] Successful deletion of " + child.getName());
-                                break;
-                            } catch (IOException | InterruptedException e) {
-                                if (!child.exists()) continue;
-                                if (i < 8) {
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException ex) {
-                                        throw new RuntimeException(ex);
+                        if ((FileSystem.fs.get(child.getName()).getLocalOnNode() != NodeParameters.nextID)) {
+                            if (NodeParameters.DEBUG)
+                                System.out.println("[S-A] File: " + child.getName() + " should be for: " + NodeParameters.nextID);
+                            for (int i = 0; i < 10; i++) {
+                                try {
+                                    String ipNext = IpTableCache.getInstance().getIp(NodeParameters.nextID).getHostAddress();
+                                    FileSender.sendFile(child.getPath(), ipNext, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
+                                    HttpClient client = HttpClient.newHttpClient();
+                                    HttpRequest request2 = HttpRequest.newBuilder(
+                                                    URI.create("http://" + ipNext + ":8080/api/changeOwner"))
+                                            .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                            .build();
+                                    //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
+                                    HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                                    FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
+                                    if (child.delete())
+                                        if (NodeParameters.DEBUG)
+                                            System.out.println("[S-A] Successful deletion of " + child.getName());
+                                    break;
+                                } catch (IOException | InterruptedException e) {
+                                    if (!child.exists()) continue;
+                                    if (i < 8) {
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException ex) {
+                                            throw new RuntimeException(ex);
+                                        }
+                                    } else {
+                                        throw new RuntimeException(e);
                                     }
-                                } else {
-                                    throw new RuntimeException(e);
                                 }
                             }
+                        } else if (!Objects.equals(NodeParameters.previousID, NodeParameters.nextID)) {
+                            try {
+                                HttpRequest request = HttpRequest.newBuilder(
+                                                URI.create("http://" + NodeParameters.getNameServerIp().getHostAddress() + ":8080/naming/file2host?filename=" + child.getName()))
+                                        .build();
+                                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+
+                                if (NodeParameters.DEBUG) System.out.println("[S-A] NS response: " + response.body());
+                                JSONParser parser = new JSONParser();
+                                JSONObject json = (JSONObject) parser.parse(response.body());
+                                // Adding to ip cache
+                                int id = ((Long) json.get("id")).intValue();
+                                String ip = String.valueOf(json.get("ip"));
+                                if (NodeParameters.nextID != id &&  NodeParameters.id != id) {
+                                    for (int i = 0; i < 10; i++) {
+                                        try {
+                                            FileSender.sendFile(child.getPath(), ip, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
+                                            HttpClient client = HttpClient.newHttpClient();
+                                            HttpRequest request2 = HttpRequest.newBuilder(
+                                                            URI.create("http://" + ip + ":8080/api/changeOwner"))
+                                                    .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                                    .build();
+                                            //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
+                                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                                            FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
+                                            if (child.delete())
+                                                if (NodeParameters.DEBUG)
+                                                    System.out.println("[S-A] Successful deletion of " + child.getName());
+                                            break;
+                                        } catch (IOException | InterruptedException e) {
+                                            if (!child.exists()) continue;
+                                            if (i < 8) {
+                                                try {
+                                                    Thread.sleep(1000);
+                                                } catch (InterruptedException ex) {
+                                                    throw new RuntimeException(ex);
+                                                }
+                                            } else {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+
+                                    }
+
+                                }
+                            } catch (IOException | InterruptedException | ParseException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-
                     }
-                }
 
+                }
             }
 
 
@@ -210,7 +261,7 @@ public class SyncAgent extends Agent {
 
     public boolean isForNext(String file){
         int hash = Hash.generateHash(file);
-        return (((NodeParameters.nextID < hash && NodeParameters.nextID > NodeParameters.id)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)) && (FileSystem.fs.get(file).getLocalOnNode() != NodeParameters.nextID));
+        return (((NodeParameters.nextID < hash && NodeParameters.nextID > NodeParameters.id)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)));
     }
 
     public HashMap<String, FileParameters> getAgentList() {

@@ -91,7 +91,7 @@ public class ReplicationService extends Thread {
         System.out.println("[RS] File is for someone else");
         // Contact NS for correct id
         try {
-            var request = HttpRequest.newBuilder(
+            HttpRequest request = HttpRequest.newBuilder(
                             URI.create("http://" + NodeParameters.getNameServerIp().getHostAddress() + ":8080/naming/file2host?filename=" + f1.getName()))
                     .build();
             HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
