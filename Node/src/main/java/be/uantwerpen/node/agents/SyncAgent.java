@@ -82,7 +82,6 @@ public class SyncAgent extends Agent {
                     }
                 }
 
-                if (NodeParameters.DEBUG) System.out.println("[S-A]: file " + child.getName());
                 //If file is replicated here and local as well, should go to previous
                 if (!(FileSystem.fs.get(child.getName()) == null)) {
                     if (FileSystem.fs.get(child.getName()).getLocalOnNode() == NodeParameters.id && !NodeParameters.id.equals(NodeParameters.previousID)) {
