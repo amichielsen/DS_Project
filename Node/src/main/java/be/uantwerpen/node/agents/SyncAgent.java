@@ -261,7 +261,7 @@ public class SyncAgent extends Agent {
 
     public boolean isForNext(String file){
         int hash = Hash.generateHash(file);
-        return (((NodeParameters.nextID < hash && NodeParameters.nextID > NodeParameters.id)|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)));
+        return (((NodeParameters.nextID < hash && (NodeParameters.nextID > NodeParameters.id | (hash<NodeParameters.id)))|(NodeParameters.nextID > hash && hash < NodeParameters.id && NodeParameters.nextID > NodeParameters.id)));
     }
 
     public HashMap<String, FileParameters> getAgentList() {
