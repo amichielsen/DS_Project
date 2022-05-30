@@ -153,52 +153,37 @@ public class SyncAgent extends Agent {
                                 }
                             }
                         } else if (!Objects.equals(NodeParameters.previousID, NodeParameters.nextID)) {
-                            try {
-                                HttpRequest request = HttpRequest.newBuilder(
-                                                URI.create("http://" + NodeParameters.getNameServerIp().getHostAddress() + ":8080/naming/file2host?filename=" + child.getName()))
-                                        .build();
-                                HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-
-                                if (NodeParameters.DEBUG) System.out.println("[S-A] NS response: " + response.body());
-                                JSONParser parser = new JSONParser();
-                                JSONObject json = (JSONObject) parser.parse(response.body());
-                                // Adding to ip cache
-                                int id = ((Long) json.get("id")).intValue();
-                                String ip = String.valueOf(json.get("ip"));
-                                if (NodeParameters.nextID != id &&  NodeParameters.id != id) {
-                                    for (int i = 0; i < 10; i++) {
-                                        try {
-                                            FileSender.sendFile(child.getPath(), ip, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
-                                            HttpClient client = HttpClient.newHttpClient();
-                                            HttpRequest request2 = HttpRequest.newBuilder(
-                                                            URI.create("http://" + ip + ":8080/api/changeOwner"))
-                                                    .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
-                                                    .build();
-                                            //if (NodeParameters.DEBUG) System.out.println("[S-A] request: " + request2);
-                                            HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
-                                            FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
-                                            if (child.delete())
-                                                if (NodeParameters.DEBUG)
-                                                    System.out.println("[S-A] Successful deletion of " + child.getName());
-                                            break;
-                                        } catch (IOException | InterruptedException e) {
-                                            if (!child.exists()) continue;
-                                            if (i < 8) {
-                                                try {
-                                                    Thread.sleep(1000);
-                                                } catch (InterruptedException ex) {
-                                                    throw new RuntimeException(ex);
-                                                }
-                                            } else {
-                                                throw new RuntimeException(e);
+                            if(NodeParameters.DEBUG) System.out.println("[S-A] Query for file in IPCache: " + child.getName());
+                            int id = IpTableCache.getInstance().findNodeFromFile(Hash.generateHash(child.getName()));
+                            String ip = IpTableCache.getInstance().getIp(id).getHostAddress();
+                            if (NodeParameters.nextID != id &&  NodeParameters.id != id) {
+                                for (int i = 0; i < 10; i++) {
+                                    try {
+                                        FileSender.sendFile(child.getPath(), ip, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
+                                        HttpClient client = HttpClient.newHttpClient();
+                                        HttpRequest request2 = HttpRequest.newBuilder(
+                                                URI.create("http://" + ip + ":8080/api/changeOwner"))
+                                                .PUT(HttpRequest.BodyPublishers.ofString(child.getName()))
+                                                .build();
+                                        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+                                        FileSystem.getFileParameters(child.getName()).setReplicatedOnNode(NodeParameters.nextID);
+                                        if (child.delete())
+                                            if (NodeParameters.DEBUG)
+                                                System.out.println("[S-A] Successful deletion of " + child.getName());
+                                        break;
+                                    } catch (IOException | InterruptedException e) {
+                                        if (!child.exists()) continue;
+                                        if (i < 8) {
+                                            try {
+                                                Thread.sleep(1000);
+                                            } catch (InterruptedException ex) {
+                                                throw new RuntimeException(ex);
                                             }
+                                        } else {
+                                            throw new RuntimeException(e);
                                         }
-
                                     }
-
                                 }
-                            } catch (IOException | InterruptedException | ParseException e) {
-                                throw new RuntimeException(e);
                             }
                         }
                     }

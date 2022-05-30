@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.*;
 
 public class IpTableCache {
     static final IpTableCache instance = new IpTableCache();
-    private final HashMap<Integer, InetAddress> cache = new HashMap<>();
+    private final TreeMap<Integer, InetAddress> cache = new TreeMap<>();
 
     private IpTableCache() {}
     public static IpTableCache getInstance(){
@@ -54,5 +54,12 @@ public class IpTableCache {
             System.out.println("[IPCACHE] [Error] connection error with name server (likely offline)");
             return null;
         }
+    }
+
+    public int findNodeFromFile(int hash) {
+        Set<Integer> nodes = this.cache.keySet();
+        TreeSet<Integer> treeNodes = new TreeSet<>(nodes);
+        Integer smaller = treeNodes.lower(hash);
+        return Objects.requireNonNullElse(smaller, treeNodes.last()); //Wrap around
     }
 }

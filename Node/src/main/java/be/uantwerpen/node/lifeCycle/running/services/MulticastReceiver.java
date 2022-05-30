@@ -2,6 +2,7 @@ package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.utils.NodeParameters;
 import be.uantwerpen.node.utils.Hash;
+import be.uantwerpen.node.utils.cache.IpTableCache;
 
 import java.io.IOException;
 import java.net.*;
@@ -66,6 +67,7 @@ public class MulticastReceiver extends Thread{
             String name = data[1];
             String ip = data[2];
             int nameHash = Hash.generateHash(name);
+            IpTableCache.getInstance().addIp(nameHash, InetAddress.getByName(ip));
             if(NodeParameters.DEBUG) System.out.println("[MCR] namehash: " + nameHash + " name: " + name);
             if (NodeParameters.nextID.equals(NodeParameters.id) && NodeParameters.previousID.equals(NodeParameters.id)) {
                 nodeParameters.setNextID(nameHash);
