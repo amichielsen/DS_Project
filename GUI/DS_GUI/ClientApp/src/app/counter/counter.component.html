@@ -1,0 +1,54 @@
+<script src="assets/NewFolder/graph.js"></script>
+<h1 id="tableLabel">Neighbours list</h1>
+
+<p>This component demonstrates fetching the Neighbours from the nodes.</p>
+
+<table class='table table-striped' aria-labelledby="tableLabel">
+  <thead>
+    <tr>
+      <th>Previous id:</th>
+      <th>Own id:</th>
+      <th>Next id:</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="2077" *ngIf="neighbourdata">
+      <td>{{neighbourdata.previousNeighbor}}</td>
+      <td>2077</td>
+      <td>{{neighbourdata.nextNeighbor}}</td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr id="30988" *ngIf="neighbourdata2">
+      <td>{{neighbourdata2.previousNeighbor}}</td>
+      <td>30988</td>
+      <td>{{neighbourdata2.nextNeighbor}}</td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr id="27131" *ngIf="neighbourdata3">
+      <td>{{neighbourdata3.previousNeighbor}}</td>
+      <td>27131</td>
+      <td>{{neighbourdata3.nextNeighbor}}</td>
+    </tr>
+  </tbody>
+  <tbody>
+    <tr id="23274" *ngIf="neighbourdata4">
+      <td>{{neighbourdata4.previousNeighbor}}</td>
+      <td>23274</td>
+      <td>{{neighbourdata4.nextNeighbor}}</td>
+    </tr>
+  </tbody>
+</table>
+
+<div id="container"></div>
+
+<style>
+  #container {
+    background-color: antiquewhite;
+    min-width: 320px;
+    max-width: 800px;
+    margin: 0 auto;
+    height: 500px;
+  }
+</style>

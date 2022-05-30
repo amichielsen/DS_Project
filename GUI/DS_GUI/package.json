@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@angular/cdk": "^13.3.8",
+    "@swimlane/ngx-graph": "^8.0.0",
+    "echarts": "^5.3.2"
+  }
+}
