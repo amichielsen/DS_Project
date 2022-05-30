@@ -1,6 +1,7 @@
 package be.uantwerpen.node.lifeCycle.running.services;
 
 import be.uantwerpen.node.utils.NodeParameters;
+import be.uantwerpen.node.utils.fileSystem.FileSystem;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -59,6 +60,8 @@ public class LocalFolderWatchdog extends Thread {
                     if(NodeParameters.DEBUG) System.out.format("[Watchdog] File Deteleted %s%n", filename);
                     FileDeleter.getInstance().deleteFile(String.valueOf(filename));
                     FileDeleter.getInstance().deleteFromLocalFolder(String.valueOf(filename));
+                    FileSystem.removeFile(filename.toString());
+                    NodeParameters.upForDeletion.add(filename.toString());
                 }
                 else{
                     if(NodeParameters.DEBUG) System.out.format("[Watchdog] New file %s%n", filename);
