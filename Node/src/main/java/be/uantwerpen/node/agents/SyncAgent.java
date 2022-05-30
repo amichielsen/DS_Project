@@ -49,14 +49,6 @@ public class SyncAgent extends Agent {
         }
 
         ArrayList<File> deletions = new ArrayList<>();
-        if(NodeParameters.DEBUG) {
-            System.out.println("[S-A] Agent's list: ");
-            for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
-                System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
-            System.out.println("[S-A] Local on this node list: ");
-            for (Map.Entry<String, FileParameters> entry : FileSystem.getLocalFiles().entrySet())
-                System.out.println("[S-A] " + entry.getKey() + " local on: " + entry.getValue().getLocalOnNode());
-        }
 
         //if(NodeParameters.DEBUG) System.out.println("[S-A] Sync Agent started on this node");
 
@@ -146,6 +138,7 @@ public class SyncAgent extends Agent {
                                     if (child.delete())
                                         if (NodeParameters.DEBUG)
                                             System.out.println("[S-A] Successful deletion of " + child.getName());
+                                    this.printList();
                                     break;
                                 } catch (IOException | InterruptedException e) {
                                     if (!child.exists()) continue;
@@ -278,5 +271,16 @@ public class SyncAgent extends Agent {
 
     public void setDeletionList(HashMap<Integer, String> deletionList) {
         this.deletionList = deletionList;
+    }
+
+    public void printList() {
+        if (NodeParameters.DEBUG) {
+            System.out.println("[S-A] Agent's list: ");
+            for (Map.Entry<String, FileParameters> entry : agentList.entrySet())
+                System.out.println("[S-A] " + entry.getKey() + " Replicated on: " + entry.getValue().getReplicatedOnNode());
+            System.out.println("[S-A] Local on this node list: ");
+            for (Map.Entry<String, FileParameters> entry : FileSystem.getLocalFiles().entrySet())
+                System.out.println("[S-A] " + entry.getKey() + " local on: " + entry.getValue().getLocalOnNode());
+        }
     }
 }
