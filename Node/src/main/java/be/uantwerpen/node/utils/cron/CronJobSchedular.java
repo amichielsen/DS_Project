@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CronJobSchedular implements Runnable{
+public class CronJobSchedular {
     private final State stateStarted;
     private final LifeCycleController lifeCycleController;
     private final HashMap<CronJob,TimeDetails> allJobs = new HashMap<>();
