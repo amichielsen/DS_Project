@@ -40,6 +40,18 @@ public class SyncAgent extends Agent {
     @Override
     public void run() {
 
+        //Unlock files on agent
+        while (NodeParameters.removeLocks.size() > 0) {
+            String lockedFile = NodeParameters.removeLocks.poll();
+            agentList.get(lockedFile).unLock();
+        }
+
+        //Lock files on agent
+        while (NodeParameters.lockRequest.size() > 0) {
+            String lockedFile = NodeParameters.lockRequest.poll();
+            agentList.get(lockedFile).lock(NodeParameters.id);
+        }
+
         while (NodeParameters.upForDeletion.size() > 0) {
             String deletedFile = NodeParameters.upForDeletion.poll();
             if(NodeParameters.DEBUG) System.out.println("[S-A] Deletion of: " +deletedFile);
@@ -194,24 +206,6 @@ public class SyncAgent extends Agent {
 
                 }
             }
-
-
-
-            //Unlock files on agent
-            while (NodeParameters.removeLocks.size() > 0) {
-                String lockedFile = NodeParameters.removeLocks.poll();
-                agentList.get(lockedFile).unLock();
-            }
-
-            //Lock files on agent
-            while (NodeParameters.lockRequest.size() > 0) {
-                String lockedFile = NodeParameters.lockRequest.poll();
-                agentList.get(lockedFile).lock(NodeParameters.id);
-            }
-
-
-
-
             //Only send it if there are other nodes in the system
             if(!Objects.equals(NodeParameters.id, NodeParameters.nextID)) {
                 for (int i = 0; i < 10; i++) {
