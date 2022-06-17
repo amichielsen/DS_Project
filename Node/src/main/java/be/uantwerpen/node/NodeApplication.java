@@ -13,12 +13,12 @@ import java.net.UnknownHostException;
 public class NodeApplication {
 
     public static void main(String[] args) throws UnknownHostException {
+        SpringApplication.run(NodeApplication.class, args);
         NodeParameters.getInstance().setup(InetAddress.getLocalHost().getHostName(), InetAddress.getLocalHost(), Hash.generateHash(InetAddress.getLocalHost().getHostName()) );
         LifeCycleController lifeCycleController = new LifeCycleController();
         Thread t1 = new Thread(lifeCycleController);
         NodeParameters.lifeCycleController = lifeCycleController;
         t1.start();
-        SpringApplication.run(NodeApplication.class, args);
     }
 
 }
