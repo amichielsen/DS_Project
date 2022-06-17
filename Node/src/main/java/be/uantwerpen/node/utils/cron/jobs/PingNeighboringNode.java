@@ -36,7 +36,7 @@ public class PingNeighboringNode extends CronJob {
                 if (i < 4) {
                     try {
                         if(NodeParameters.DEBUG) System.out.println("[Ping] Try: " + i + " For node: " + nodeParameters.getPreviousID());
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -62,7 +62,7 @@ public class PingNeighboringNode extends CronJob {
             } catch (InterruptedException | IOException e) {
                 if (i < 4) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
