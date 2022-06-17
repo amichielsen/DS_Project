@@ -35,6 +35,7 @@ public class PingNeighboringNode extends CronJob {
             } catch (InterruptedException | IOException e) {
                 if (i < 4) {
                     try {
+                        if(NodeParameters.DEBUG) System.out.println("[Ping] Try: " + i + " For node: " + nodeParameters.getPreviousID());
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
@@ -82,12 +83,14 @@ public class PingNeighboringNode extends CronJob {
 
     private void ping(int ID) throws IOException, InterruptedException {
         String ip = nodeParameters.getIP(ID).getHostAddress();
+        if(NodeParameters.DEBUG) System.out.println("[Ping] ID: "+ ID + " IP: " + ip);
         var client = HttpClient.newHttpClient();
 
         var request = HttpRequest.newBuilder(
                         URI.create("http://"+ip+":8080/api/status"))
                 .build();
 
+        if(NodeParameters.DEBUG) System.out.println("[Ping] Request: " + request);
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
 
