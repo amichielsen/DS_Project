@@ -22,6 +22,9 @@ public class IpTableCache {
     public void addIp(Integer id, InetAddress ip) {
         cache.put(id,ip);
     }
+
+    public void deleteIp(Integer id) {
+        cache.remove(id);}
     public InetAddress getIp(Integer id) {
         if (cache.containsKey(id)) return cache.get(id);
         try {

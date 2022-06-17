@@ -40,6 +40,7 @@ public class FailureAgent extends Agent {
 
     @Override
     public void run() {
+        IpTableCache.getInstance().deleteIp(this.failedNode);
         if(NodeParameters.DEBUG) System.out.println("[F-A] Node "+failedNode+ " has failed!");
         if(NodeParameters.DEBUG) System.out.println("[F-A] Agent Started at node "+startingNode+ " !");
         if (!(hasBeenRunTimes == 0) & startingNode == NodeParameters.id) return;
