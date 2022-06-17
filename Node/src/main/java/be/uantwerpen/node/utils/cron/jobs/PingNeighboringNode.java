@@ -28,15 +28,15 @@ public class PingNeighboringNode extends CronJob {
         }
 
         // Previous
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             try {
                 ping(nodeParameters.getPreviousID());
                 break;
             } catch (InterruptedException | IOException e) {
-                if (i < 8) {
+                if (i < 7) {
                     try {
                         if(NodeParameters.DEBUG) System.out.println("[Ping] Try: " + i + " For node: " + nodeParameters.getPreviousID());
-                        Thread.sleep(2000);
+                        Thread.sleep(950);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -54,15 +54,15 @@ public class PingNeighboringNode extends CronJob {
             return;
         }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             // Next
             try {
                 ping(nodeParameters.getNextID());
                 break;
             } catch (InterruptedException | IOException e) {
-                if (i < 8) {
+                if (i < 7) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(950);
                     } catch (InterruptedException ex) {
                         throw new RuntimeException(ex);
                     }
