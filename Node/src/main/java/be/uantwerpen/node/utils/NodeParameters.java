@@ -138,6 +138,7 @@ public class NodeParameters {
 
     public static void addLockRequest(String filename){
         if(!FileSystem.fs.containsKey(filename)) return;
+        FileSystem.fs.get(filename).lock(id);
         lockRequest.add(filename);
     }
 
