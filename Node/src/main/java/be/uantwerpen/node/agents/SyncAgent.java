@@ -103,7 +103,7 @@ public class SyncAgent extends Agent {
                             } catch (IOException | InterruptedException e) {
                                 if (i < 8) {
                                     try {
-                                        Thread.sleep(2000);
+                                        Thread.sleep(1000);
                                     } catch (InterruptedException ex) {
                                         throw new RuntimeException(ex);
                                     }
@@ -143,7 +143,7 @@ public class SyncAgent extends Agent {
                                     if (!child.exists()) continue;
                                     if (i < 8) {
                                         try {
-                                            Thread.sleep(2000);
+                                            Thread.sleep(1000);
                                         } catch (InterruptedException ex) {
                                             throw new RuntimeException(ex);
                                         }
@@ -175,7 +175,7 @@ public class SyncAgent extends Agent {
                                         if (!child.exists()) continue;
                                         if (i < 8) {
                                             try {
-                                                Thread.sleep(2000);
+                                                Thread.sleep(1000);
                                             } catch (InterruptedException ex) {
                                                 throw new RuntimeException(ex);
                                             }
