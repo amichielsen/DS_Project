@@ -55,7 +55,8 @@ public class Running extends State {
         }
         CronJobSchedular cron = new CronJobSchedular(lifeCycleController);
         cron.addCronJob(new PingNeighboringNode(lifeCycleController), 1);
-        cron.run();
+        Thread scheduler = new Thread(cron);
+        scheduler.start();
     }
 
 
