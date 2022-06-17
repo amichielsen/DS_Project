@@ -44,12 +44,14 @@ public class SyncAgent extends Agent {
         while (NodeParameters.removeLocks.size() > 0) {
             String lockedFile = NodeParameters.removeLocks.poll();
             agentList.get(lockedFile).unLock();
+            FileSystem.fs.get(lockedFile).unLock();
         }
 
         //Lock files on agent
         while (NodeParameters.lockRequest.size() > 0) {
             String lockedFile = NodeParameters.lockRequest.poll();
             agentList.get(lockedFile).lock(NodeParameters.id);
+            FileSystem.fs.get(lockedFile).lock(NodeParameters.id);
         }
 
         while (NodeParameters.upForDeletion.size() > 0) {
