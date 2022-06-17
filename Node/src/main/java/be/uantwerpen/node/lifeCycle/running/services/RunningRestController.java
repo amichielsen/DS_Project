@@ -32,12 +32,12 @@ public class RunningRestController {
     /**
      * POST Hello -> payload: send from
      * {
-     *     "id": _id of sending node,
-     *     "ip": _ip of sending node
+     * "id": _id of sending node,
+     * "ip": _ip of sending node
      * }
      * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/hello")
+    @PostMapping(path = "/hello")
     public static void hello(@RequestBody String payload) {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -45,19 +45,19 @@ public class RunningRestController {
     /**
      * POST bye -> payload: send from + new neighbor
      * {
-     *     "id": _id of sending node,
-     *     "ip": _ip of sending node
+     * "id": _id of sending node,
+     * "ip": _ip of sending node
      * }
      * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/bye")
+    @PostMapping(path = "/bye")
     public static void bye(@RequestBody String payload) {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
 
 
     // GET status -> returns: state + neighbors
-    @GetMapping(path ="/status")
+    @GetMapping(path = "/status")
     public static String getStatus() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", "Running");
@@ -69,8 +69,8 @@ public class RunningRestController {
         return jsonObject.toString();
     }
 
-    @GetMapping(path="/neighbours")
-    public static String getNeighbours(){
+    @GetMapping(path = "/neighbours")
+    public static String getNeighbours() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("previousNeighbor", NodeParameters.previousID);
         jsonObject.put("nextNeighbor", NodeParameters.nextID);
@@ -78,38 +78,34 @@ public class RunningRestController {
     }
 
     // Update next node id for
-    @PutMapping(path ="/updateNext")
-    public static  String updateNextNodeId(@RequestParam Integer hostId) {
-        if(Objects.nonNull(hostId))
-        {
+    @PutMapping(path = "/updateNext")
+    public static String updateNextNodeId(@RequestParam Integer hostId) {
+        if (Objects.nonNull(hostId)) {
             NodeParameters.getInstance().setNextID(hostId);
-            return "successfully added next id as: "+hostId;
-        }
-        else return "could not add a null hostId";
+            return "successfully added next id as: " + hostId;
+        } else return "could not add a null hostId";
     }
 
     // Update previous node id for
-    @PutMapping(path ="/updatePrevious")
-    public static  String updatePreviousNodeId(@RequestParam Integer hostId) {
-        if(Objects.nonNull(hostId))
-        {
+    @PutMapping(path = "/updatePrevious")
+    public static String updatePreviousNodeId(@RequestParam Integer hostId) {
+        if (Objects.nonNull(hostId)) {
             NodeParameters.getInstance().setPreviousID(hostId);
-            return "successfully added previous id as:  "+hostId;
-        }
-        else return "could not add a null hostId";
+            return "successfully added previous id as:  " + hostId;
+        } else return "could not add a null hostId";
     }
 
     /**
      * POST status -> changes settings on the fly (all the payload parameters are optional)
      * {
-     *     "newId": _new id for this node,
-     *     "newIp": _new ip for this node,
-     *     "newPreviousNeighbor: _new previousNeighbor for this node,
-     *     "newNextNeighbor: _new nextNeighbor for this node,
+     * "newId": _new id for this node,
+     * "newIp": _new ip for this node,
+     * "newPreviousNeighbor: _new previousNeighbor for this node,
+     * "newNextNeighbor: _new nextNeighbor for this node,
      * }
      * return 200 if success, 204 if nothing changes, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/status")
+    @PostMapping(path = "/status")
     public static void postStatus(@RequestBody String payload) {
         throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -117,13 +113,13 @@ public class RunningRestController {
     /**
      * POST agent -> changes settings on the fly (all the payload parameters are optional)
      * {
-     *     "agent": SYNC | FAILURE
+     * "agent": SYNC | FAILURE
      * }
      * returns 200 if success, 503 if not in running, 500 if failed for other reason
      */
-    @PostMapping(path ="/failureagent")
+    @PostMapping(path = "/failureagent")
     public static void postAgent(@RequestBody String agentStr) {
-        if(NodeParameters.DEBUG) System.out.println("[REST] FailureAgent should start running...");
+        if (NodeParameters.DEBUG) System.out.println("[REST] FailureAgent should start running...");
         FailureAgent agent;
         try {
             agent = new ObjectMapper().readValue(agentStr, FailureAgent.class);
@@ -134,7 +130,7 @@ public class RunningRestController {
         failAgent.start();
     }
 
-    @PostMapping(path ="/syncagent")
+    @PostMapping(path = "/syncagent")
     public static void postSyncAgent(@RequestBody String agentStr) {
         //if(NodeParameters.DEBUG) System.out.println("[REST] SyncAgent should start running...");
         SyncAgent agent;
@@ -149,56 +145,75 @@ public class RunningRestController {
     }
 
 
-    @PostMapping(path ="/deleteFile")
+    @PostMapping(path = "/deleteFile")
     public static boolean deleteFile(@RequestBody String filename) {
         NodeParameters.upForDeletion.add(filename);
         return FileDeleter.getInstance().deleteFromReplicaFolder(filename);
     }
 
-    @PutMapping(path ="/addLogEntry")
-    public static void addLogEntry(@RequestBody String filename, FileParameters parameters){
-         FileSystem.fs.put(filename, parameters);
+    @PutMapping(path = "/addLogEntry")
+    public static void addLogEntry(@RequestBody String filename, FileParameters parameters) {
+        FileSystem.fs.put(filename, parameters);
     }
 
-    @PutMapping(path="/changeOwner")
-    public static int changeOwner(@RequestBody String filename){
-        if(NodeParameters.DEBUG) System.out.println("[REST] Change owner requested for file: " + filename);
-        if(FileSystem.addReplica(filename, NodeParameters.id) != -1) {
+    @PutMapping(path = "/changeOwner")
+    public static int changeOwner(@RequestBody String filename) {
+        if (NodeParameters.DEBUG) System.out.println("[REST] Change owner requested for file: " + filename);
+        if (FileSystem.addReplica(filename, NodeParameters.id) != -1) {
             if (NodeParameters.DEBUG) System.out.println("[REST] File not present with name: " + filename);
             FileSystem.fs.get(filename).setReplicatedOnNode(NodeParameters.id);
         }
-        if(NodeParameters.DEBUG) System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename).getReplicatedOnNode());
+        if (NodeParameters.DEBUG)
+            System.out.println("[REST] FileSys after owner change: " + FileSystem.fs.get(filename).getReplicatedOnNode());
         return 1;
     }
 
-    @PostMapping(path ="/localDeletion")
-    public static void localDeletion(@RequestBody String filename){
+    @PostMapping(path = "/localDeletion")
+    public static void localDeletion(@RequestBody String filename) {
         if (FileSystem.getFileParameters(filename).getEntryType() == EntryType.DOWNLOADED) {
             FileSystem.removeFile(filename);
         } else {
             FileSystem.removeFile(filename);
             NodeParameters.upForDeletion.add(filename);
-            if(new File(NodeParameters.replicaFolder + "/"+filename).delete())
-                if(NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deleted successfully"));
-            else
-                if(NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deletion failed"));
+            if (new File(NodeParameters.replicaFolder + "/" + filename).delete())
+                if (NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deleted successfully"));
+                else if (NodeParameters.DEBUG) System.out.println(("[REST] File: " + filename + " deletion failed"));
         }
     }
 
-    @DeleteMapping(path="/shutdown")
-    public static void shutdown(){
+    @DeleteMapping(path = "/shutdown")
+    public static void shutdown() {
         NodeParameters.lifeCycleController.ChangeState(new Shutdown(NodeParameters.lifeCycleController));
     }
 
-    @GetMapping(path="/localfiles")
-    public static String getLocalFiles(){
+    @GetMapping(path = "/localfiles")
+    public static String getLocalFiles() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("localfiles", FileSystem.getLocalFiles().keySet());
-        return jsonObject.toString();    }
+        return jsonObject.toString();
+    }
 
-    @GetMapping(path="/replicafiles")
-    public static String getReplicaFiles(){
+    @GetMapping(path = "/replicafiles")
+    public static String getReplicaFiles() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("replicafiles", FileSystem.getReplicatedFiles(true).keySet());
-        return jsonObject.toString();    }
+        return jsonObject.toString();
+    }
+
+    @PutMapping(path = "/lock")
+    public static void lockFile(String filename) {
+        NodeParameters.addLockRequest(filename);
+    }
+
+    @PutMapping(path = "/unlock")
+    public static void unlockFile(String filename) {
+        NodeParameters.removeLock(filename);
+    }
+
+    @GetMapping(path = "/fileinfo")
+    public static String fileInfo(String filename) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Is locked: ", FileSystem.fs.get(filename).isLocked());
+        return jsonObject.toString();
+    }
 }
