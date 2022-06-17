@@ -157,6 +157,8 @@ public class SyncAgent extends Agent {
                             int id = IpTableCache.getInstance().findNodeFromFile(Hash.generateHash(child.getName()));
                             String ip = IpTableCache.getInstance().getIp(id).getHostAddress();
                             if (NodeParameters.nextID != id &&  NodeParameters.id != id) {
+                                if (NodeParameters.DEBUG)
+                                    System.out.println("[S-A] File: " + child.getName() + " should be for (via cache): " + id + " with ip: " + ip);
                                 for (int i = 0; i < 10; i++) {
                                     try {
                                         FileSender.sendFile(child.getPath(), ip, FileSystem.fs.get(child.getName()).getLocalOnNode(), "Owner");
