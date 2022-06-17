@@ -91,6 +91,7 @@ public class SyncAgent extends Agent {
                 if (agentList.get(child.getName()) != null) {
                     if (agentList.get(child.getName()).isLocked() && agentList.get(child.getName()).getLockedOnNode() == NodeParameters.id) {
                         FileSystem.getFileParameters(child.getName()).unLock();
+                        agentList.get(child.getName()).unLock();
                     }
                 }
 
