@@ -215,7 +215,7 @@ public class Shutdown extends State {
                             .build();
                     HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
                     JSONParser parser = new JSONParser();
-                    JSONObject json = (JSONObject) parser.parse(response.body()); //TODO Fix dat ook local/replica weg gaat uit lijst
+                    JSONObject json = (JSONObject) parser.parse(response.body());
                     // Adding to ip cache
                     String ip = ((String) json.get("ip"));
                     request = HttpRequest.newBuilder(
